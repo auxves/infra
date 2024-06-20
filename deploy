@@ -1,0 +1,27 @@
+#!/usr/bin/env fish
+
+set FLAKE (status dirname)
+set CFG $argv[1]
+
+set ARGS $argv[3..]
+
+if test $argv[2]
+    set HOST $argv[2]
+else
+    set HOST $CFG
+end
+
+if test $CFG
+    nix shell nixpkgs#nixos-rebuild --command nixos-rebuild switch \
+        --flake $FLAKE#$CFG \
+        --target-host $HOST --build-host $HOST \
+        --fast --use-remote-sudo $ARGS
+
+    exit 0
+end
+
+if test $(uname) = Darwin
+    darwin-rebuild switch --flake $FLAKE
+else
+    nixos-rebuild switch --flake $FLAKE
+end
