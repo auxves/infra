@@ -1,10 +1,12 @@
-{ self, ... }: {
+{ self, config, ... }: {
   imports = [
     self.inputs.lanzaboote.nixosModules.lanzaboote
     self.inputs.disko.nixosModules.disko
   ];
 
   boot = {
+    kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
+
     bootspec.enabled = true;
 
     initrd.systemd.enable = true;
