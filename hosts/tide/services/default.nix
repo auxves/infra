@@ -12,7 +12,6 @@
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStop = "${pkgs.podman}/bin/podman network rm -f lan";
     };
 
     script = ''
