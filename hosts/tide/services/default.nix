@@ -16,7 +16,7 @@
     };
 
     script = ''
-      podman network inspect lan || podman network create lan -d macvlan -o parent=enp3s0 --subnet 192.168.4.0/22 --subnet 2600:1700:78c0:130f::/64 --ipv6
+      podman network inspect lan || podman network create lan -d macvlan -o parent=enp130s0 --subnet 192.168.4.0/22 --subnet 2600:1700:78c0:130f::/64 --ipv6
     '';
 
     partOf = [ "podman-networks.target" ];
