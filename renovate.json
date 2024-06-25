@@ -3,5 +3,13 @@
   "extends": ["config:best-practices", "docker:enableMajor"],
   "major": {
     "dependencyDashboardApproval": true
-  }
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [".nix$"],
+      "datasourceTemplate": "docker",
+      "matchStrings": ["image = \"(?<depName>.+?):(?<currentValue>.+?)\";"]
+    }
+  ]
 }
