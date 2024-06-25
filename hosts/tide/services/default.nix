@@ -1,5 +1,5 @@
 { lib, pkgs, ... }: {
-  # imports = lib.readModules ./.;
+  imports = lib.readModules ./.;
 
   systemd.targets."podman-networks" = {
     unitConfig.Description = "Podman networks needed by services.";

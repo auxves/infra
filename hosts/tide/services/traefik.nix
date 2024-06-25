@@ -7,12 +7,18 @@
 
     volumes = [
       "/var/run/podman/podman.sock:/var/run/docker.sock:ro"
-      "/services/traefik:/data"
+      "/services/traefik:/etc/traefik"
     ];
 
-    environment = { };
+    environment = {
+      CF_DNS_API_TOKEN_FILE = "/run/secrets/traefik_cloudflare_token";
+    };
 
-    extraOptions = [ "--network=lan" "--network=traefik" ];
+    extraOptions = [
+      "--network=lan"
+      "--network=traefik"
+      "--secret=traefik_cloudflare_token"
+    ];
 
     cmd = [
       "--api.insecure=true"
@@ -21,8 +27,8 @@
       "--entryPoints.websecure.asDefault=true"
       "--entrypoints.websecure.http3=true"
       "--entrypoints.websecure.http.tls.certresolver=letsencrypt"
-      "--entrypoints.websecure.http.tls.domains[0].main=auxves.dev"
-      "--entrypoints.websecure.http.tls.domains[0].sans=*.auxves.dev"
+      "--entrypoints.websecure.http.tls.domains[0].main=x.auxves.dev"
+      "--entrypoints.websecure.http.tls.domains[0].sans=*.x.auxves.dev"
       "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       "--providers.docker=true"
@@ -30,7 +36,7 @@
       "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
       "--certificatesResolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,9.9.9.9:53"
       "--certificatesresolvers.letsencrypt.acme.email=me@auxves.dev"
-      "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
+      "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme.json"
     ];
   };
 
@@ -44,7 +50,7 @@
     };
 
     script = ''
-      podman network inspect traefik || podman network create traefik
+      podman network exists traefik || podman network create traefik --ipv6
     '';
 
     partOf = [ "podman-networks.target" ];
