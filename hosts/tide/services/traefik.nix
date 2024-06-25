@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ ... }: {
   disko.devices.zpool.storage.datasets."services/traefik".type = "zfs_fs";
 
   virtualisation.oci-containers.containers."traefik" = {
@@ -16,7 +16,6 @@
 
     extraOptions = [
       "--network=lan"
-      "--network=traefik"
       "--secret=traefik_cloudflare_token"
     ];
 
@@ -44,22 +43,5 @@
       "traefik.http.routers.traefik.service" = "api@internal";
       "traefik.http.services.traefik.loadbalancer.server.port" = "9999";
     };
-  };
-
-  systemd.services."podman-network-traefik" = {
-    path = [ pkgs.podman ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStop = "${pkgs.podman}/bin/podman network rm -f traefik";
-    };
-
-    script = ''
-      podman network exists traefik || podman network create traefik --ipv6
-    '';
-
-    partOf = [ "podman-networks.target" ];
-    wantedBy = [ "podman-networks.target" ];
   };
 }
