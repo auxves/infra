@@ -11,12 +11,10 @@
 
     loader.efi.canTouchEfiVariables = true;
 
-    loader.systemd-boot.enable = true;
-
-    # lanzaboote = {
-    #   enable = true;
-    #   pkiBundle = "/etc/secureboot";
-    # };
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/etc/secureboot";
+    };
   };
 
   disko.devices = {
