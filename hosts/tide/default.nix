@@ -12,6 +12,8 @@
 
   networking.hostId = "c2079ac5";
 
+  networking.firewall.enable = false;
+
   services.comin = {
     enable = true;
     remotes = [{
