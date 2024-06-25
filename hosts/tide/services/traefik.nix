@@ -7,7 +7,7 @@
 
     volumes = [
       "/var/run/podman/podman.sock:/var/run/docker.sock:ro"
-      "/services/traefik:/etc/traefik"
+      "/storage/services/traefik:/etc/traefik"
     ];
 
     environment = {

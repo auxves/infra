@@ -94,10 +94,7 @@
         };
 
         datasets = {
-          services = {
-            type = "zfs_fs";
-            mountpoint = "/services";
-          };
+          services.type = "zfs_fs";
         };
       };
     };
