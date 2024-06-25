@@ -1,4 +1,4 @@
-{ self, config, ... }:
+{ self, config, pkgs, ... }:
 {
   imports = [
     self.inputs.comin.nixosModules.comin
@@ -51,7 +51,7 @@
               (builtins.attrNames pools.${pool}.datasets)))
         (builtins.attrNames pools);
 
-      commands = builtins.map (path: "zfs create -p ${path}") datasets;
+      commands = builtins.map (path: "${pkgs.zfs}/bin/zfs create -p ${path}") datasets;
     in
     builtins.concatStringsSep "\n" commands;
 }
