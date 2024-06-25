@@ -16,7 +16,7 @@
       VERSION = "1.20.4";
     };
 
-    volumes = [ "/storage/services/minecraft:/data" ];
+    volumes = [ "/storage/services/minecraft-vz:/data" ];
 
     extraOptions = [ "--network=lan:ip=2600:1700:78c0:130f:abcd::2e4c" ];
   };
