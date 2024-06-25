@@ -16,6 +16,7 @@
 
     extraOptions = [
       "--network=lan"
+      "--ip6=2600:1700:78c0:130f:abcd::1"
       "--secret=traefik_cloudflare_token"
     ];
 
