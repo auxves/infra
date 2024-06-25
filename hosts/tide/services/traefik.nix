@@ -2,7 +2,7 @@
   disko.devices.zpool.storage.datasets."services/traefik".type = "zfs_fs";
 
   virtualisation.oci-containers.containers.traefik-internal = {
-    image = "traefik:v3.0.0@sha256:7996bdae8aaa70eaacf2978b6c949de5b68c0a24ddc3e40c06344ecc88cfaea3";
+    image = "traefik:v3.0.3@sha256:a00ced69e41bf2eb475fd0cc70c1be785e4a5f45d693f26360b688c48816717f";
     autoStart = true;
 
     volumes = [
