@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:best-practices", "docker:enableMajor"],
+  "extends": [
+    "config:best-practices",
+    "docker:enableMajor",
+    "docker:pinDigests"
+  ],
   "major": {
     "dependencyDashboardApproval": true
   },
@@ -8,8 +12,13 @@
     {
       "customType": "regex",
       "fileMatch": [".nix$"],
-      "datasourceTemplate": "docker",
-      "matchStrings": ["image = \"(?<depName>.+?):(?<currentValue>.+?)\";"]
+      "matchStringsStrategy": "any",
+      "matchStrings": [
+        "image = \"(?<depName>.*):(?<currentValue>.*)\";",
+        "image = {\n.*repository = \"(?<depName>.*)\";\n.*tag = \"(?<currentValue>.*)\";",
+        "image = {\n.*repo = \"(?<depName>.*)\";\n.*tag = \"(?<currentValue>.*)\";"
+      ],
+      "datasourceTemplate": "docker"
     }
   ]
 }
