@@ -8,17 +8,7 @@
   "major": {
     "dependencyDashboardApproval": true
   },
-  "customManagers": [
-    {
-      "customType": "regex",
-      "fileMatch": [".nix$"],
-      "matchStringsStrategy": "any",
-      "matchStrings": [
-        "image = \"(?<depName>.*):(?<currentValue>.*)\";",
-        "image = {\n.*repository = \"(?<depName>.*)\";\n.*tag = \"(?<currentValue>.*)\";",
-        "image = {\n.*repo = \"(?<depName>.*)\";\n.*tag = \"(?<currentValue>.*)\";"
-      ],
-      "datasourceTemplate": "docker"
-    }
-  ]
+  "nix": {
+    "enabledManagers": ["docker"]
+  }
 }
