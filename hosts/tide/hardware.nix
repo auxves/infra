@@ -74,6 +74,7 @@
       storage = {
         type = "zpool";
         mode = "";
+        mountpoint = "/storage";
 
         rootFsOptions = {
           acltype = "posixacl";
@@ -96,4 +97,6 @@
       };
     };
   };
+
+  fileSystems."/storage".options = [ "noauto" ];
 }
