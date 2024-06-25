@@ -2,7 +2,7 @@
   disko.devices.zpool.storage.datasets."services/minecraft-vz".type = "zfs_fs";
 
   virtualisation.oci-containers.containers.minecraft-vz = {
-    image = "itzg/minecraft-server:java21-graalvm@sha256:86cc055800d00aa49c1548034cf5e40c96cdcf69e7573ab6b23c2bd0c3ff5a26";
+    image = "itzg/minecraft-server:java21-graalvm";
     autoStart = true;
 
     environment = {
