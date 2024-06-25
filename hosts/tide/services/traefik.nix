@@ -42,7 +42,7 @@
     labels = {
       "traefik.http.routers.traefik.rule" = "Host(`traefik.x.auxves.dev`)";
       "traefik.http.routers.traefik.service" = "api@internal";
-      "traefik.http.services.traefik.loadbalancer.server.port" = 9999;
+      "traefik.http.services.traefik.loadbalancer.server.port" = "9999";
     };
   };
 
