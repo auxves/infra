@@ -13,5 +13,5 @@ let
 in
 lib.mapAttrs buildHost {
   blaze = { system = "aarch64-darwin"; variant = "darwin"; };
-  tide = { system = "aarch64-linux"; variant = "nixos"; };
+  tide = { system = "x86_64-linux"; variant = "nixos"; };
 }

@@ -1,13 +1,16 @@
-{ self, ... }:
+{ self, config, ... }:
 {
   imports = [
-    ./hardware.nix
     self.inputs.comin.nixosModules.comin
+    ./hardware.nix
+    ./services
   ];
 
   modules = {
     home.enable = true;
   };
+
+  networking.hostId = "c2079ac5";
 
   services.comin = {
     enable = true;
@@ -17,6 +20,8 @@
     }];
   };
 
+  services.tailscale.enable = true;
+
   services.nfs.server.enable = true;
 
   services.zfs = {
@@ -24,17 +29,29 @@
     trim.enable = true;
   };
 
-  virtualisation = {
-    containers.enable = true;
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+    autoPrune.enable = true;
 
-    podman = {
-      enable = true;
-      dockerCompat = true;
-
-      defaultNetwork.settings = {
-        dns_enabled = true;
-        ipv6_enabled = true;
-      };
+    defaultNetwork.settings = {
+      dns_enabled = true;
+      ipv6_enabled = true;
     };
   };
+
+  system.activationScripts.sync-zfs-datasets.text =
+    let
+      pools = config.disko.devices.zpool;
+
+      datasets = builtins.concatMap
+        (pool:
+          builtins.map (path: "${pool}/${path}")
+            (builtins.filter (path: path != "__root")
+              (builtins.attrNames pools.${pool}.datasets)))
+        (builtins.attrNames pools);
+
+      commands = builtins.map (path: "zfs create -p ${path}") datasets;
+    in
+    builtins.concatStringsSep "\n" commands;
 }

@@ -7,16 +7,16 @@
   boot = {
     kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
 
-    bootspec.enabled = true;
-
     initrd.systemd.enable = true;
 
     loader.efi.canTouchEfiVariables = true;
 
-    lanzaboote = {
-      enable = true;
-      pkiBundle = "/etc/secureboot";
-    };
+    loader.systemd-boot.enable = true;
+
+    # lanzaboote = {
+    #   enable = true;
+    #   pkiBundle = "/etc/secureboot";
+    # };
   };
 
   disko.devices = {
@@ -54,9 +54,9 @@
         };
       };
 
-      nvme0n1 = {
+      storage0 = {
         type = "disk";
-        device = "/dev/nvme0n1";
+        device = "/dev/disk/by-id/nvme-FIKWOT_FN955_2TB_AA233920564";
         content = {
           type = "gpt";
           partitions = {
@@ -75,7 +75,7 @@
     zpool = {
       storage = {
         type = "zpool";
-        mode = "stripe";
+        mode = "";
         mountpoint = "/storage";
 
         rootFsOptions = {
@@ -84,13 +84,9 @@
           compression = "zstd";
           encryption = "aes-256-gcm";
           keyformat = "passphrase";
-          keylocation = "file:///tmp/storage.secret.key";
+          keylocation = "file:///root/storage.key";
           xattr = "sa";
         };
-
-        postCreateHook = ''
-          zfs set keylocation=prompt $name;
-        '';
 
         options = {
           ashift = "12";
@@ -98,7 +94,10 @@
         };
 
         datasets = {
-          services.type = "zfs_fs";
+          services = {
+            type = "zfs_fs";
+            mountpoint = "/services";
+          };
         };
       };
     };
