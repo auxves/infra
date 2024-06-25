@@ -38,6 +38,12 @@
       "--certificatesresolvers.letsencrypt.acme.email=me@auxves.dev"
       "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme.json"
     ];
+
+    labels = {
+      "traefik.http.routers.traefik.rule" = "Host(`traefik.x.auxves.dev`)";
+      "traefik.http.routers.traefik.service" = "api@internal";
+      "traefik.http.services.traefik.loadbalancer.server.port" = 9999;
+    };
   };
 
   systemd.services."podman-network-traefik" = {
