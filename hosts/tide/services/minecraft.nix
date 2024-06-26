@@ -5,7 +5,7 @@
     image = "itzg/minecraft-server:java21-graalvm@sha256:2ed613b1a5752a6a55132e3ed447e74994c6a3aeeaf9ee6ffbd2e3f261f7a245";
     autoStart = true;
 
-    ports = [ "25565:25565" ];
+    ports = [ "25565:25565" "[::]:25565:25565" ];
 
     environment = {
       EULA = "true";
