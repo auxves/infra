@@ -10,7 +10,7 @@
     ];
 
     extraOptions = [
-      "--network=lan:ip=2600:1700:78c0:130f:abcd::6eb4"
+      "--network=lan:ip=2600:1700:78c0:130f:abcd::6eb4,mac=1e:b6:ce:7f:15:38"
       "--network=traefik-internal"
       "--device=/dev/ttyACM0"
     ];

@@ -15,7 +15,7 @@
     };
 
     extraOptions = [
-      "--network=lan:ip=2600:1700:78c0:130f:abcd::1"
+      "--network=lan:ip=2600:1700:78c0:130f:abcd::1,mac=7e:b1:c5:e2:89:f0"
       "--network=traefik-internal"
       "--secret=traefik_cloudflare_token"
     ];

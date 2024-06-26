@@ -17,6 +17,8 @@
 
     volumes = [ "/storage/services/minecraft-vz:/data" ];
 
-    extraOptions = [ "--network=lan:ip=2600:1700:78c0:130f:abcd::2e4c" ];
+    extraOptions = [
+      "--network=lan:ip=2600:1700:78c0:130f:abcd::2e4c,mac=62:aa:7d:8b:22:65"
+    ];
   };
 }
