@@ -13,6 +13,23 @@
   networking.hostId = "c2079ac5";
 
   networking.nftables.enable = true;
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
+
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+    autoPrune.enable = true;
+
+    defaultNetwork.settings = {
+      dns_enabled = true;
+      ipv6_enabled = true;
+
+      subnets = [
+        { gateway = "10.88.0.1"; subnet = "10.88.0.0/16"; }
+        { gateway = "fd80::1"; subnet = "fd80::/64"; }
+      ];
+    };
+  };
 
   services.comin = {
     enable = true;
@@ -24,22 +41,9 @@
 
   services.tailscale.enable = true;
 
-  services.nfs.server.enable = true;
-
   services.zfs = {
     autoScrub.enable = true;
     trim.enable = true;
-  };
-
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    autoPrune.enable = true;
-
-    defaultNetwork.settings = {
-      dns_enabled = true;
-      ipv6_enabled = true;
-    };
   };
 
   system.activationScripts.sync-zfs-datasets.text =

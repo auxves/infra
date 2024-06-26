@@ -5,6 +5,8 @@
     image = "itzg/minecraft-server:java21-graalvm@sha256:2ed613b1a5752a6a55132e3ed447e74994c6a3aeeaf9ee6ffbd2e3f261f7a245";
     autoStart = true;
 
+    ports = [ "25565:25565" ];
+
     environment = {
       EULA = "true";
       MEMORY = "8G";
@@ -16,9 +18,7 @@
     };
 
     volumes = [ "/storage/services/minecraft-vz:/data" ];
-
-    extraOptions = [
-      "--network=lan:ip=2600:1700:78c0:130f:abcd::2e4c,mac=62:aa:7d:8b:22:65"
-    ];
   };
+
+  networking.firewall.allowedTCPPorts = [ 25565 ];
 }

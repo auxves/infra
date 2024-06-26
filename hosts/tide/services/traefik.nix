@@ -1,7 +1,7 @@
-{ pkgs, ... }: {
+{ ... }: {
   disko.devices.zpool.storage.datasets."services/traefik".type = "zfs_fs";
 
-  virtualisation.oci-containers.containers.traefik-internal = {
+  virtualisation.oci-containers.containers.traefik = {
     image = "traefik:v3.0.3@sha256:a00ced69e41bf2eb475fd0cc70c1be785e4a5f45d693f26360b688c48816717f";
     autoStart = true;
 
@@ -14,9 +14,19 @@
       CF_DNS_API_TOKEN_FILE = "/run/secrets/traefik_cloudflare_token";
     };
 
+    ports = [
+      # Internal
+      "[fd7a:115c:a1e0::4d01:292e]:443:443"
+      "[fd7a:115c:a1e0::4d01:292e]:80:80"
+      "100.108.41.46:443:443"
+      "100.108.41.46:80:80"
+
+      # Public
+      # "[2600:1700:78c0:130f:2e0:4cff:fe88:9afa]:443:8443"
+      # "[2600:1700:78c0:130f:2e0:4cff:fe88:9afa]:80:8080"
+    ];
+
     extraOptions = [
-      "--network=lan:ip=2600:1700:78c0:130f:abcd::1,mac=7e:b1:c5:e2:89:f0"
-      "--network=traefik-internal"
       "--secret=traefik_cloudflare_token"
     ];
 
@@ -44,22 +54,5 @@
       "traefik.http.routers.traefik.service" = "api@internal";
       "traefik.http.services.traefik.loadbalancer.server.port" = "9999";
     };
-  };
-
-  systemd.services."podman-network-traefik-internal" = {
-    path = [ pkgs.podman ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStop = "${pkgs.podman}/bin/podman network rm -f traefik-internal";
-    };
-
-    script = ''
-      podman network exists traefik-internal || podman network create traefik-internal --ipv6 --disable-dns
-    '';
-
-    partOf = [ "podman-networks.target" ];
-    wantedBy = [ "podman-networks.target" ];
   };
 }
