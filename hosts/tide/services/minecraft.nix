@@ -9,7 +9,6 @@
       EULA = "true";
       MEMORY = "8G";
       SEED = "gi//2WUWTxu6XfdK";
-      SERVER_PORT = "25560";
       TYPE = "FABRIC";
       USE_AIKAR_FLAGS = "true";
       USE_SIMD_FLAGS = "true";
