@@ -12,7 +12,7 @@
 
   networking.hostId = "c2079ac5";
 
-  networking.firewall.enable = false;
+  networking.nftables.enable = true;
 
   services.comin = {
     enable = true;
