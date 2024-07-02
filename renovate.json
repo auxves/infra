@@ -20,5 +20,12 @@
       ],
       "datasourceTemplate": "docker"
     }
-  ]
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "extends": ["schedule:weekly"]
+  },
+  "nix": {
+    "enabled": true
+  }
 }
