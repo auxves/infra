@@ -14,9 +14,7 @@
       "fileMatch": [".nix$"],
       "matchStringsStrategy": "any",
       "matchStrings": [
-        "image\\s*=\\s*\"?(?<depName>.*?):(?<currentValue>.*?)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\";",
-        "image = {\n.*repository = \"(?<depName>.*)\";\n.*tag = \"(?<currentValue>.*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\";",
-        "image = {\n.*repo = \"(?<depName>.*)\";\n.*tag = \"(?<currentValue>.*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\";"
+        "image\\s*=\\s*\"?(?<depName>.*?):(?<currentValue>.*?)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\";"
       ],
       "datasourceTemplate": "docker"
     }
