@@ -1,3 +1,8 @@
-{ lib, ... }: {
-  imports = lib.readModules ./.;
+{ ... }: {
+  imports = [
+    ./traefik
+    ./home-assistant
+    ./dns.nix
+    ./minecraft.nix
+  ];
 }
