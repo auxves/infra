@@ -51,12 +51,8 @@
       pools = config.disko.devices.zpool;
 
       datasets = builtins.concatMap
-        (pool: lib.pipe pools.${pool}.datasets [
-          builtins.attrNames
-          (builtins.filter (path: path != "__root"))
-          (builtins.map (path: "${pool}/${path}"))
-        ])
-        (builtins.attrNames pools);
+        (pool: lib.mapAttrsToList (_: dataset: dataset._name) pool.datasets)
+        (builtins.attrValues pools);
 
       commands = builtins.map (path: "${pkgs.zfs}/bin/zfs create -p ${path}") datasets;
     in
