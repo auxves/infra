@@ -12,6 +12,7 @@
     extraOptions = [ "--device=/dev/ttyACM0" ];
 
     labels = {
+      "traefik.enable" = "true";
       "traefik.http.routers.home-assistant.rule" = "Host(`home.x.auxves.dev`)";
       "traefik.http.services.home-assistant.loadbalancer.server.port" = "8123";
     };

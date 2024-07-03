@@ -1,0 +1,45 @@
+entryPoints:
+  internal:
+    address: :443
+    asDefault: true
+
+    http:
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: x.auxves.dev
+            sans:
+              - "*.x.auxves.dev"
+
+    http3: {}
+
+  public:
+    address: :8443
+
+    http:
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: auxves.dev
+            sans:
+              - "*.auxves.dev"
+
+    http3: {}
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - 1.1.1.1:53
+          - 9.9.9.9:53
+      email: me@auxves.dev
+      storage: /etc/traefik/acme.json
+
+providers:
+  docker:
+    exposedByDefault: false
+
+api:
+  insecure: true
