@@ -1,22 +1,18 @@
 { config, ... }: {
   disko.devices.zpool.storage.datasets."services/traefik".type = "zfs_fs";
 
-  sops.secrets."cloudflare/dns_token" = { };
+  sops.secrets."traefik/env" = { };
 
   virtualisation.oci-containers.containers.traefik = {
     image = "traefik:v3.0.4@sha256:525189d9283abd7c0f88598b9ef9009736e607e5d8ce1e56bd9003cf47798b2a";
-    autoStart = true;
 
     volumes = [
       "/var/run/podman/podman.sock:/var/run/docker.sock:ro"
       "/storage/services/traefik:/etc/traefik"
       "${./traefik.yaml}:/etc/traefik/traefik.yaml:ro"
-      "${config.sops.secrets."cloudflare/dns_token".path}:/run/secrets/cloudflare_token:ro"
     ];
 
-    environment = {
-      CF_DNS_API_TOKEN_FILE = "/run/secrets/cloudflare_token";
-    };
+    environmentFiles = [ config.sops.secrets."traefik/env".path ];
 
     ports = [
       # Internal

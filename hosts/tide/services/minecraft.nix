@@ -3,7 +3,7 @@
 
   virtualisation.oci-containers.containers.minecraft-vz = {
     image = "itzg/minecraft-server:java21-graalvm@sha256:2ed613b1a5752a6a55132e3ed447e74994c6a3aeeaf9ee6ffbd2e3f261f7a245";
-    autoStart = true;
+    autoStart = false;
 
     ports = [ "25565:25565" "[::]:25565:25565" ];
 

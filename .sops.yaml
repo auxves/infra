@@ -2,7 +2,7 @@ keys:
   - &auxves age15k7x7umuau2ucnv09xcgr58s8vhz3tapr4rj0ah8j2r597shwelqfa60e0
   - &tide age130smjsmgjrxqjke8knxta9f2l34v3ucdjx9qf07rtw0aulx5e4kq8wdvrs
 creation_rules:
-  - path_regex: hosts/tide/secrets.(yaml|json|env|ini|keytab)$
+  - path_regex: hosts/tide/.*\.(yaml|json|env|ini|keytab)$
     key_groups:
       - age:
           - *auxves
