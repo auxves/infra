@@ -29,5 +29,11 @@
     Include /etc/ssh/ssh_config.d/*
   '';
 
+  security.pam.sshAgentAuth.enable = true;
+
+  users.users.root = {
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINHiwuwSpFayBr5vka7mNjmFkPlKXK7bUkRYxJspY5WE" ];
+  };
+
   system.stateVersion = "23.05";
 }
