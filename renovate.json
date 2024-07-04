@@ -12,11 +12,13 @@
     {
       "customType": "regex",
       "fileMatch": [".nix$"],
+      "datasourceTemplate": "docker",
       "matchStringsStrategy": "any",
       "matchStrings": [
-        "image\\s*=\\s*\"?(?<depName>.*?):(?<currentValue>.*?)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\";"
+        "image = \"(?<depName>.*?)(:(?<currentValue>.*?))?(@(?<currentDigest>sha256:[a-f0-9]+))?\""
       ],
-      "datasourceTemplate": "docker"
+      "currentValueTemplate": "{{#if currentValue}}{{currentValue}}{{else}}latest{{/if}}",
+      "autoReplaceStringTemplate": "image = \"{{depName}}:{{newValue}}{{#if newDigest}}@{{{newDigest}}}{{/if}}\""
     }
   ],
   "lockFileMaintenance": {
