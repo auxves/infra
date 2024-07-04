@@ -2,7 +2,7 @@
   disko.devices.zpool.storage.datasets."services/minecraft-vz".type = "zfs_fs";
 
   virtualisation.oci-containers.containers.minecraft-vz = {
-    image = "itzg/minecraft-server:java21-graalvm@sha256:2ed613b1a5752a6a55132e3ed447e74994c6a3aeeaf9ee6ffbd2e3f261f7a245";
+    image = "itzg/minecraft-server:2024.6.1-java21-graalvm@sha256:41f60e34e630e698c39509c291565f1f962788d7628a82f91d932c5c8af3fc1a";
     autoStart = false;
 
     ports = [ "25565:25565" "[::]:25565:25565" ];
