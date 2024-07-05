@@ -10,11 +10,11 @@
     environment = {
       EULA = "true";
       MEMORY = "8G";
-      SEED = "gi//2WUWTxu6XfdK";
+      SEED = "-1254774536";
       TYPE = "FABRIC";
       USE_AIKAR_FLAGS = "true";
       USE_SIMD_FLAGS = "true";
-      VERSION = "1.20.4";
+      VERSION = "1.20.1";
     };
 
     volumes = [ "/storage/services/minecraft-vz:/data" ];
