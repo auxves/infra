@@ -17,10 +17,12 @@
       VERSION = "1.20.1";
 
       MOTD = "§l§cNo iPhones allowed!§r";
-      ICON = "https://raw.githubusercontent.com/auxves/infra/main/hosts/tide/services/minecraft/icon.png";
     };
 
-    volumes = [ "/storage/services/minecraft-vz:/data" ];
+    volumes = [
+      "/storage/services/minecraft-vz:/data"
+      "${./icon.png}:/data/server-icon.png"
+    ];
   };
 
   networking.firewall.allowedTCPPorts = [ 25565 ];
