@@ -15,6 +15,9 @@
       USE_AIKAR_FLAGS = "true";
       USE_SIMD_FLAGS = "true";
       VERSION = "1.20.1";
+
+      MOTD = "§l§cNo iPhones allowed!§r";
+      ICON = "https://raw.githubusercontent.com/auxves/infra/main/hosts/tide/services/minecraft/icon.png";
     };
 
     volumes = [ "/storage/services/minecraft-vz:/data" ];
