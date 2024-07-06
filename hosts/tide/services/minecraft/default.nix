@@ -16,7 +16,7 @@
       USE_SIMD_FLAGS = "true";
       VERSION = "1.20.1";
 
-      MOTD = "§l§cNo iPhones allowed!§r";
+      MOTD = "No iPhones allowed!";
     };
 
     volumes = [

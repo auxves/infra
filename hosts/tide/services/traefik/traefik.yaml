@@ -43,3 +43,6 @@ providers:
 
 api:
   insecure: true
+
+metrics:
+  prometheus: {}
