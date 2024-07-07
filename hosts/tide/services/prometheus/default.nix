@@ -2,7 +2,7 @@
   disko.devices.zpool.storage.datasets."services/prometheus".type = "zfs_fs";
 
   virtualisation.oci-containers.containers.prometheus = {
-    image = "prom/prometheus:v2.45.6@sha256:15ccbb1cec5fad2cd9f20f574ba5a4dd4160e8472213c76faac17f6481cb6a75";
+    image = "prom/prometheus:v2.53.0@sha256:075b1ba2c4ebb04bc3a6ab86c06ec8d8099f8fda1c96ef6d104d9bb1def1d8bc";
     user = "root:root";
 
     volumes = [
