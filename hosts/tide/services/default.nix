@@ -5,5 +5,6 @@
     ./minecraft
     ./prometheus
     ./grafana
+    ./loki
   ];
 }

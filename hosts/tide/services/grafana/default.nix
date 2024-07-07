@@ -9,6 +9,10 @@
       "/storage/services/grafana:/var/lib/grafana"
     ];
 
+    environment = {
+      HOSTNAME = "grafana.x.auxves.dev";
+    };
+
     labels = {
       "traefik.enable" = "true";
       "traefik.http.routers.grafana.rule" = "Host(`grafana.x.auxves.dev`)";

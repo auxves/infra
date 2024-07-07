@@ -6,10 +6,6 @@ entryPoints:
     http:
       tls:
         certResolver: letsencrypt
-        domains:
-          - main: x.auxves.dev
-            sans:
-              - "*.x.auxves.dev"
 
     http3: {}
 
@@ -19,10 +15,6 @@ entryPoints:
     http:
       tls:
         certResolver: letsencrypt
-        domains:
-          - main: auxves.dev
-            sans:
-              - "*.auxves.dev"
 
     http3: {}
 
@@ -46,3 +38,6 @@ api:
 
 metrics:
   prometheus: {}
+
+serversTransport:
+  insecureSkipVerify: true
