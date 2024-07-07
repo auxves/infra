@@ -11,6 +11,7 @@
 
     environment = {
       HOSTNAME = "grafana.x.auxves.dev";
+      GF_SERVER_ROOT_URL = "https://grafana.x.auxves.dev";
     };
 
     labels = {

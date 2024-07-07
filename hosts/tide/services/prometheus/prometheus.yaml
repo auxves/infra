@@ -16,3 +16,7 @@ scrape_configs:
       - targets: ["minecraft-vz:25585"]
         labels:
           server: vz
+
+  - job_name: uptime
+    static_configs:
+      - targets: ["uptime-kuma:3001"]

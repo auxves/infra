@@ -6,5 +6,6 @@
     ./prometheus
     ./grafana
     ./loki
+    ./uptime-kuma
   ];
 }
