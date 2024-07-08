@@ -47,6 +47,28 @@
     trim.enable = true;
   };
 
+  services.sanoid = {
+    enable = true;
+
+    interval = "*:0/15";
+
+    datasets = {
+      "storage" = {
+        useTemplate = [ "data" ];
+        recursive = "zfs";
+      };
+    };
+
+    templates.data = {
+      autosnap = true;
+      autoprune = true;
+      hourly = 12;
+      daily = 6;
+      weekly = 3;
+      monthly = 2;
+    };
+  };
+
   system.activationScripts.sync-zfs-datasets.text =
     let
       pools = config.disko.devices.zpool;
