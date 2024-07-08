@@ -14,9 +14,12 @@ scrape_configs:
   - job_name: minecraft
     static_configs:
       - targets: ["minecraft-vz:25585"]
-        labels:
-          server: vz
 
   - job_name: uptime
     static_configs:
       - targets: ["uptime-kuma:3001"]
+
+  - job_name: hass
+    metrics_path: /api/prometheus
+    static_configs:
+      - targets: ["home-assistant:8123"]
