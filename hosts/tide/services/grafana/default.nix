@@ -1,4 +1,8 @@
-{ ... }: {
+{ ... }:
+let
+  hostname = "grafana.x.auxves.dev";
+in
+{
   disko.devices.zpool.storage.datasets."services/grafana".type = "zfs_fs";
 
   virtualisation.oci-containers.containers.grafana = {
@@ -10,13 +14,13 @@
     ];
 
     environment = {
-      HOSTNAME = "grafana.x.auxves.dev";
-      GF_SERVER_ROOT_URL = "https://grafana.x.auxves.dev";
+      HOSTNAME = hostname;
+      GF_SERVER_ROOT_URL = "https://${hostname}";
     };
 
     labels = {
       "traefik.enable" = "true";
-      "traefik.http.routers.grafana.rule" = "Host(`grafana.x.auxves.dev`)";
+      "traefik.http.routers.grafana.rule" = "Host(`${hostname}`)";
       "traefik.http.services.grafana.loadbalancer.server.port" = "3000";
     };
   };
