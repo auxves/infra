@@ -12,12 +12,13 @@
       trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" ];
     };
 
-    extraOptions = ''
-      flake-registry = /global-registry-i-dont-think-so
-    '';
-
     registry = lib.mapAttrs (_: value: { flake = value; }) (self.inputs // { inherit self; });
     nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
+
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 7d";
+    };
   };
 
   networking.hostName = host.name;

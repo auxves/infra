@@ -1,17 +1,6 @@
 { lib, config, pkgs, ... }:
 let
   cfg = config.modules.development;
-
-  rust-toolchain = with pkgs.fenix; combine [
-    latest.toolchain
-    # targets.x86_64-apple-darwin.latest.rust-std
-    # targets.aarch64-apple-darwin.latest.rust-std
-    # targets.x86_64-unknown-linux-gnu.latest.rust-std
-    # targets.aarch64-unknown-linux-gnu.latest.rust-std
-    # targets.x86_64-pc-windows-gnu.latest.rust-std
-    # targets.wasm32-unknown-unknown.latest.rust-std
-    # targets.wasm32-wasi.latest.rust-std
-  ];
 in
 {
   options.modules.development = with lib; {
@@ -37,15 +26,11 @@ in
       nodejs_20
 
       # Rust
-      rust-toolchain
+      fenix.latest.toolchain
 
       # Containers
       docker-client
       docker-credential-helpers
-
-      # Kubernetes
-      kubectl
-      kubernetes-helm
     ];
 
     programs.git = let cfg = import ../../config/git.nix; in {

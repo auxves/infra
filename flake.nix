@@ -10,7 +10,7 @@
     darwin.url = "github:LnL7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
-    fenix.url = "github:nix-community/fenix";
+    fenix.url = "github:nix-community/fenix/monthly";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
 
     lanzaboote.url = "github:nix-community/lanzaboote";
