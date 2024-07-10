@@ -2,6 +2,11 @@
 {
   imports = lib.readModules ./.;
 
+  nix.settings = {
+    experimental-features = [ "cgroups" ];
+    use-cgroups = true;
+  };
+
   boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
   time.timeZone = "America/Los_Angeles";

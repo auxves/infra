@@ -4,10 +4,13 @@
 
   nix = {
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [ "nix-command" "flakes" "auto-allocate-uids" ];
       trusted-users = [ "@admin" "@wheel" ];
-      auto-optimise-store = true;
+      auto-allocate-uids = true;
+      auto-optimise-store = host.platform != "darwin";
+      accept-flake-config = true;
       sandbox = true;
+      warn-dirty = false;
       substituters = [ "https://nix-community.cachix.org" ];
       trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" ];
     };
