@@ -7,5 +7,6 @@
     ./grafana
     ./loki
     ./uptime-kuma
+    ./immich
   ];
 }
