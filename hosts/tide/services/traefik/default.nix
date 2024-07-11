@@ -1,6 +1,9 @@
-{ config, ... }: {
-  disko.devices.zpool.storage.datasets."services/traefik".type = "zfs_fs";
-
+{ config, ... }:
+let
+  paths = config.modules.storage.paths;
+in
+{
+  modules.storage.paths."services/traefik" = { };
   sops.secrets."traefik/env" = { };
 
   virtualisation.oci-containers.containers.traefik = {
@@ -8,7 +11,7 @@
 
     volumes = [
       "/var/run/podman/podman.sock:/var/run/docker.sock:ro"
-      "/storage/services/traefik:/etc/traefik"
+      "${paths."services/traefik".path}:/etc/traefik"
       "${./traefik.yaml}:/etc/traefik/traefik.yaml:ro"
     ];
 

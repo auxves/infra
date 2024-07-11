@@ -1,12 +1,16 @@
-{ ... }: {
-  disko.devices.zpool.storage.datasets."services/prometheus".type = "zfs_fs";
+{ config, ... }:
+let
+  paths = config.modules.storage.paths;
+in
+{
+  modules.storage.paths."services/prometheus" = { };
 
   virtualisation.oci-containers.containers.prometheus = {
     image = "prom/prometheus:v2.53.0@sha256:075b1ba2c4ebb04bc3a6ab86c06ec8d8099f8fda1c96ef6d104d9bb1def1d8bc";
     user = "root:root";
 
     volumes = [
-      "/storage/services/prometheus:/prometheus"
+      "${paths."services/prometheus".path}:/prometheus"
       "${./prometheus.yaml}:/etc/prometheus/prometheus.yml:ro"
     ];
   };

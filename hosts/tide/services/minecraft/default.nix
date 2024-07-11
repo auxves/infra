@@ -1,5 +1,9 @@
-{ ... }: {
-  disko.devices.zpool.storage.datasets."services/minecraft-vz".type = "zfs_fs";
+{ config, ... }:
+let
+  paths = config.modules.storage.paths;
+in
+{
+  modules.storage.paths."services/minecraft-vz" = { };
 
   virtualisation.oci-containers.containers.minecraft-vz = {
     image = "itzg/minecraft-server:2024.6.1-java21-graalvm@sha256:41f60e34e630e698c39509c291565f1f962788d7628a82f91d932c5c8af3fc1a";
@@ -20,7 +24,7 @@
     };
 
     volumes = [
-      "/storage/services/minecraft-vz:/data"
+      "${paths."services/minecraft-vz".path}:/data"
       "${./icon.png}:/data/server-icon.png"
       "/etc/localtime:/etc/localtime:ro"
     ];

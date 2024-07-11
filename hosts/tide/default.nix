@@ -9,6 +9,7 @@
 
   modules = {
     home.enable = true;
+    storage.enable = true;
   };
 
   networking.hostId = "c2079ac5";
