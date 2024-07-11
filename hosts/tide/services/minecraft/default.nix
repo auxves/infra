@@ -22,6 +22,7 @@
     volumes = [
       "/storage/services/minecraft-vz:/data"
       "${./icon.png}:/data/server-icon.png"
+      "/etc/localtime:/etc/localtime:ro"
     ];
   };
 
