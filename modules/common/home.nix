@@ -24,7 +24,7 @@ in
     home-manager.useUserPackages = true;
     home-manager.extraSpecialArgs = { inherit self host; };
 
-    home-manager.users.${cfg.user}.imports = [ ./home ] ++ cfg.modules;
+    home-manager.users.${cfg.user}.imports = [ ../home ] ++ cfg.modules;
 
     users.users.${cfg.user} = {
       openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINHiwuwSpFayBr5vka7mNjmFkPlKXK7bUkRYxJspY5WE" ];

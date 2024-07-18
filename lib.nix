@@ -8,7 +8,7 @@ let
   buildWith = builder: host: builder {
     pkgs = pkgsFor host.system;
     specialArgs = { inherit self host lib; };
-    modules = [ ./modules ./modules/${host.variant} ./hosts/${host.name} ];
+    modules = [ ./modules/common ./modules/${host.variant} ./hosts/${host.name} ];
   };
 in
 inputs.nixpkgs.lib.extend (_: _: {
@@ -31,7 +31,7 @@ inputs.nixpkgs.lib.extend (_: _: {
 
   readModules = dir:
     let
-      isValid = name: type: type == "regular" && lib.hasSuffix ".nix" name && name != "default.nix";
+      isValid = name: type: name != "default.nix";
       files = lib.filterAttrs isValid (builtins.readDir dir);
     in
     map (n: dir + "/${n}") (builtins.attrNames files);
