@@ -39,7 +39,7 @@ in
   };
 
   virtualisation.oci-containers.containers.immich-machine-learning = {
-    image = "ghcr.io/immich-app/immich-machine-learning:v1.108.0@sha256:4dc544396bf08cd92066f83a270155201d80512add127ca9fac2d3e56694d2a4";
+    image = "ghcr.io/immich-app/immich-machine-learning:v1.109.2@sha256:3ab8e332004c693421320ac7e22065a1187f3d0e84255f97cacf83bce7bdfc1f";
 
     volumes = [
       "${paths."var/cache/immich-ml".path}:/cache"
