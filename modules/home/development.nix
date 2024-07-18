@@ -1,15 +1,14 @@
 { lib, config, pkgs, ... }:
 let
-  cfg = config.modules.development;
+  cfg = config.presets.development;
 in
 {
-  options.modules.development = with lib; {
+  options.presets.development = with lib; {
     enable = mkEnableOption "Enable development environment";
   };
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      delta
       skim
       jq
 
@@ -33,13 +32,7 @@ in
       docker-credential-helpers
     ];
 
-    programs.git = let cfg = import ../../config/git.nix; in {
-      enable = true;
-      userName = cfg.name;
-      userEmail = cfg.email;
-      extraConfig = cfg.config;
-      ignores = cfg.ignores;
-    };
+    programs.git.enable = true;
 
     programs.direnv = {
       enable = true;

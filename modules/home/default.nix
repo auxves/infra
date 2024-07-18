@@ -1,17 +1,11 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   imports = lib.readModules ./.;
 
   home.sessionVariables = {
     EDITOR = "nvim";
   };
 
-  programs.fish = {
-    enable = true;
-    interactiveShellInit = ''
-      set fish_greeting
-    '';
-  };
+  programs.fish.enable = true;
 
   home.stateVersion = "23.05";
 }

@@ -1,9 +1,9 @@
 { config, ... }:
 let
-  paths = config.modules.storage.paths;
+  paths = config.storage.paths;
 in
 {
-  modules.storage.paths."services/traefik" = { };
+  storage.paths."services/traefik" = { };
   sops.secrets."traefik/env" = { };
 
   virtualisation.oci-containers.containers.traefik = {

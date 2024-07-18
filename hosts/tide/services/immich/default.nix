@@ -1,9 +1,9 @@
 { config, ... }:
 let
-  paths = config.modules.storage.paths;
+  paths = config.storage.paths;
 in
 {
-  modules.storage.paths."services/immich" = { };
+  storage.paths."services/immich" = { };
   sops.secrets."immich/env" = { };
 
   virtualisation.oci-containers.containers.immich = {
@@ -34,7 +34,7 @@ in
     };
   };
 
-  modules.storage.paths."var/cache/immich-ml" = {
+  storage.paths."var/cache/immich-ml" = {
     backend = "none";
   };
 
@@ -55,7 +55,7 @@ in
     ];
   };
 
-  modules.storage.paths."services/immich/postgres" = { };
+  storage.paths."services/immich/postgres" = { };
   sops.secrets."immich/postgres/env" = { };
 
   virtualisation.oci-containers.containers.immich-postgres = {

@@ -1,9 +1,4 @@
-{ self, config, ... }: {
-  imports = [
-    self.inputs.lanzaboote.nixosModules.lanzaboote
-    self.inputs.disko.nixosModules.disko
-  ];
-
+{ config, ... }: {
   boot = {
     kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
 

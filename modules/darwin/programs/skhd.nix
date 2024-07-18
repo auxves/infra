@@ -1,3 +1,4 @@
+{ config, lib, pkgs, ... }:
 let
   focusKey = "fn - space";
 
@@ -57,7 +58,13 @@ let
   };
 
   mkBinding = key: command: "${key} : ${builtins.replaceStrings ["\n"] ["; "] command}";
-
-  mapAttrsToList = f: attrs: map (name: f name attrs.${name}) (builtins.attrNames attrs);
 in
-builtins.concatStringsSep "\n\n" (mapAttrsToList mkBinding keybindings)
+{
+  config = lib.mkIf config.services.skhd.enable {
+    services.skhd = {
+      skhdConfig = builtins.concatStringsSep "\n\n" (lib.mapAttrsToList mkBinding keybindings);
+    };
+
+    environment.systemPackages = with pkgs; [ skhd ];
+  };
+}

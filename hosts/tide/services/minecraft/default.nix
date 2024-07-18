@@ -1,9 +1,9 @@
 { config, ... }:
 let
-  paths = config.modules.storage.paths;
+  paths = config.storage.paths;
 in
 {
-  modules.storage.paths."services/minecraft-vz" = { };
+  storage.paths."services/minecraft-vz" = { };
 
   virtualisation.oci-containers.containers.minecraft-vz = {
     image = "itzg/minecraft-server:2024.6.1-java21-graalvm@sha256:41f60e34e630e698c39509c291565f1f962788d7628a82f91d932c5c8af3fc1a";

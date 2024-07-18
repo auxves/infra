@@ -1,6 +1,6 @@
 { lib, config, ... }:
 let
-  cfg = config.modules.home;
+  cfg = config.presets.home;
 in
 {
   config = lib.mkIf cfg.enable {

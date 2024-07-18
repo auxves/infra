@@ -1,6 +1,6 @@
 { lib, config, host, pkgs, ... }:
 let
-  cfg = config.modules.emulation;
+  cfg = config.presets.emulation;
 
   emulatedSystems = lib.remove host.system [ "x86_64-linux" "aarch64-linux" "riscv64-linux" ];
 
@@ -12,7 +12,7 @@ let
   registrations = builtins.listToAttrs (map (system: lib.nameValuePair system flags) emulatedSystems);
 in
 {
-  options.modules.emulation = with lib; {
+  options.presets.emulation = with lib; {
     enable = mkEnableOption "Enable emulation";
   };
 

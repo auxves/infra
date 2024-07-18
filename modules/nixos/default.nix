@@ -1,6 +1,9 @@
-{ lib, pkgs, ... }:
+{ self, lib, pkgs, ... }:
 {
-  imports = lib.readModules ./.;
+  imports = lib.readModules ./. ++ [
+    self.inputs.lanzaboote.nixosModules.lanzaboote
+    self.inputs.disko.nixosModules.disko
+  ];
 
   nix.settings = {
     experimental-features = [ "cgroups" ];

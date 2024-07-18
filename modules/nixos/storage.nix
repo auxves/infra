@@ -1,6 +1,6 @@
 { lib, config, pkgs, ... }:
 let
-  cfg = config.modules.storage;
+  cfg = config.storage;
 
   pathType = with lib; types.submodule ({ config, ... }: {
     options = {
@@ -52,17 +52,16 @@ let
   };
 in
 {
-  options.modules.storage = with lib; {
-    enable = mkEnableOption "Enable storage management";
-
+  options.storage = with lib; {
     paths = mkOption {
       type = types.attrsOf pathType;
       default = { };
     };
   };
 
-  config = lib.mkIf (cfg.enable && config ? "disko") {
+  config = {
     systemd.tmpfiles.rules = lib.mapAttrsToList mkRule cfg.paths;
+
     disko.devices.zpool = lib.mkMerge (lib.mapAttrsToList mkDataset cfg.paths);
 
     system.activationScripts.sync-zfs-datasets.text =

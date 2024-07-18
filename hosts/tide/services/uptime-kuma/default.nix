@@ -1,9 +1,9 @@
 { config, ... }:
 let
-  paths = config.modules.storage.paths;
+  paths = config.storage.paths;
 in
 {
-  modules.storage.paths."services/uptime-kuma" = { };
+  storage.paths."services/uptime-kuma" = { };
 
   virtualisation.oci-containers.containers.uptime-kuma = {
     image = "louislam/uptime-kuma:1.23.13@sha256:96510915e6be539b76bcba2e6873591c67aca8a6075ff09f5b4723ae47f333fc";

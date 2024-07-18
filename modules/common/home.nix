@@ -1,11 +1,11 @@
 { self, lib, config, host, ... }:
 let
-  cfg = config.modules.home;
+  cfg = config.presets.home;
 in
 {
   imports = [ self.inputs.home-manager."${host.variant}Modules".home-manager ];
 
-  options.modules.home = with lib; {
+  options.presets.home = with lib; {
     enable = mkEnableOption "Enable home-manager";
 
     user = mkOption {

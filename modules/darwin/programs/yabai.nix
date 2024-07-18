@@ -1,5 +1,6 @@
-{
-  config = {
+{ config, lib, ... }:
+let
+  options = {
     mouse_follows_focus = "off";
     focus_follows_mouse = "off";
     window_origin_display = "default";
@@ -33,4 +34,12 @@
     yabai -m rule --add app="^Shottr$" manage=off
     yabai -m rule --add app="^Parallels Desktop$" title="Control Center" manage=off
   '';
+in
+{
+  config = lib.mkIf config.services.yabai.enable {
+    services.yabai = {
+      config = options;
+      extraConfig = extra;
+    };
+  };
 }

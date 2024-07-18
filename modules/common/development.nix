@@ -1,13 +1,13 @@
 { lib, config, ... }:
 let
-  cfg = config.modules.development;
+  cfg = config.presets.development;
 in
 {
-  options.modules.development = with lib; {
+  options.presets.development = with lib; {
     enable = mkEnableOption "Enable development environment";
   };
 
   config = lib.mkIf cfg.enable {
-    modules.home.modules = [{ modules.development.enable = true; }];
+    presets.home.modules = [{ presets.development.enable = true; }];
   };
 }

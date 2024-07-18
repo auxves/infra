@@ -1,13 +1,13 @@
 { lib, config, ... }:
 let
-  cfg = config.modules.graphical;
+  cfg = config.presets.graphical;
 in
 {
-  options.modules.graphical = with lib; {
+  options.presets.graphical = with lib; {
     enable = mkEnableOption "Enable graphical environment";
   };
 
   config = lib.mkIf cfg.enable {
-    modules.home.modules = [{ modules.graphical.enable = true; }];
+    presets.home.modules = [{ presets.graphical.enable = true; }];
   };
 }
