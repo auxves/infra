@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, pkgs, ... }:
 let
   cfg = config.modules.storage;
 
@@ -37,7 +37,10 @@ let
 
       path = mkOption {
         type = types.str;
-        default = if config.backend == "zfs" then "/${config.pool}/${config.name}" else "/${config.name}";
+        default = {
+          zfs = "/${config.pool}/${config.name}";
+          none = "/${config.name}";
+        }.${config.backend};
       };
     };
   });
@@ -58,8 +61,20 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && config ? "disko") {
     systemd.tmpfiles.rules = lib.mapAttrsToList mkRule cfg.paths;
     disko.devices.zpool = lib.mkMerge (lib.mapAttrsToList mkDataset cfg.paths);
+
+    system.activationScripts.sync-zfs-datasets.text =
+      let
+        pools = config.disko.devices.zpool;
+
+        datasets = builtins.concatMap
+          (pool: lib.mapAttrsToList (_: dataset: dataset._name) pool.datasets)
+          (builtins.attrValues pools);
+
+        commands = builtins.map (path: "${pkgs.zfs}/bin/zfs create -p ${path}") datasets;
+      in
+      builtins.concatStringsSep "\n" commands;
   };
 }

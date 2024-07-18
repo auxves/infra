@@ -31,6 +31,11 @@ in
       "192.168.7.209:443:8443/udp"
     ];
 
+    extraOptions = [
+      "--health-cmd=traefik healthcheck"
+      "--health-on-failure=stop"
+    ];
+
     labels = {
       "traefik.enable" = "true";
       "traefik.http.routers.traefik.rule" = "Host(`traefik.x.auxves.dev`)";

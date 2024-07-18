@@ -50,7 +50,8 @@ in
     image = "redis:7.2.5@sha256:fb534a36ac2034a6374933467d971fbcbfa5d213805507f560d564851a720355";
 
     extraOptions = [
-      "--health-cmd=redis-cli ping || exit 1"
+      "--health-cmd=redis-cli ping"
+      "--health-on-failure=stop"
     ];
   };
 
@@ -71,5 +72,10 @@ in
       POSTGRES_DB = "immich";
       POSTGRES_INITDB_ARGS = "--data-checksums";
     };
+
+    extraOptions = [
+      "--health-cmd=pg_isready"
+      "--health-on-failure=stop"
+    ];
   };
 }

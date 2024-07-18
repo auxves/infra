@@ -13,6 +13,11 @@ in
       "${paths."services/prometheus".path}:/prometheus"
       "${./prometheus.yaml}:/etc/prometheus/prometheus.yml:ro"
     ];
+
+    extraOptions = [
+      "--health-cmd=wget --spider --quiet http://localhost:9090/-/healthy || exit 1"
+      "--health-on-failure=stop"
+    ];
   };
 
   virtualisation.oci-containers.containers.node-exporter = {

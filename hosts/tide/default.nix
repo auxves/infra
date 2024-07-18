@@ -1,4 +1,4 @@
-{ self, lib, config, pkgs, ... }:
+{ self, ... }:
 {
   imports = [
     self.inputs.comin.nixosModules.comin
@@ -69,18 +69,6 @@
       monthly = 2;
     };
   };
-
-  system.activationScripts.sync-zfs-datasets.text =
-    let
-      pools = config.disko.devices.zpool;
-
-      datasets = builtins.concatMap
-        (pool: lib.mapAttrsToList (_: dataset: dataset._name) pool.datasets)
-        (builtins.attrValues pools);
-
-      commands = builtins.map (path: "${pkgs.zfs}/bin/zfs create -p ${path}") datasets;
-    in
-    builtins.concatStringsSep "\n" commands;
 
   sops = {
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
