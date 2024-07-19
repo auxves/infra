@@ -27,5 +27,11 @@
   },
   "nix": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "groupName": "immich",
+      "matchPackagePrefixes": ["ghcr.io/immich-app/"]
+    }
+  ]
 }
