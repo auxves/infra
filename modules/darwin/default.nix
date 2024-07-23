@@ -8,7 +8,5 @@
 
   security.pam.enableSudoTouchIdAuth = true;
 
-  nix.settings.sandbox = lib.mkForce false;
-
   system.stateVersion = 4;
 }
