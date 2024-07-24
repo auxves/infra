@@ -1,5 +1,9 @@
-{ lib, ... }: {
+{ lib, pkgs, ... }: {
   imports = lib.readModules ./.;
+
+  home.packages = with pkgs; [
+    uutils-coreutils-noprefix
+  ];
 
   home.sessionVariables = {
     EDITOR = "nvim";
