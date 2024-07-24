@@ -42,7 +42,7 @@ in
   sops.secrets."zitadel/postgres/env" = { };
 
   virtualisation.oci-containers.containers.zitadel-postgres = {
-    image = "postgres:16-alpine@sha256:de3d7b6e4b5b3fe899e997579d6dfe95a99539d154abe03f0b6839133ed05065";
+    image = "postgres:16-alpine@sha256:36ed71227ae36305d26382657c0b96cbaf298427b3f1eaeb10d77a6dea3eec41";
 
     volumes = [
       "${paths."services/zitadel/postgres".path}:/var/lib/postgresql/data"
