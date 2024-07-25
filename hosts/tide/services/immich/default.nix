@@ -47,7 +47,7 @@ in
   };
 
   virtualisation.oci-containers.containers.immich-redis = {
-    image = "redis:7.2.5@sha256:fb534a36ac2034a6374933467d971fbcbfa5d213805507f560d564851a720355";
+    image = "redis:7.2.5@sha256:e59c42a34bdb950f988a1578504c31ce981096e3a18b83db1808bd7a32302e7f";
 
     extraOptions = [
       "--health-cmd=redis-cli ping"
