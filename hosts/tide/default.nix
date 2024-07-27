@@ -13,8 +13,9 @@
 
   networking.hostId = "c2079ac5";
 
-  networking.nftables.enable = true;
   networking.firewall.trustedInterfaces = [ "tailscale0" ];
+
+  networking.firewall.interfaces."podman+".allowedUDPPorts = [ 53 5353 ];
 
   virtualisation.podman = {
     enable = true;
