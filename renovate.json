@@ -9,6 +9,13 @@
   "automergeType": "branch",
   "automergeSchedule": ["before 4am"],
 
+  "pin": {
+    "automerge": true
+  },
+  "pinDigest": {
+    "automerge": true
+  },
+
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
