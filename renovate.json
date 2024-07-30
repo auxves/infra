@@ -5,9 +5,36 @@
     "docker:enableMajor",
     "docker:pinDigests"
   ],
-  "major": {
-    "dependencyDashboardApproval": true
+
+  "automergeType": "branch",
+  "automergeSchedule": ["before 4am"],
+
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    },
+    {
+      "groupName": "immich",
+      "matchPackagePrefixes": ["ghcr.io/immich-app/"]
+    },
+    {
+      "matchPackageNames": ["redis", "postgres", "tensorchord/pgvecto-rs"],
+      "enabled": false
+    }
+  ],
+
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "extends": ["schedule:weekly"]
   },
+
+  "nix": {
+    "enabled": true
+  },
+
   "customManagers": [
     {
       "customType": "regex",
@@ -19,19 +46,6 @@
       ],
       "currentValueTemplate": "{{#if currentValue}}{{currentValue}}{{else}}latest{{/if}}",
       "autoReplaceStringTemplate": "image = \"{{depName}}:{{newValue}}{{#if newDigest}}@{{{newDigest}}}{{/if}}\""
-    }
-  ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "extends": ["schedule:weekly"]
-  },
-  "nix": {
-    "enabled": true
-  },
-  "packageRules": [
-    {
-      "groupName": "immich",
-      "matchPackagePrefixes": ["ghcr.io/immich-app/"]
     }
   ]
 }
