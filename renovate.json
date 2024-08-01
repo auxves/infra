@@ -7,7 +7,6 @@
   ],
 
   "automergeType": "branch",
-  "automergeSchedule": ["before 4am"],
 
   "pin": {
     "automerge": true
