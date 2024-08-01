@@ -37,10 +37,6 @@
     "extends": ["schedule:weekly"]
   },
 
-  "nix": {
-    "enabled": true
-  },
-
   "customManagers": [
     {
       "customType": "regex",
