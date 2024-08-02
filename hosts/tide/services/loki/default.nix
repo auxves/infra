@@ -1,6 +1,15 @@
-{ ... }: {
+{ config, ... }:
+let
+  paths = config.storage.paths;
+in
+{
+  storage.paths."services/loki" = { };
+
   virtualisation.oci-containers.containers.loki = {
     image = "grafana/loki:3.1.0@sha256:d947e68a84d9e44915dfa08c3bec27e2124efd5ba6c83443eb53578101ec69e3";
+    user = "root:root";
+
+    volumes = [ "${paths."services/loki".path}:/loki" ];
   };
 
   virtualisation.oci-containers.containers.promtail = {
