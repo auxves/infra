@@ -7,6 +7,7 @@
   ],
 
   "automergeType": "branch",
+  "automergeSchedule": ["before 4am"],
   "ignoreTests": true,
 
   "pin": {
@@ -24,7 +25,7 @@
     },
     {
       "groupName": "immich",
-      "matchPackagePrefixes": ["ghcr.io/immich-app/"]
+      "matchPackageNames": ["ghcr.io/immich-app/{/,}**"]
     },
     {
       "matchPackageNames": ["redis", "postgres", "tensorchord/pgvecto-rs"],
