@@ -5,43 +5,51 @@
     "docker:enableMajor",
     "docker:pinDigests"
   ],
-
   "automergeType": "branch",
   "ignoreTests": true,
-
   "pin": {
     "automerge": true
   },
   "pinDigest": {
     "automerge": true
   },
-
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
     },
     {
       "groupName": "immich",
-      "matchPackagePrefixes": ["ghcr.io/immich-app/"]
+      "matchPackageNames": [
+        "ghcr.io/immich-app/{/,}**"
+      ]
     },
     {
-      "matchPackageNames": ["redis", "postgres", "tensorchord/pgvecto-rs"],
+      "matchPackageNames": [
+        "redis",
+        "postgres",
+        "tensorchord/pgvecto-rs"
+      ],
       "enabled": false
     }
   ],
-
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
-    "extends": ["schedule:weekly"]
+    "extends": [
+      "schedule:weekly"
+    ]
   },
-
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [".nix$"],
+      "fileMatch": [
+        ".nix$"
+      ],
       "datasourceTemplate": "docker",
       "matchStringsStrategy": "any",
       "matchStrings": [
