@@ -30,6 +30,10 @@ in
       # Containers
       docker-client
       docker-credential-helpers
+
+      # Man
+      man-pages
+      man-pages-posix
     ];
 
     programs.git.enable = true;
