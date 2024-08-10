@@ -6,7 +6,7 @@ in
   storage.paths."services/home-assistant" = { };
 
   virtualisation.oci-containers.containers.home-assistant = {
-    image = "ghcr.io/home-assistant/home-assistant:2024.8.0@sha256:dcc3d4c582848593db1e3f049fc7269222c340693be5c799e0bddf1f1c61a102";
+    image = "ghcr.io/home-assistant/home-assistant:2024.8.1@sha256:01af627f579835945d9c67cd130aa7e6f7167a09d8ffab5d09c698f285ec8109";
 
     volumes = [
       "${paths."services/home-assistant".path}:/config"
