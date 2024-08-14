@@ -15,17 +15,20 @@ in
       EULA = "true";
       MEMORY = "8G";
       SEED = "-1254774536";
-      TYPE = "FABRIC";
       USE_AIKAR_FLAGS = "true";
       USE_SIMD_FLAGS = "true";
-      VERSION = "1.20.1";
+      MOD_PLATFORM = "MODRINTH";
+      MODRINTH_MODPACK = "/mods.mrpack";
 
       MOTD = "No iPhones allowed!";
+      SPAWN_PROTECTION = "0";
+      ENABLE_COMMAND_BLOCK = "true";
     };
 
     volumes = [
       "${paths."services/minecraft-vz".path}:/data"
       "${./icon.png}:/data/server-icon.png"
+      "${./vz.mrpack}:/mods.mrpack:ro"
       "/etc/localtime:/etc/localtime:ro"
     ];
   };
