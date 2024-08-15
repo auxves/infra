@@ -3,6 +3,8 @@
   imports = lib.readModules ./.;
 
   nix = {
+    package = pkgs.lix;
+
     settings = {
       experimental-features = [ "nix-command" "flakes" "auto-allocate-uids" ];
       trusted-users = [ "@admin" "@wheel" ];
