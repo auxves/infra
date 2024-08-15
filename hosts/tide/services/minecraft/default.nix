@@ -33,5 +33,9 @@ in
     ];
   };
 
+  systemd.services.podman-minecraft-vz = {
+    stopIfChanged = false;
+  };
+
   networking.firewall.allowedTCPPorts = [ 25565 ];
 }
