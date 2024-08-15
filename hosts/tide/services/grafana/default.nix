@@ -8,7 +8,7 @@ in
   storage.paths."services/grafana" = { };
 
   virtualisation.oci-containers.containers.grafana = {
-    image = "grafana/grafana:11.1.3@sha256:b23b588cf7cba025ec95efba82e0d8d2e5d549a8b2cb5d50332d4175693c54e0";
+    image = "grafana/grafana:11.1.4@sha256:886b56d5534e54f69a8cfcb4b8928da8fc753178a7a3d20c3f9b04b660169805";
     user = "root:root";
 
     volumes = [
