@@ -8,7 +8,6 @@
 
   "automergeType": "branch",
   "automergeSchedule": ["before 4am"],
-  "ignoreTests": true,
 
   "pin": {
     "automerge": true
