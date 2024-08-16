@@ -17,6 +17,7 @@ in
       SEED = "-1254774536";
       USE_AIKAR_FLAGS = "true";
       USE_SIMD_FLAGS = "true";
+      TZ = "America/Los_Angeles";
       MOD_PLATFORM = "MODRINTH";
       MODRINTH_MODPACK = "/mods.mrpack";
 
@@ -29,8 +30,6 @@ in
       "${paths."services/minecraft-vz".path}:/data"
       "${./icon.png}:/data/server-icon.png"
       "${./vz.mrpack}:/mods.mrpack:ro"
-      "/etc/localtime:/etc/localtime:ro"
-      "/etc/timezone:/etc/timezone:ro"
     ];
   };
 
