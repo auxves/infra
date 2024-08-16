@@ -30,11 +30,8 @@ in
       "${./icon.png}:/data/server-icon.png"
       "${./vz.mrpack}:/mods.mrpack:ro"
       "/etc/localtime:/etc/localtime:ro"
+      "/etc/timezone:/etc/timezone:ro"
     ];
-  };
-
-  systemd.services.podman-minecraft-vz = {
-    stopIfChanged = false;
   };
 
   networking.firewall.allowedTCPPorts = [ 25565 ];
