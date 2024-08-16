@@ -6,6 +6,8 @@
     "docker:pinDigests"
   ],
 
+  "timezone": "America/Los_Angeles",
+
   "automergeType": "branch",
   "automergeSchedule": ["before 4am"],
 
