@@ -9,7 +9,7 @@
   "timezone": "America/Los_Angeles",
 
   "automergeType": "branch",
-  "automergeSchedule": ["before 4am"],
+  "automergeSchedule": ["after 2am", "before 5am"],
 
   "pin": {
     "automerge": true
@@ -29,7 +29,12 @@
       "matchPackageNames": ["ghcr.io/immich-app/{/,}**"]
     },
     {
-      "matchPackageNames": ["redis", "postgres", "tensorchord/pgvecto-rs"],
+      "matchPackageNames": [
+        "redis",
+        "postgres",
+        "tensorchord/pgvecto-rs",
+        "itzg/minecraft-server"
+      ],
       "enabled": false
     }
   ],
