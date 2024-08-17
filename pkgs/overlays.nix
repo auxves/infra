@@ -13,7 +13,7 @@ rec {
     custom
   ];
 
-  custom = final: _: lib.mapAttrs
-    (name: _: lib.callPackageWith (final // args) ./${name} { })
+  custom = final: prev: lib.mapAttrs
+    (name: _: lib.callPackageWith (final // args // { inherit prev; }) ./${name} { })
     packages;
 }

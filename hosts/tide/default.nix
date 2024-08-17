@@ -1,4 +1,4 @@
-{ self, ... }:
+{ self, config, pkgs, ... }:
 {
   imports = [
     self.inputs.comin.nixosModules.comin
@@ -10,6 +10,8 @@
   presets = {
     home.enable = true;
   };
+
+  storage.enable = true;
 
   networking.hostId = "c2079ac5";
 
@@ -55,6 +57,7 @@
 
   services.sanoid = {
     enable = true;
+    package = pkgs.sanoid-unstable;
 
     interval = "*:0/15";
 
@@ -72,6 +75,27 @@
       daily = 6;
       weekly = 3;
       monthly = 2;
+    };
+  };
+
+  sops.secrets."syncoid/ssh" = {
+    owner = "syncoid";
+    group = "syncoid";
+    mode = "0400";
+  };
+
+  services.syncoid = {
+    enable = true;
+    package = pkgs.sanoid-unstable;
+    sshKey = config.sops.secrets."syncoid/ssh".path;
+
+    commands = {
+      storage = {
+        target = "tide@harpy:backups/tide";
+        recursive = true;
+        sendOptions = "w p";
+        extraArgs = [ "--exclude-snaps=autosnap" ];
+      };
     };
   };
 

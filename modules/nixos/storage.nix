@@ -53,13 +53,15 @@ let
 in
 {
   options.storage = with lib; {
+    enable = mkEnableOption "Enable storage system";
+
     paths = mkOption {
       type = types.attrsOf pathType;
       default = { };
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     systemd.tmpfiles.rules = lib.mapAttrsToList mkRule cfg.paths;
 
     disko.devices.zpool = lib.mkMerge (lib.mapAttrsToList mkDataset cfg.paths);
