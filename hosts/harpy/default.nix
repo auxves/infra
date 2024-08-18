@@ -23,21 +23,19 @@
     trim.enable = true;
   };
 
+  users.groups.syncoid = { };
+
   users.users.tide = {
     isNormalUser = true;
     group = "syncoid";
     home = "/home/tide";
-
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHXrz2geCofvG1mAsSrYw+JG4XVTdLgNP2yuHVqXCiRy syncoid@tide"
-    ];
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHXrz2geCofvG1mAsSrYw+JG4XVTdLgNP2yuHVqXCiRy syncoid@tide" ];
   };
-
-  users.groups.syncoid = { };
 
   systemd.services.allow-remote-users = {
     after = [ "zfs.target" ];
     wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.zfs ];
 
     script =
       let
@@ -53,7 +51,7 @@
         ];
       in
       ''
-        ${pkgs.zfs}/bin/zfs allow tide ${perms} backups/tide 
+        zfs allow tide ${perms} backups/tide 
       '';
   };
 }
