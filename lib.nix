@@ -1,6 +1,6 @@
 self @ { lib, inputs, ... }:
 let
-  overlays = [ self.overlays.all ];
+  overlays = with self.overlays; [ all unstable ];
   pkgsFor = system: import inputs.nixpkgs { inherit system overlays; };
 
   hostList = builtins.attrValues self.hosts;
@@ -24,10 +24,6 @@ inputs.nixpkgs.lib.extend (_: _: {
   platformOf = system: builtins.elemAt (lib.splitString "-" system) 1;
 
   filterHosts = predicate: builtins.filter predicate hostList;
-
-  filterHostsOf = variants: predicate: builtins.filter
-    (host: builtins.elem host.variant variants && predicate host)
-    hostList;
 
   readModules = dir:
     let
@@ -53,5 +49,5 @@ inputs.nixpkgs.lib.extend (_: _: {
       final = pkgsFor system;
       prev = import inputs.nixpkgs { inherit system; };
     in
-    self.overlays.export final prev;
+    self.overlays.default final prev;
 })

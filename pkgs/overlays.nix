@@ -5,15 +5,17 @@ let
 in
 rec {
   all = lib.composeManyExtensions [
-    export
+    default
     inputs.fenix.overlays.default
   ];
 
-  export = lib.composeManyExtensions [
-    custom
-  ];
-
-  custom = final: prev: lib.mapAttrs
+  default = final: prev: lib.mapAttrs
     (name: _: lib.callPackageWith (final // args // { inherit prev; }) ./${name} { })
     packages;
+
+  unstable = final: _: {
+    unstable = import inputs.unstable {
+      inherit (final) system overlays;
+    };
+  };
 }
