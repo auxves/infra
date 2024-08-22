@@ -66,8 +66,10 @@
       "fileMatch": ["^flake.nix$"],
       "datasourceTemplate": "git-refs",
       "matchStringsStrategy": "any",
-      "matchStrings": ["url = \"github:(?<depName>.*)/(?<currentValue>.*?)\""],
-      "packageNameTemplate": "https://github.com/{{depName}}"
+      "matchStrings": [
+        "(?<depName>.*?).url = \"github:(?<packageName>.*)/(?<currentValue>.*?)\""
+      ],
+      "packageNameTemplate": "https://github.com/{{packageName}}"
     }
   ]
 }
