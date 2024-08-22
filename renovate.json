@@ -60,6 +60,14 @@
       ],
       "currentValueTemplate": "{{#if currentValue}}{{currentValue}}{{else}}latest{{/if}}",
       "autoReplaceStringTemplate": "image = \"{{depName}}:{{newValue}}{{#if newDigest}}@{{{newDigest}}}{{/if}}\""
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^flake.nix$"],
+      "datasourceTemplate": "git-refs",
+      "matchStringsStrategy": "any",
+      "matchStrings": ["url = \"github:(?<depName>.*)/(?<currentValue>.*?)\""],
+      "packageNameTemplate": "https://github.com/{{depName}}"
     }
   ]
 }
