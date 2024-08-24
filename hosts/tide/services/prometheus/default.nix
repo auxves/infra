@@ -31,7 +31,7 @@ in
   };
 
   virtualisation.oci-containers.containers.podman-exporter = {
-    image = "quay.io/navidys/prometheus-podman-exporter:v1.13.0@sha256:b09cbe4d6a76d07aba23bb5de6945932be3adb8b91e64bd87b97709b80729f32";
+    image = "quay.io/navidys/prometheus-podman-exporter:v1.13.1@sha256:c7414b53c09473b9e23fc4f27470b8d97a746f0e9f88c3bca3751dde3b76bfa9";
     user = "root:root";
 
     environment = {
