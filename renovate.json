@@ -67,7 +67,7 @@
       "datasourceTemplate": "git-refs",
       "matchStringsStrategy": "any",
       "matchStrings": [
-        "(?<depName>.*?).url = \"github:(?<packageName>.*)/(?<currentValue>.*?)\""
+        "\\s*(?<depName>.*?).url = \"github:(?<packageName>.*)/(?<currentValue>.*?)\""
       ],
       "packageNameTemplate": "https://github.com/{{packageName}}"
     }
