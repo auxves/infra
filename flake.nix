@@ -17,7 +17,7 @@
     lanzaboote.url = "github:nix-community/lanzaboote/v0.4.1";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
 
-    disko.url = "github:nix-community/disko/v1.6.1";
+    disko.url = "github:nix-community/disko/v1.7.0";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
     comin.url = "github:nlewo/comin/v0.5.0";
