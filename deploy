@@ -12,7 +12,7 @@ else
 end
 
 if test $CFG
-    nix shell nixpkgs#nixos-rebuild --command nixos-rebuild test \
+    nix run nixpkgs#nixos-rebuild -- test \
         --flake $FLAKE#$CFG \
         --target-host $HOST --build-host $HOST \
         --fast --use-remote-sudo $ARGS

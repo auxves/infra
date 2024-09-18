@@ -1,6 +1,7 @@
 { self, config, pkgs, ... }:
 {
   imports = [
+    self.inputs.comin.nixosModules.comin
     self.inputs.sops.nixosModules.sops
     ./hardware.nix
     ./services
@@ -43,10 +44,12 @@
     };
   };
 
-  system.autoUpgrade = {
+  services.comin = {
     enable = true;
-    flake = "github:auxves/infra";
-    dates = "hourly";
+    remotes = [{
+      name = "origin";
+      url = "https://github.com/auxves/infra";
+    }];
   };
 
   services.tailscale = {

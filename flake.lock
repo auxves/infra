@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "comin": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1712611219,
+        "narHash": "sha256-RYCOkK8Qg9Fb35S/xWEpEGqraTal+VoIugy8wi/Q52I=",
+        "owner": "nlewo",
+        "repo": "comin",
+        "rev": "147eef7be66b7b03b2733a9a9a9bd07225ac319e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nlewo",
+        "ref": "v0.2.0",
+        "repo": "comin",
+        "type": "github"
+      }
+    },
     "crane": {
       "inputs": {
         "nixpkgs": [
@@ -270,6 +291,7 @@
     },
     "root": {
       "inputs": {
+        "comin": "comin",
         "darwin": "darwin",
         "disko": "disko",
         "fenix": "fenix",

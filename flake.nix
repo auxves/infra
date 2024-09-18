@@ -20,6 +20,9 @@
     disko.url = "github:nix-community/disko/v1.7.0";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
+    comin.url = "github:nlewo/comin/v0.2.0";
+    comin.inputs.nixpkgs.follows = "nixpkgs";
+
     sops.url = "github:Mic92/sops-nix";
     sops.inputs.nixpkgs.follows = "nixpkgs";
     sops.inputs.nixpkgs-stable.follows = "nixpkgs";
