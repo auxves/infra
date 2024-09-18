@@ -11,7 +11,11 @@
     home.enable = true;
   };
 
-  storage.enable = true;
+  storage = {
+    enable = true;
+    zfs.health.enable = true;
+    zfs.health.webhook = "https://uptime.x.auxves.dev/api/push/LieheAkPr6";
+  };
 
   networking.hostId = "c2079ac5";
 
@@ -106,4 +110,38 @@
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     defaultSopsFile = ./secrets.yaml;
   };
+
+  systemd.services.zpool-health-check =
+    let
+      script = pkgs.writeShellApplication {
+        name = "check-status";
+        runtimeInputs = with pkgs; [ zfs curl ];
+        text = ''
+          if [ "$(zpool status -x)" = "all pools are healthy" ]; then
+            STATUS=up
+            MESSAGE="All pools are healthy"
+          else
+            STATUS=down
+            MESSAGE="One or more pools are degraded"
+          fi
+
+          curl --get \
+            --data-urlencode "status=$STATUS" \
+            --data-urlencode "msg=$MESSAGE" \
+            https://uptime.x.auxves.dev/api/push/LieheAkPr6
+        '';
+      };
+    in
+    {
+      description = "Health check for ZFS pools which reports to Uptime Kuma";
+      after = [ "podman-uptime-kuma.service" ];
+      startAt = "*:*:00";
+
+      serviceConfig = {
+        User = "nobody";
+        Group = "nobody";
+
+        ExecStart = "${script}/bin/check-status";
+      };
+    };
 }

@@ -53,8 +53,6 @@ let
 in
 {
   options.storage = with lib; {
-    enable = mkEnableOption "Enable storage system";
-
     paths = mkOption {
       type = types.attrsOf pathType;
       default = { };
