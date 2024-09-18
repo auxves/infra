@@ -63,12 +63,29 @@
           };
         };
       };
+
+      storage1 = {
+        type = "disk";
+        device = "/dev/disk/by-id/nvme-Samsung_SSD_980_PRO_2TB_S6B0NG0R708350X";
+        content = {
+          type = "gpt";
+          partitions = {
+            zfs = {
+              size = "100%";
+              content = {
+                type = "zfs";
+                pool = "storage";
+              };
+            };
+          };
+        };
+      };
     };
 
     zpool = {
       storage = {
         type = "zpool";
-        mode = "";
+        mode = "mirror";
         mountpoint = "/storage";
 
         rootFsOptions = {
