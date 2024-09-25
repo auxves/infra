@@ -9,7 +9,7 @@ in
   sops.secrets."zitadel/env" = { };
 
   virtualisation.oci-containers.containers.zitadel = {
-    image = "ghcr.io/zitadel/zitadel:v2.62.1@sha256:b4112cbe46f8a5d013cf2a6d69013d0bf2d4dd8d0f674bf64d0e637858aa1afa";
+    image = "ghcr.io/zitadel/zitadel:v2.62.2@sha256:74b6dd9ebfc6ac35b600489f0dd33e99a8dcd5557af61890f360b9078648e38f";
 
     environmentFiles = [ config.sops.secrets."zitadel/env".path ];
 
