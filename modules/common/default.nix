@@ -1,8 +1,6 @@
 { self, lib, config, host, pkgs, ... }:
 {
-  imports = lib.readModules ./. ++ [
-    self.inputs.lix.nixosModules.default
-  ];
+  imports = lib.readModules ./.;
 
   nix = {
     settings = {
