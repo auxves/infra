@@ -35,7 +35,7 @@ in
   };
 
   storage.paths."var/cache/immich-ml" = {
-    backend = "none";
+    backend = "local";
   };
 
   virtualisation.oci-containers.containers.immich-machine-learning = {

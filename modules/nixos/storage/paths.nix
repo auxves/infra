@@ -10,23 +10,13 @@ let
         default = config._module.args.name;
       };
 
-      owner = mkOption {
-        type = types.str;
-        default = "root";
-      };
-
-      group = mkOption {
-        type = types.str;
-        default = "wheel";
-      };
-
-      mode = mkOption {
-        type = types.str;
-        default = "0770";
+      acls = mkOption {
+        type = types.listOf types.str;
+        default = [ "g:wheel:rwx" ];
       };
 
       backend = mkOption {
-        type = types.enum [ "zfs" "none" ];
+        type = types.enum [ "zfs" "local" ];
         default = "zfs";
       };
 
@@ -39,16 +29,21 @@ let
         type = types.str;
         default = {
           zfs = "/${config.pool}/${config.name}";
-          none = "/${config.name}";
+          local = "/${config.name}";
         }.${config.backend};
       };
     };
   });
 
-  mkRule = _: path: {
-    "zfs" = "A ${path.path} - - - - u:${path.owner}:rwx,g:${path.group}:rwx";
-    "none" = "d ${path.path} ${path.mode} ${path.owner} ${path.group} -";
-  }.${path.backend};
+  mkRule = _: path:
+    let
+      acls = path.acls ++ map (a: "d:${a}") path.acls;
+    in
+    lib.optionalString (path.backend == "local") ''
+      d ${path.path} 0700 root root -
+    '' + ''
+      A ${path.path} - - - - ${builtins.concatStringsSep "," acls}
+    '';
 
   mkDataset = _: path: lib.optionalAttrs (path.backend == "zfs") {
     ${path.pool}.datasets.${path.name}.type = "zfs_fs";
