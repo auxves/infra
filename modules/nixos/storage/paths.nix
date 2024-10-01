@@ -45,7 +45,10 @@ let
     };
   });
 
-  mkRule = _: path: "d ${path.path} ${path.mode} ${path.owner} ${path.group} -";
+  mkRule = _: path: {
+    "zfs" = "A ${path.path} - - - - u:${path.owner}:rwx,g:${path.group}:rwx";
+    "none" = "d ${path.path} ${path.mode} ${path.owner} ${path.group} -";
+  }.${path.backend};
 
   mkDataset = _: path: lib.optionalAttrs (path.backend == "zfs") {
     ${path.pool}.datasets.${path.name}.type = "zfs_fs";
