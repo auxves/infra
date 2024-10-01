@@ -74,7 +74,7 @@ in
     };
 
     extraOptions = [
-      "--health-cmd=pg_isready"
+      "--health-cmd=pg_isready -d \${POSTGRES_USER} -U \${POSTGRES_DB}"
       "--health-on-failure=stop"
     ];
   };
