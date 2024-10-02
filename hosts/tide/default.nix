@@ -57,6 +57,18 @@
     package = pkgs.unstable.tailscale;
   };
 
+  services.samba = {
+    enable = true;
+    securityType = "user";
+    shares = {
+      storage = {
+        path = "/storage";
+        browseable = true;
+        "read only" = false;
+      };
+    };
+  };
+
   services.zfs = {
     autoScrub.enable = true;
     trim.enable = true;
@@ -110,38 +122,4 @@
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     defaultSopsFile = ./secrets.yaml;
   };
-
-  systemd.services.zpool-health-check =
-    let
-      script = pkgs.writeShellApplication {
-        name = "check-status";
-        runtimeInputs = with pkgs; [ zfs curl ];
-        text = ''
-          if [ "$(zpool status -x)" = "all pools are healthy" ]; then
-            STATUS=up
-            MESSAGE="All pools are healthy"
-          else
-            STATUS=down
-            MESSAGE="One or more pools are degraded"
-          fi
-
-          curl --get \
-            --data-urlencode "status=$STATUS" \
-            --data-urlencode "msg=$MESSAGE" \
-            https://uptime.x.auxves.dev/api/push/LieheAkPr6
-        '';
-      };
-    in
-    {
-      description = "Health check for ZFS pools which reports to Uptime Kuma";
-      after = [ "podman-uptime-kuma.service" ];
-      startAt = "*:*:00";
-
-      serviceConfig = {
-        User = "nobody";
-        Group = "nobody";
-
-        ExecStart = "${script}/bin/check-status";
-      };
-    };
 }
