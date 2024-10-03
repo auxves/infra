@@ -21,15 +21,13 @@ in
             text = ''
               if [ "$(zpool status -x)" = "all pools are healthy" ]; then
                 STATUS=up
-                MESSAGE="All pools are healthy"
               else
                 STATUS=down
-                MESSAGE="One or more pools are degraded"
               fi
 
               curl --get \
                 --data-urlencode "status=$STATUS" \
-                --data-urlencode "msg=$MESSAGE" \
+                --data-urlencode "msg=$(zpool status -x)" \
                 ${cfg.health.webhook}
             '';
           };
