@@ -7,7 +7,8 @@ entryPoints:
       tls:
         certResolver: letsencrypt
 
-    http3: {}
+    http3:
+      advertisedPort: 443
 
   public:
     address: :8443
@@ -16,7 +17,8 @@ entryPoints:
       tls:
         certResolver: letsencrypt
 
-    http3: {}
+    http3:
+      advertisedPort: 443
 
 certificatesResolvers:
   letsencrypt:
