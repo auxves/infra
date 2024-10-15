@@ -30,7 +30,7 @@ in
     labels = {
       "traefik.enable" = "true";
       "traefik.http.routers.immich.rule" = "Host(`immich.x.auxves.dev`)";
-      "traefik.http.services.immich.loadbalancer.server.port" = "3001";
+      "traefik.http.services.immich.loadbalancer.server.port" = "2283";
     };
   };
 
