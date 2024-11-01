@@ -15,6 +15,10 @@ scrape_configs:
     static_configs:
       - targets: ["podman-exporter:9882"]
 
+  - job_name: ups
+    static_configs:
+      - targets: ["apcupsd-exporter:9162"]
+
   - job_name: minecraft
     static_configs:
       - targets: ["minecraft-vz:25585"]
