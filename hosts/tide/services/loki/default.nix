@@ -6,7 +6,7 @@ in
   storage.paths."services/loki" = { };
 
   virtualisation.oci-containers.containers.loki = {
-    image = "grafana/loki:3.2.1@sha256:09a53b4a4ff81ffcd8f13886df19d33fac7a8d3aaf952e3c7e66cbade5b2fc31";
+    image = "grafana/loki:3.3.0@sha256:58b60b901255c209d3455d8a1979a3f73d1d09686a0a858c2c93025a969eb550";
     user = "root:root";
 
     volumes = [ "${paths."services/loki".path}:/loki" ];
