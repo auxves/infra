@@ -6,7 +6,7 @@ in
   storage.paths."services/prometheus" = { };
 
   virtualisation.oci-containers.containers.prometheus = {
-    image = "prom/prometheus:v2.55.1@sha256:2659f4c2ebb718e7695cb9b25ffa7d6be64db013daba13e05c875451cf51b0d3";
+    image = "prom/prometheus:v3.0.1@sha256:565ee86501224ebbb98fc10b332fa54440b100469924003359edf49cbce374bd";
     user = "root:root";
 
     volumes = [
