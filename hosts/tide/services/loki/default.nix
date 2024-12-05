@@ -13,7 +13,7 @@ in
   };
 
   virtualisation.oci-containers.containers.promtail = {
-    image = "grafana/promtail:3.3.0@sha256:5aa128328d6b0b47a41e1fedd3e5e599c02203c0368d2a2ffc736785ba5a22a3";
+    image = "grafana/promtail:3.3.1@sha256:f90460fd8f56d1d14846bb871f86c379f6b73d06c6ef6475cc31ea7f62e14887";
     user = "root:root";
 
     volumes = [
