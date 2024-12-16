@@ -5,9 +5,13 @@ in
 {
   config = lib.mkIf cfg.enable {
     launchd.user.envVariables = {
-      PATH = config.environment.systemPath;
+      PATH = lib.replaceAll
+        {
+          "$HOME" = config.home-manager.users.${cfg.user}.home.homeDirectory;
+          "$USER" = cfg.user;
+        }
+        config.environment.systemPath;
     }
-    // config.environment.variables
     // config.home-manager.users.${cfg.user}.home.sessionVariables;
   };
 }
