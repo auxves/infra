@@ -10,8 +10,6 @@
     use-cgroups = true;
   };
 
-  boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
-
   time.timeZone = "America/Los_Angeles";
 
   systemd.network.enable = lib.mkDefault true;

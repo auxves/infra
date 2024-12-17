@@ -1,4 +1,4 @@
-{ config, ... }:
+{ pkgs, config, ... }:
 let
   paths = config.storage.paths;
 in
@@ -10,9 +10,13 @@ in
 
     volumes = [
       "${paths."services/home-assistant".path}:/config"
+      "${pkgs.writeText ".dockerenv" ""}:/.dockerenv"
     ];
 
-    extraOptions = [ "--device=/dev/ttyACM0" ];
+    extraOptions = [
+      "--device=/dev/ttyACM0"
+      "--cap-add=CAP_NET_RAW"
+    ];
 
     labels = {
       "traefik.enable" = "true";

@@ -1,11 +1,9 @@
-{ pkgs, modulesPath, ... }: {
+{ modulesPath, ... }: {
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_6;
-
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
 

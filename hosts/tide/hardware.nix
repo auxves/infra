@@ -1,7 +1,5 @@
-{ config, ... }: {
+{ ... }: {
   boot = {
-    kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
-
     initrd.systemd.enable = true;
 
     loader.efi.canTouchEfiVariables = true;
