@@ -11,6 +11,7 @@ in
     volumes = [
       "${paths."services/home-assistant".path}:/config"
       "${pkgs.writeText ".dockerenv" ""}:/.dockerenv"
+      "/run/dbus:/run/dbus:ro" # Bluetooth support
     ];
 
     extraOptions = [

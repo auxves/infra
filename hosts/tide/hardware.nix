@@ -10,6 +10,11 @@
     };
   };
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
   disko.devices = {
     disk = {
       root = {
