@@ -27,6 +27,9 @@ in
 
   storage.paths."services/home-assistant/matter" = { };
 
+  networking.firewall.interfaces.podman0.allowedTCPPorts = [ 5580 ];
+  networking.firewall.allowedUDPPorts = [ 5353 ]; # needed for mDNS
+
   virtualisation.oci-containers.containers.matter-server = {
     image = "ghcr.io/home-assistant-libs/python-matter-server:stable@sha256:2057a36093e8a0e5a9d6c391a2be64401944783a6263e26c992b7790033304b5";
 
