@@ -23,6 +23,10 @@
 
   networking.firewall.interfaces."podman+".allowedUDPPorts = [ 53 5353 ];
 
+  networking.firewall.interfaces.podman0.allowedTCPPorts = [
+    5580 # Matter server
+  ];
+
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;

@@ -11,7 +11,6 @@ in
     volumes = [
       "${paths."services/home-assistant".path}:/config"
       "${pkgs.writeText ".dockerenv" ""}:/.dockerenv"
-      "/run/dbus:/run/dbus:ro" # Bluetooth support
     ];
 
     extraOptions = [
@@ -24,5 +23,17 @@ in
       "traefik.http.routers.home-assistant.rule" = "Host(`home.x.auxves.dev`)";
       "traefik.http.services.home-assistant.loadbalancer.server.port" = "8123";
     };
+  };
+
+  storage.paths."services/home-assistant/matter" = { };
+
+  virtualisation.oci-containers.containers.matter-server = {
+    image = "ghcr.io/home-assistant-libs/python-matter-server:stable@sha256:2057a36093e8a0e5a9d6c391a2be64401944783a6263e26c992b7790033304b5";
+
+    volumes = [
+      "${paths."services/home-assistant/matter".path}:/data"
+    ];
+
+    extraOptions = [ "--network=host" ];
   };
 }
