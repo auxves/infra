@@ -60,8 +60,7 @@
 
   services.samba = {
     enable = true;
-    securityType = "user";
-    shares = {
+    settings = {
       storage = {
         path = "/storage";
         browseable = true;
