@@ -36,8 +36,6 @@ in
       man-pages-posix
     ];
 
-    programs.git.enable = true;
-
     programs.direnv = {
       enable = true;
       nix-direnv.enable = true;
