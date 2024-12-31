@@ -31,7 +31,7 @@ in
   networking.firewall.allowedUDPPorts = [ 5353 ]; # needed for mDNS
 
   virtualisation.oci-containers.containers.matter-server = {
-    image = "ghcr.io/home-assistant-libs/python-matter-server:stable@sha256:2057a36093e8a0e5a9d6c391a2be64401944783a6263e26c992b7790033304b5";
+    image = "ghcr.io/home-assistant-libs/python-matter-server:stable@sha256:828c1cd3f957bb0287a099a439505457a25f5d65ed34281acf19cfbf537fe346";
 
     volumes = [
       "${paths."services/home-assistant/matter".path}:/data"
