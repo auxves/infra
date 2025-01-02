@@ -1,6 +1,6 @@
 { ... }: {
   virtualisation.oci-containers.containers.apcupsd = {
-    image = "gregewing/apcupsd:latest@sha256:67c34d6b993f60f5d953e385b07d8db6276050c9237c092d357964f9fd702ee9";
+    image = "gregewing/apcupsd:latest@sha256:9d1deddc7a543fc9cfd7a0213f3bbc8d37ece3ee23069e2db45d9cb9baf36c81";
 
     extraOptions = [ "--device=/dev/usb/hiddev0" ];
 
