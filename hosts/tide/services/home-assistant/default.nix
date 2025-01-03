@@ -14,7 +14,7 @@ in
     ];
 
     extraOptions = [
-      "--device=/dev/ttyACM0"
+      "--device=/dev/serial/by-id/usb-ITEAD_SONOFF_Zigbee_3.0_USB_Dongle_Plus_V2_20240123082922-if00:/dev/ttyUSB0"
       "--cap-add=CAP_NET_RAW"
     ];
 
