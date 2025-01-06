@@ -42,7 +42,7 @@ let
     lib.optionalString (path.backend == "local") ''
       d ${path.path} 0700 root root -
     '' + ''
-      A ${path.path} - - - - ${builtins.concatStringsSep "," acls}
+      a ${path.path} - - - - ${builtins.concatStringsSep "," acls}
     '';
 
   mkDataset = _: path: lib.optionalAttrs (path.backend == "zfs") {
