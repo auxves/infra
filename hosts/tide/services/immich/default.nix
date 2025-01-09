@@ -7,7 +7,7 @@ in
   sops.secrets."immich/env" = { };
 
   virtualisation.oci-containers.containers.immich = {
-    image = "ghcr.io/immich-app/immich-server:v1.123.0@sha256:666ce77995230ff7327da5d285c861895576977237de08564e3c3ddf842877eb";
+    image = "ghcr.io/immich-app/immich-server:v1.124.2@sha256:c14dccad0611635668abf98f17ce87c3badcc17bb979c53ef96dc49e934ebbc8";
 
     volumes = [
       "${paths."services/immich".path}:/usr/src/app/upload"
@@ -39,7 +39,7 @@ in
   };
 
   virtualisation.oci-containers.containers.immich-machine-learning = {
-    image = "ghcr.io/immich-app/immich-machine-learning:v1.123.0@sha256:fca90362ff3081fc7762d731eb24de262181eaec28afc51eff1d3ca5348663cd";
+    image = "ghcr.io/immich-app/immich-machine-learning:v1.124.2@sha256:a134652b47278edfdac3187d61558e78679be39c810536193a41e9e0d894c5f4";
 
     volumes = [
       "${paths."var/cache/immich-ml".path}:/cache"
