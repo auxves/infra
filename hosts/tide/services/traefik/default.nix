@@ -7,7 +7,7 @@ in
   sops.secrets."traefik/env" = { };
 
   virtualisation.oci-containers.containers.traefik = {
-    image = "traefik:v3.3.1@sha256:a0a80d2e1604d62218e58fd21095d64b55a38445eda7bf235687cafca7d21eaf";
+    image = "traefik:v3.3.1@sha256:b051db814cb18a7533fa9e645ae9bcbe5bf3c8136df2a7f7898329760c4206a9";
 
     volumes = [
       "/var/run/podman/podman.sock:/var/run/docker.sock:ro"
