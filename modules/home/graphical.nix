@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, host, pkgs, ... }:
 let
   cfg = config.presets.graphical;
 in
@@ -7,13 +7,20 @@ in
     enable = mkEnableOption "Enable graphical environment";
   };
 
-  config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
-      # Fonts
-      inter
-      fira-code
-    ];
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    {
+      home.packages = with pkgs; [
+        # Fonts
+        inter
+        fira-code
+      ];
 
-    fonts.fontconfig.enable = true;
-  };
+      fonts.fontconfig.enable = true;
+    }
+
+    (lib.mkIf (host.platform == "darwin") {
+      services.yabai.enable = true;
+      services.skhd.enable = true;
+    })
+  ]);
 }
