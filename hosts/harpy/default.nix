@@ -1,12 +1,20 @@
-{ self, pkgs, ... }: {
+{ self, ... }: {
   imports = [
     self.inputs.comin.nixosModules.comin
+    self.inputs.sops.nixosModules.sops
     ./hardware.nix
+    ./services
   ];
 
-  networking.hostId = "c2079aa6";
+  presets = {
+    containers.enable = true;
+  };
 
-  networking.firewall.trustedInterfaces = [ "tailscale0" ];
+  storage = {
+    enable = true;
+  };
+
+  networking.hostId = "c2079aa6";
 
   services.comin = {
     enable = true;
@@ -16,45 +24,11 @@
     }];
   };
 
-  services.tailscale = {
-    enable = true;
-    package = pkgs.unstable.tailscale;
-  };
+  services.tailscale.enable = true;
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
 
-  services.zfs = {
-    autoScrub.enable = true;
-    trim.enable = true;
-  };
-
-  users.groups.syncoid = { };
-
-  users.users.tide = {
-    isNormalUser = true;
-    group = "syncoid";
-    home = "/home/tide";
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHXrz2geCofvG1mAsSrYw+JG4XVTdLgNP2yuHVqXCiRy syncoid@tide" ];
-  };
-
-  systemd.services.allow-remote-users = {
-    after = [ "zfs.target" ];
-    wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.zfs ];
-
-    script =
-      let
-        perms = builtins.concatStringsSep "," [
-          "change-key"
-          "compression"
-          "create"
-          "mount"
-          "mountpoint"
-          "receive"
-          "rollback"
-          "destroy"
-        ];
-      in
-      ''
-        zfs allow tide ${perms} backups/tide 
-      '';
+  sops = {
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    defaultSopsFile = ./secrets.yaml;
   };
 }
