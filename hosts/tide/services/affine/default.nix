@@ -7,7 +7,7 @@ in
   sops.secrets."affine/env" = { };
 
   virtualisation.oci-containers.containers.affine = {
-    image = "ghcr.io/toeverything/affine-graphql:stable@sha256:08ede007df3d634b0abdbf9afeabfe939137e2888c803c990be57cbdb522b19e";
+    image = "ghcr.io/toeverything/affine-graphql:stable@sha256:396f81415c2394c9718f25f9f39d0fdc07389cb24548a482c103017730e4d742";
 
     volumes = [
       "${paths."services/affine".path}:/root/.affine"
