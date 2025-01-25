@@ -18,12 +18,7 @@ jobs:
       - name: Cache Nix Store
         uses: DeterminateSystems/magic-nix-cache-action@87b14cf437d03d37989d87f0fa5ce4f5dc1a330b # v8
 
-      - name: Dry Update DNS Records
-        if: github.ref != 'refs/heads/main'
-        run: nix run .#deploy-dns
-
       - name: Update DNS Records
-        if: github.ref == "refs/heads/main"
         run: nix run .#deploy-dns -- --doit
 
   dry-run:
