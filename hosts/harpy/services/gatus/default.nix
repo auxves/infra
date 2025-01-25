@@ -1,5 +1,7 @@
 { self, config, pkgs, ... }:
 let
+  paths = config.storage.paths;
+
   yaml = pkgs.formats.yaml { };
 
   endpoints = builtins.concatMap
@@ -14,6 +16,11 @@ let
     inherit endpoints external-endpoints;
 
     metrics = true;
+
+    storage = {
+      type = "sqlite";
+      path = "/data/gatus.db";
+    };
 
     alerting.discord = {
       webhook-url = "$DISCORD_WEBHOOK_URL";
@@ -34,6 +41,10 @@ let
   };
 in
 {
+  storage.paths."var/cache/gatus" = {
+    backend = "local";
+  };
+
   sops.secrets."gatus/env" = { };
 
   virtualisation.oci-containers.containers.gatus = {
@@ -42,6 +53,7 @@ in
     environmentFiles = [ config.sops.secrets."gatus/env".path ];
 
     volumes = [
+      "${paths."var/cache/gatus".path}:/data"
       "${yaml.generate "gatus.yaml" gatusConfig}:/config/config.yaml"
     ];
 
