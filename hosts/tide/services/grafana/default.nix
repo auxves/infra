@@ -26,4 +26,15 @@ in
       "traefik.http.services.grafana.loadbalancer.server.port" = "3000";
     };
   };
+
+  monitoring.checks = [{
+    name = "grafana";
+    group = "services";
+    url = "https://${hostname}";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 }

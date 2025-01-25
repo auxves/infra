@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  host = "auth.auxves.dev";
+  hostname = "auth.auxves.dev";
 
   paths = config.storage.paths;
 in
@@ -22,7 +22,7 @@ in
       ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME = "postgres";
       ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE = "disable";
       ZITADEL_EXTERNALSECURE = "true";
-      ZITADEL_EXTERNALDOMAIN = host;
+      ZITADEL_EXTERNALDOMAIN = hostname;
       ZITADEL_EXTERNALPORT = "443";
     };
 
@@ -32,11 +32,22 @@ in
 
     labels = {
       "traefik.enable" = "true";
-      "traefik.http.routers.zitadel.rule" = "Host(`${host}`)";
+      "traefik.http.routers.zitadel.rule" = "Host(`${hostname}`)";
       "traefik.http.routers.zitadel.entrypoints" = "public";
       "traefik.http.services.zitadel.loadbalancer.server.port" = "8080";
     };
   };
+
+  monitoring.checks = [{
+    name = "zitadel";
+    group = "services";
+    url = "https://${hostname}";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 
   storage.paths."services/zitadel/postgres" = { };
   sops.secrets."zitadel/postgres/env" = { };

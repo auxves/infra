@@ -9,40 +9,19 @@
 
   presets = {
     home.enable = true;
+    containers.enable = true;
   };
 
   storage = {
     enable = true;
     zfs.health.enable = true;
-    zfs.health.webhook = "https://uptime.x.auxves.dev/api/push/LieheAkPr6";
   };
 
   networking.hostId = "c2079ac5";
 
   networking.firewall = {
     trustedInterfaces = [ "tailscale0" ];
-    interfaces."podman+".allowedUDPPorts = [ 53 5353 ];
-  };
-
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-
-    autoPrune = {
-      enable = true;
-      dates = "weekly";
-      flags = [ "--all" ];
-    };
-
-    defaultNetwork.settings = {
-      dns_enabled = true;
-      ipv6_enabled = true;
-
-      subnets = [
-        { gateway = "10.88.0.1"; subnet = "10.88.0.0/16"; }
-        { gateway = "fd80::1"; subnet = "fd80::/64"; }
-      ];
-    };
+    interfaces."podman+".allowedUDPPorts = [ 5353 ];
   };
 
   services.comin = {
@@ -53,10 +32,7 @@
     }];
   };
 
-  services.tailscale = {
-    enable = true;
-    package = pkgs.unstable.tailscale;
-  };
+  services.tailscale.enable = true;
 
   services.samba = {
     enable = true;

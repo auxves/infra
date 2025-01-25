@@ -1,6 +1,8 @@
 { config, ... }:
 let
   paths = config.storage.paths;
+
+  hostname = "immich.x.auxves.dev";
 in
 {
   storage.paths."services/immich" = { };
@@ -29,10 +31,21 @@ in
 
     labels = {
       "traefik.enable" = "true";
-      "traefik.http.routers.immich.rule" = "Host(`immich.x.auxves.dev`)";
+      "traefik.http.routers.immich.rule" = "Host(`${hostname}`)";
       "traefik.http.services.immich.loadbalancer.server.port" = "2283";
     };
   };
+
+  monitoring.checks = [{
+    name = "immich";
+    group = "services";
+    url = "https://${hostname}";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 
   storage.paths."var/cache/immich-ml" = {
     backend = "local";

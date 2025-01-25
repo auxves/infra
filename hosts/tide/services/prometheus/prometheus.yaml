@@ -23,10 +23,6 @@ scrape_configs:
     static_configs:
       - targets: ["minecraft-vz:25585"]
 
-  - job_name: uptime
-    static_configs:
-      - targets: ["uptime-kuma:3001"]
-
   - job_name: hass
     metrics_path: /api/prometheus
     static_configs:

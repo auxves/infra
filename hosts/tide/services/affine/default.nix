@@ -1,6 +1,8 @@
 { config, ... }:
 let
   paths = config.storage.paths;
+
+  hostname = "affine.x.auxves.dev";
 in
 {
   storage.paths."services/affine" = { };
@@ -16,7 +18,7 @@ in
     environmentFiles = [ config.sops.secrets."affine/env".path ];
 
     environment = {
-      AFFINE_SERVER_EXTERNAL_URL = "https://affine.x.auxves.dev";
+      AFFINE_SERVER_EXTERNAL_URL = "https://${hostname}";
       REDIS_SERVER_HOST = "affine-redis";
 
       OAUTH_OIDC_SCOPE = "openid email profile offline_access";
@@ -34,10 +36,21 @@ in
 
     labels = {
       "traefik.enable" = "true";
-      "traefik.http.routers.affine.rule" = "Host(`affine.x.auxves.dev`)";
+      "traefik.http.routers.affine.rule" = "Host(`${hostname}`)";
       "traefik.http.services.affine.loadbalancer.server.port" = "3010";
     };
   };
+
+  monitoring.checks = [{
+    name = "affine";
+    group = "services";
+    url = "https://${hostname}";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 
   virtualisation.oci-containers.containers.affine-redis = {
     image = "redis:7.2.5@sha256:fb534a36ac2034a6374933467d971fbcbfa5d213805507f560d564851a720355";

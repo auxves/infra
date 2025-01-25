@@ -1,14 +1,10 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, host, ... }:
 let
   cfg = config.storage.zfs;
 in
 {
   options.storage.zfs = with lib; {
     health.enable = mkEnableOption "Enable ZFS health check";
-    health.webhook = mkOption {
-      type = types.str;
-      description = "Uptime Kuma webhook to send status to";
-    };
   };
 
   config = lib.mkMerge [
@@ -20,21 +16,21 @@ in
             runtimeInputs = with pkgs; [ zfs curl ];
             text = ''
               if [ "$(zpool status -x)" = "all pools are healthy" ]; then
-                STATUS=up
+                SUCCESS=true
               else
-                STATUS=down
+                SUCCESS=false
               fi
 
-              curl --get \
-                --data-urlencode "status=$STATUS" \
-                --data-urlencode "msg=$(zpool status -x)" \
-                ${cfg.health.webhook}
+              curl -X POST --get \
+                --data-urlencode "success=$SUCCESS" \
+                --data-urlencode "error=$(zpool status -x)" \
+                --header "Authorization: Bearer ${host.name}" \
+                https://status.x.auxves.dev/api/v1/endpoints/zfs_${host.name}/external
             '';
           };
         in
         {
-          description = "Health check for ZFS pools which reports to Uptime Kuma";
-          after = [ "podman-uptime-kuma.service" ];
+          description = "Health check for ZFS pools which reports to Gatus";
           startAt = "*:*:00";
 
           serviceConfig = {
@@ -42,6 +38,13 @@ in
             DynamicUser = "yes";
           };
         };
+
+      monitoring.endpoints = [{
+        name = host.name;
+        group = "zfs";
+        token = host.name;
+        alerts = [{ type = "discord"; }];
+      }];
     })
   ];
 }
