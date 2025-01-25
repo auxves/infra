@@ -48,7 +48,7 @@ in
   sops.secrets."gatus/env" = { };
 
   virtualisation.oci-containers.containers.gatus = {
-    image = "ghcr.io/twin/gatus:v5.12.1@sha256:3a380d56c035ea11328fe66716aae9ceb2ccaca7be2c126c40bbe6987d2f85af";
+    image = "ghcr.io/twin/gatus:v5.12.1@sha256:3cc4e90534c05599f07fbdf15580401aa7771fac15f51d1dc8f7de265d70d12f";
 
     environmentFiles = [ config.sops.secrets."gatus/env".path ];
 
