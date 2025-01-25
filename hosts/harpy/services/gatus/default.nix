@@ -3,11 +3,17 @@ let
   yaml = pkgs.formats.yaml { };
 
   endpoints = builtins.concatMap
+    (host: host.cfg.monitoring.checks)
+    (builtins.attrValues self.hosts);
+
+  external-endpoints = builtins.concatMap
     (host: host.cfg.monitoring.endpoints)
     (builtins.attrValues self.hosts);
 
   gatusConfig = {
-    inherit endpoints;
+    inherit endpoints external-endpoints;
+
+    metrics = true;
 
     alerting.discord = {
       webhook-url = "$DISCORD_WEBHOOK_URL";
@@ -18,13 +24,13 @@ let
       };
     };
 
-    security.oidc = {
-      issuer-url = "https://auth.auxves.dev";
-      redirect-url = "https://status.x.auxves.dev/authorization-code/callback";
-      client-id = "$OIDC_CLIENT_ID";
-      client-secret = "$OIDC_CLIENT_SECRET";
-      scopes = [ "openid" ];
-    };
+    # security.oidc = {
+    #   issuer-url = "https://auth.auxves.dev";
+    #   redirect-url = "https://status.x.auxves.dev/authorization-code/callback";
+    #   client-id = "$OIDC_CLIENT_ID";
+    #   client-secret = "$OIDC_CLIENT_SECRET";
+    #   scopes = [ "openid" ];
+    # };
   };
 in
 {

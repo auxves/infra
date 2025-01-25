@@ -27,9 +27,9 @@ in
     };
   };
 
-  monitoring.endpoints = [{
+  monitoring.checks = [{
     name = "grafana";
-    group = "internal";
+    group = "services";
     url = "https://${hostname}";
     interval = "1m";
     alerts = [{ type = "discord"; }];

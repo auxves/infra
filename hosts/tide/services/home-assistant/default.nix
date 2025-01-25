@@ -1,6 +1,8 @@
 { pkgs, config, ... }:
 let
   paths = config.storage.paths;
+
+  hostname = "home.x.auxves.dev";
 in
 {
   storage.paths."services/home-assistant" = { };
@@ -20,10 +22,21 @@ in
 
     labels = {
       "traefik.enable" = "true";
-      "traefik.http.routers.home-assistant.rule" = "Host(`home.x.auxves.dev`)";
+      "traefik.http.routers.home-assistant.rule" = "Host(`${hostname}`)";
       "traefik.http.services.home-assistant.loadbalancer.server.port" = "8123";
     };
   };
+
+  monitoring.checks = [{
+    name = "home-assistant";
+    group = "services";
+    url = "https://${hostname}";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 
   storage.paths."services/home-assistant/matter" = { };
 

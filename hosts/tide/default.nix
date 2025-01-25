@@ -15,7 +15,6 @@
   storage = {
     enable = true;
     zfs.health.enable = true;
-    zfs.health.webhook = "https://uptime.x.auxves.dev/api/push/LieheAkPr6";
   };
 
   networking.hostId = "c2079ac5";
