@@ -30,8 +30,7 @@ in
           };
         in
         {
-          description = "Health check for ZFS pools which reports to Uptime Kuma";
-          after = [ "podman-uptime-kuma.service" ];
+          description = "Health check for ZFS pools which reports to Gatus";
           startAt = "*:*:00";
 
           serviceConfig = {
