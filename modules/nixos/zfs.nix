@@ -1,6 +1,7 @@
-{ lib, config, pkgs, host, ... }:
+{ self, lib, config, pkgs, host, ... }:
 let
   cfg = config.services.zfs;
+  domain = self.hosts.harpy.cfg.apps.gatus.ingress.domain;
 in
 {
   options.services.zfs = with lib; {
@@ -25,7 +26,7 @@ in
                 --data-urlencode "success=$SUCCESS" \
                 --data-urlencode "error=$(zpool status -x)" \
                 --header "Authorization: Bearer ${host.name}" \
-                https://status.auxves.dev/api/v1/endpoints/zfs_${host.name}/external
+                https://${domain}/api/v1/endpoints/zfs_${host.name}/external
             '';
           };
         in
