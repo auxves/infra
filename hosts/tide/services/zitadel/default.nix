@@ -13,7 +13,7 @@ in
     };
 
     containers = {
-      app = {
+      zitadel = {
         image = "ghcr.io/zitadel/zitadel:v2.68.1@sha256:74344030df8414add04f429b1748af89e1e1b2ff4de78c7d7dd5a2f76ba00074";
 
         environmentFiles = [ config.sops.secrets."zitadel/env".path ];
@@ -58,7 +58,7 @@ in
     };
 
     ingress = {
-      container = "app";
+      container = "zitadel";
       host = "auth.auxves.dev";
       type = "public";
       port = 8080;

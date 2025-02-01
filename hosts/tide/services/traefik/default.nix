@@ -11,7 +11,7 @@ in
     };
 
     containers = {
-      proxy = {
+      traefik = {
         image = "traefik:v3.3.2@sha256:e8b170343bb1ab703a956049291ef0d951867bef39839c9b0d70eebda6b2ed29";
 
         volumes = [
@@ -50,7 +50,7 @@ in
     };
 
     ingress = {
-      container = "proxy";
+      container = "traefik";
       host = "traefik.x.auxves.dev";
       port = 9999;
     };

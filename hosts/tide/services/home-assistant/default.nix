@@ -13,7 +13,7 @@ in
     };
 
     containers = {
-      app = {
+      home-assistant = {
         image = "ghcr.io/home-assistant/home-assistant:2025.1.4@sha256:a8aab945aec2f43eb1b1fde4d19e25ef952fab9c10f49e40d3b3ce7d24cedc19";
 
         volumes = [
@@ -44,7 +44,7 @@ in
     };
 
     ingress = {
-      container = "app";
+      container = "home-assistant";
       host = "home.x.auxves.dev";
       port = 8123;
     };

@@ -14,7 +14,7 @@ in
     };
 
     containers = {
-      app = {
+      immich = {
         image = "ghcr.io/immich-app/immich-server:v1.125.7@sha256:217cddb1e0fa3f4878e1573fe1fd4b9dc24f737015cc5c917910787a5ec0f85e";
 
         volumes = [
@@ -73,7 +73,7 @@ in
     };
 
     ingress = {
-      container = "app";
+      container = "immich";
       host = "immich.x.auxves.dev";
       port = 2283;
     };
