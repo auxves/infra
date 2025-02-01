@@ -1,15 +1,17 @@
 { config, ... }:
 let
-  paths = config.storage.paths;
+  cfg = config.apps.zitadel;
 in
 {
-  storage.paths."services/zitadel" = { };
   sops.secrets."zitadel/env" = { };
-
-  storage.paths."services/zitadel/postgres" = { };
   sops.secrets."zitadel/postgres/env" = { };
 
   apps.zitadel = {
+    volumes = {
+      zitadel = { type = "zfs"; };
+      postgres = { type = "zfs"; };
+    };
+
     containers = {
       app = {
         image = "ghcr.io/zitadel/zitadel:v2.68.1@sha256:74344030df8414add04f429b1748af89e1e1b2ff4de78c7d7dd5a2f76ba00074";
@@ -25,7 +27,7 @@ in
           ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME = "postgres";
           ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE = "disable";
           ZITADEL_EXTERNALSECURE = "true";
-          ZITADEL_EXTERNALDOMAIN = config.apps.zitadel.ingress.host;
+          ZITADEL_EXTERNALDOMAIN = cfg.ingress.host;
           ZITADEL_EXTERNALPORT = "443";
         };
 
@@ -38,7 +40,7 @@ in
         image = "postgres:16-alpine@sha256:de3d7b6e4b5b3fe899e997579d6dfe95a99539d154abe03f0b6839133ed05065";
 
         volumes = [
-          "${paths."services/zitadel/postgres".path}:/var/lib/postgresql/data"
+          "${cfg.volumes.postgres.path}:/var/lib/postgresql/data"
         ];
 
         environmentFiles = [ config.sops.secrets."zitadel/postgres/env".path ];
@@ -66,7 +68,7 @@ in
   monitoring.checks = [{
     name = "zitadel";
     group = "services";
-    url = "https://${config.apps.zitadel.ingress.host}";
+    url = "https://${cfg.ingress.host}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

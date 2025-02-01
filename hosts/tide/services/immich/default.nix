@@ -1,25 +1,24 @@
 { config, ... }:
 let
-  paths = config.storage.paths;
+  cfg = config.apps.immich;
 in
 {
-  storage.paths."services/immich" = { };
   sops.secrets."immich/env" = { };
-
-  storage.paths."var/cache/immich-ml" = {
-    backend = "local";
-  };
-
-  storage.paths."services/immich/postgres" = { };
   sops.secrets."immich/postgres/env" = { };
 
   apps.immich = {
+    volumes = {
+      immich = { type = "zfs"; };
+      postgres = { type = "zfs"; };
+      ml = { type = "ephemeral"; };
+    };
+
     containers = {
       app = {
         image = "ghcr.io/immich-app/immich-server:v1.125.7@sha256:217cddb1e0fa3f4878e1573fe1fd4b9dc24f737015cc5c917910787a5ec0f85e";
 
         volumes = [
-          "${paths."services/immich".path}:/usr/src/app/upload"
+          "${cfg.volumes.immich.path}:/usr/src/app/upload"
           "/etc/localtime:/etc/localtime:ro"
         ];
 
@@ -39,7 +38,7 @@ in
 
       machine-learning = {
         image = "ghcr.io/immich-app/immich-machine-learning:v1.125.7@sha256:5a7bac207c5be17bbe775fdca2fef7ec6635400180ae79cc7a41659cef2c05b0";
-        volumes = [ "${paths."var/cache/immich-ml".path}:/cache" ];
+        volumes = [ "${cfg.volumes.ml.path}:/cache" ];
       };
 
       redis = {
@@ -55,7 +54,7 @@ in
         image = "tensorchord/pgvecto-rs:pg16-v0.2.1@sha256:ff2288833f32aa863ba46f4c6f5b5c143f526a2d27f4cca913c232f917a66602";
 
         volumes = [
-          "${paths."services/immich/postgres".path}:/var/lib/postgresql/data"
+          "${cfg.volumes.postgres.path}:/var/lib/postgresql/data"
         ];
 
         environmentFiles = [ config.sops.secrets."immich/postgres/env".path ];
@@ -83,7 +82,7 @@ in
   monitoring.checks = [{
     name = "immich";
     group = "services";
-    url = "https://${config.apps.immich.ingress.host}";
+    url = "https://${cfg.ingress.host}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

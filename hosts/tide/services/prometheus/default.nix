@@ -1,11 +1,13 @@
 { config, ... }:
 let
-  paths = config.storage.paths;
+  cfg = config.apps.prometheus;
 in
 {
-  storage.paths."services/prometheus" = { };
-
   apps.prometheus = {
+    volumes = {
+      prometheus = { type = "zfs"; };
+    };
+
     containers = {
       prometheus = {
         image = "prom/prometheus:v2.55.1@sha256:2659f4c2ebb718e7695cb9b25ffa7d6be64db013daba13e05c875451cf51b0d3";
@@ -15,7 +17,7 @@ in
 
         volumes = [
           "/var/run/podman/podman.sock:/var/run/docker.sock:ro" # container scraping
-          "${paths."services/prometheus".path}:/prometheus"
+          "${cfg.volumes.prometheus.path}:/prometheus"
           "${./prometheus.yaml}:/etc/prometheus/prometheus.yml:ro"
         ];
 

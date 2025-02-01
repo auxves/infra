@@ -1,23 +1,25 @@
 { config, ... }:
 let
-  paths = config.storage.paths;
+  cfg = config.apps.grafana;
 in
 {
-  storage.paths."services/grafana" = { };
-
   apps.grafana = {
+    volumes = {
+      grafana = { type = "zfs"; };
+    };
+
     containers = {
       app = {
         image = "grafana/grafana:11.5.0@sha256:0a2874cf39c6487093c682215f7c7903ed8646d78ae5f911af945d2dfcc0a447";
         user = "root:root";
 
         volumes = [
-          "${paths."services/grafana".path}:/var/lib/grafana"
+          "${cfg.volumes.grafana.path}:/var/lib/grafana"
         ];
 
         environment = {
-          HOSTNAME = config.apps.grafana.ingress.host;
-          GF_SERVER_ROOT_URL = "https://${config.apps.grafana.ingress.host}";
+          HOSTNAME = cfg.ingress.host;
+          GF_SERVER_ROOT_URL = "https://${cfg.ingress.host}";
         };
       };
     };
@@ -32,7 +34,7 @@ in
   monitoring.checks = [{
     name = "grafana";
     group = "services";
-    url = "https://${config.apps.grafana.ingress.host}";
+    url = "https://${cfg.ingress.host}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

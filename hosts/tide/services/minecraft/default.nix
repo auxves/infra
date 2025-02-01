@@ -1,11 +1,13 @@
 { config, ... }:
 let
-  paths = config.storage.paths;
+  cfg = config.apps.minecraft;
 in
 {
-  storage.paths."services/minecraft-vz" = { };
-
   apps.minecraft = {
+    volumes = {
+      vz = { type = "zfs"; };
+    };
+
     containers = {
       vz = {
         image = "itzg/minecraft-server:2024.7.2-java21-graalvm@sha256:9944796b60e917ee4dc51685b52165adadcc6f501fdb647015879146e1f6312c";
@@ -29,7 +31,7 @@ in
         };
 
         volumes = [
-          "${paths."services/minecraft-vz".path}:/data"
+          "${cfg.volumes.vz.path}:/data"
           "${./icon.png}:/data/server-icon.png"
           "${./vz.mrpack}:/mods.mrpack:ro"
         ];

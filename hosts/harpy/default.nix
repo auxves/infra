@@ -10,10 +10,6 @@
     containers.enable = true;
   };
 
-  storage = {
-    enable = true;
-  };
-
   networking.hostId = "c2079aa6";
 
   services.comin = {
@@ -26,6 +22,8 @@
 
   services.tailscale.enable = true;
   networking.firewall.trustedInterfaces = [ "tailscale0" ];
+
+  services.zfs.health.enable = true;
 
   sops = {
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];

@@ -12,11 +12,6 @@
     containers.enable = true;
   };
 
-  storage = {
-    enable = true;
-    zfs.health.enable = true;
-  };
-
   networking.hostId = "c2079ac5";
 
   networking.firewall = {
@@ -48,6 +43,7 @@
   services.zfs = {
     autoScrub.enable = true;
     trim.enable = true;
+    health.enable = true;
   };
 
   services.sanoid = {

@@ -1,27 +1,29 @@
 { config, ... }:
 let
-  paths = config.storage.paths;
+  cfg = config.apps.affine;
 in
 {
-  storage.paths."services/affine" = { };
   sops.secrets."affine/env" = { };
-
-  storage.paths."services/affine/postgres" = { };
   sops.secrets."affine/postgres/env" = { };
 
   apps.affine = {
+    volumes = {
+      data = { type = "zfs"; };
+      postgres = { type = "zfs"; };
+    };
+
     containers = {
       app = {
         image = "ghcr.io/toeverything/affine-graphql:stable@sha256:396f81415c2394c9718f25f9f39d0fdc07389cb24548a482c103017730e4d742";
 
         volumes = [
-          "${paths."services/affine".path}:/root/.affine"
+          "${cfg.volumes.data.path}:/root/.affine"
         ];
 
         environmentFiles = [ config.sops.secrets."affine/env".path ];
 
         environment = {
-          AFFINE_SERVER_EXTERNAL_URL = "https://${config.apps.affine.ingress.host}";
+          AFFINE_SERVER_EXTERNAL_URL = "https://${cfg.ingress.host}";
           REDIS_SERVER_HOST = "affine-redis";
 
           OAUTH_OIDC_SCOPE = "openid email profile offline_access";
@@ -51,7 +53,7 @@ in
         image = "postgres:16-alpine@sha256:de3d7b6e4b5b3fe899e997579d6dfe95a99539d154abe03f0b6839133ed05065";
 
         volumes = [
-          "${paths."services/affine/postgres".path}:/var/lib/postgresql/data"
+          "${cfg.volumes.postgres.path}:/var/lib/postgresql/data"
         ];
 
         environmentFiles = [ config.sops.secrets."affine/postgres/env".path ];
@@ -78,7 +80,7 @@ in
   monitoring.checks = [{
     name = "affine";
     group = "services";
-    url = "https://${config.apps.affine.ingress.host}";
+    url = "https://${cfg.ingress.host}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

@@ -1,9 +1,9 @@
 { lib, config, pkgs, host, ... }:
 let
-  cfg = config.storage.zfs;
+  cfg = config.services.zfs;
 in
 {
-  options.storage.zfs = with lib; {
+  options.services.zfs = with lib; {
     health.enable = mkEnableOption "Enable ZFS health check";
   };
 
