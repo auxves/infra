@@ -27,6 +27,11 @@ in
         ];
       };
     };
+
+    ingress = {
+      container = "prometheus";
+      port = 9090;
+    };
   };
 
   apps.exporters = {

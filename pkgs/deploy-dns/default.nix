@@ -19,6 +19,7 @@ let
       ingresses = lib.pipe applicableHosts [
         (builtins.concatMap lib.ingressesOfHost)
         (builtins.filter (ingress: lib.hasSuffix name ingress.domain))
+        (builtins.filter (ingress: !(lib.hasInfix ".x." ingress.domain)))
       ];
 
       ingressToRecord = { type, domain, host, ... }: {

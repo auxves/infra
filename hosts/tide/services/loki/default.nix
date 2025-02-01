@@ -18,5 +18,10 @@ in
         volumes = [ "${cfg.volumes.loki.path}:/loki" ];
       };
     };
+
+    ingress = {
+      container = "loki";
+      port = 3100;
+    };
   };
 }

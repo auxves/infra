@@ -47,6 +47,7 @@ in
 
         labels = {
           "traefik.http.routers.traefik.service" = "api@internal";
+          "traefik.http.routers.traefik.tls.certresolver" = "letsencrypt";
           "traefik.http.routers.traefik.tls.domains[0].main" = "${config.networking.hostName}.x.auxves.dev";
           "traefik.http.routers.traefik.tls.domains[0].sans" = "*.${config.networking.hostName}.x.auxves.dev";
         };
@@ -57,7 +58,6 @@ in
 
     ingress = {
       container = "traefik";
-      domain = "traefik.${config.networking.hostName}.x.auxves.dev";
       port = 9999;
     };
   };

@@ -1,4 +1,4 @@
-{ lib, options, ... }:
+{ lib, config, options, ... }:
 let
   metricsOptions = {
     options = with lib; {
@@ -70,7 +70,7 @@ let
     };
   };
 
-  ingressOptions = {
+  ingressOptions = appName: {
     options = with lib; {
       type = mkOption {
         type = types.enum [ "internal" "public" ];
@@ -90,6 +90,7 @@ let
 
       domain = mkOption {
         type = types.str;
+        default = "${appName}.${config.networking.hostName}.x.auxves.dev";
         description = "The domain to use for ingress";
       };
     };
@@ -117,7 +118,7 @@ let
       };
 
       ingress = mkOption {
-        type = types.nullOr (types.submodule ingressOptions);
+        type = types.nullOr (types.submodule (ingressOptions name));
         default = null;
         description = "Ingress options for the application";
       };
