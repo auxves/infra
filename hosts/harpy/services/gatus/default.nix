@@ -47,19 +47,24 @@ in
 
   sops.secrets."gatus/env" = { };
 
-  virtualisation.oci-containers.containers.gatus = {
-    image = "ghcr.io/twin/gatus:v5.15.0@sha256:45686324db605e57dfa8b0931d8d57fe06298f52685f06aa9654a1f710d461bb";
+  apps.gatus = {
+    containers = {
+      app = {
+        image = "ghcr.io/twin/gatus:v5.15.0@sha256:45686324db605e57dfa8b0931d8d57fe06298f52685f06aa9654a1f710d461bb";
 
-    environmentFiles = [ config.sops.secrets."gatus/env".path ];
+        environmentFiles = [ config.sops.secrets."gatus/env".path ];
 
-    volumes = [
-      "${paths."var/cache/gatus".path}:/data"
-      "${yaml.generate "gatus.yaml" gatusConfig}:/config/config.yaml"
-    ];
+        volumes = [
+          "${paths."var/cache/gatus".path}:/data"
+          "${yaml.generate "gatus.yaml" gatusConfig}:/config/config.yaml"
+        ];
+      };
+    };
 
-    labels = {
-      "traefik.enable" = "true";
-      "traefik.http.routers.gatus.rule" = "Host(`status.x.auxves.dev`)";
+    ingress = {
+      container = "app";
+      host = "status.x.auxves.dev";
+      port = 8080;
     };
   };
 }

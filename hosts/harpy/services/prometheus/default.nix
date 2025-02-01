@@ -3,7 +3,9 @@ let
   paths = config.storage.paths;
 in
 {
-  storage.paths."services/prometheus" = { };
+  storage.paths."var/cache/prometheus" = {
+    backend = "local";
+  };
 
   apps.prometheus = {
     containers = {
@@ -15,7 +17,7 @@ in
 
         volumes = [
           "/var/run/podman/podman.sock:/var/run/docker.sock:ro" # container scraping
-          "${paths."services/prometheus".path}:/prometheus"
+          "${paths."var/cache/prometheus".path}:/prometheus"
           "${./prometheus.yaml}:/etc/prometheus/prometheus.yml:ro"
         ];
 
