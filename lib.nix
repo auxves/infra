@@ -54,4 +54,8 @@ inputs.nixpkgs.lib.extend (_: _: {
   replaceAll = attrs: builtins.replaceStrings
     (builtins.attrNames attrs)
     (builtins.attrValues attrs);
+
+  ingressesOfHost = host: lib.mapAttrsToList
+    (_: app: app.ingress // { inherit host; })
+    (lib.filterAttrs (_: app: app.ingress != null) host.cfg.apps);
 })

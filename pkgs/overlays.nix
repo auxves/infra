@@ -11,7 +11,7 @@ rec {
   ];
 
   default = final: prev: lib.mapAttrs
-    (name: _: lib.callPackageWith (final // args // { inherit prev; }) ./${name} { })
+    (name: _: lib.callPackageWith (final // args // { inherit prev; self = args; }) ./${name} { })
     packages;
 
   unstable = final: _: {

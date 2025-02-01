@@ -1,4 +1,4 @@
-{ config, ... }:
+{ lib, config, ... }:
 let
   cfg = config.apps.traefik;
 in
@@ -22,12 +22,22 @@ in
 
         environmentFiles = [ config.sops.secrets."traefik/env".path ];
 
-        ports = [
+        ports = lib.optionals (config.meta.addresses.internal.v6 != null) [
           # Internal
-          "[fd7a:115c:a1e0::e701:4a12]:443:443/tcp"
-          "[fd7a:115c:a1e0::e701:4a12]:443:443/udp"
-          "100.92.74.18:443:443/tcp"
-          "100.92.74.18:443:443/udp"
+          "[${config.meta.addresses.internal.v6}]:443:443/tcp"
+          "[${config.meta.addresses.internal.v6}]:443:443/udp"
+        ] ++ lib.optionals (config.meta.addresses.internal.v4 != null) [
+          # Internal
+          "${config.meta.addresses.internal.v4}:443:443/tcp"
+          "${config.meta.addresses.internal.v4}:443:443/udp"
+        ] ++ lib.optionals (config.meta.addresses.public.v6 != null) [
+          # Public
+          "[${config.meta.addresses.public.v6}]:443:8443/tcp"
+          "[${config.meta.addresses.public.v6}]:443:8443/udp"
+        ] ++ lib.optionals (config.meta.addresses.public.v4 != null) [
+          # Public
+          "${config.meta.addresses.public.v4}:443:8443/tcp"
+          "${config.meta.addresses.public.v4}:443:8443/udp"
         ];
 
         extraOptions = [
@@ -35,8 +45,20 @@ in
           "--health-on-failure=stop"
         ];
 
+        labels = {
+          "traefik.http.routers.traefik.service" = "api@internal";
+          "traefik.http.routers.traefik.tls.domains[0].main" = "${config.networking.hostName}.x.auxves.dev";
+          "traefik.http.routers.traefik.tls.domains[0].sans" = "*.${config.networking.hostName}.x.auxves.dev";
+        };
+
         metrics.port = 8080;
       };
+    };
+
+    ingress = {
+      container = "traefik";
+      domain = "traefik.${config.networking.hostName}.x.auxves.dev";
+      port = 9999;
     };
   };
 }

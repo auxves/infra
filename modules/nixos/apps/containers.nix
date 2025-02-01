@@ -16,7 +16,7 @@ let
           "app.node" = config.networking.hostName;
         } // lib.optionalAttrs (app.ingress != null && app.ingress.container == containerName) {
           "traefik.enable" = "true";
-          "traefik.http.routers.${app.name}.rule" = "Host(`${app.ingress.host}`)";
+          "traefik.http.routers.${app.name}.rule" = "Host(`${app.ingress.domain}`)";
           "traefik.http.routers.${app.name}.entrypoints" = app.ingress.type;
           "traefik.http.services.${app.name}.loadbalancer.server.port" = toString app.ingress.port;
         } // lib.optionalAttrs (container.metrics != null) {

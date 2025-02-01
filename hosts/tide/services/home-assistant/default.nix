@@ -45,7 +45,7 @@ in
 
     ingress = {
       container = "home-assistant";
-      host = "home.x.auxves.dev";
+      domain = "home.auxves.dev";
       port = 8123;
     };
   };
@@ -53,7 +53,7 @@ in
   monitoring.checks = [{
     name = "home-assistant";
     group = "services";
-    url = "https://${cfg.ingress.host}";
+    url = "https://${cfg.ingress.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

@@ -74,7 +74,7 @@ in
 
     ingress = {
       container = "immich";
-      host = "immich.x.auxves.dev";
+      domain = "immich.auxves.dev";
       port = 2283;
     };
   };
@@ -82,7 +82,7 @@ in
   monitoring.checks = [{
     name = "immich";
     group = "services";
-    url = "https://${cfg.ingress.host}";
+    url = "https://${cfg.ingress.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

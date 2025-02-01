@@ -25,7 +25,7 @@ in
                 --data-urlencode "success=$SUCCESS" \
                 --data-urlencode "error=$(zpool status -x)" \
                 --header "Authorization: Bearer ${host.name}" \
-                https://status.x.auxves.dev/api/v1/endpoints/zfs_${host.name}/external
+                https://status.auxves.dev/api/v1/endpoints/zfs_${host.name}/external
             '';
           };
         in
