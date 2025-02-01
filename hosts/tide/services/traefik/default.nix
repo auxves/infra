@@ -22,19 +22,19 @@ in
 
         environmentFiles = [ config.sops.secrets."traefik/env".path ];
 
-        ports = lib.optionals (config.meta.addresses.internal.v6 != "") [
+        ports = lib.optionals (config.meta.addresses.internal.v6 != null) [
           # Internal
           "[${config.meta.addresses.internal.v6}]:443:443/tcp"
           "[${config.meta.addresses.internal.v6}]:443:443/udp"
-        ] ++ lib.optionals (config.meta.addresses.internal.v4 != "") [
+        ] ++ lib.optionals (config.meta.addresses.internal.v4 != null) [
           # Internal
           "${config.meta.addresses.internal.v4}:443:443/tcp"
           "${config.meta.addresses.internal.v4}:443:443/udp"
-        ] ++ lib.optionals (config.meta.addresses.public.v6 != "") [
+        ] ++ lib.optionals (config.meta.addresses.public.v6 != null) [
           # Public
           "[${config.meta.addresses.public.v6}]:443:8443/tcp"
           "[${config.meta.addresses.public.v6}]:443:8443/udp"
-        ] ++ lib.optionals (config.meta.addresses.public.v4 != "") [
+        ] ++ lib.optionals (config.meta.addresses.public.v4 != null) [
           # Public
           "${config.meta.addresses.public.v4}:443:8443/tcp"
           "${config.meta.addresses.public.v4}:443:8443/udp"
