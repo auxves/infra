@@ -34,6 +34,8 @@ in
           "--health-cmd=traefik healthcheck"
           "--health-on-failure=stop"
         ];
+
+        metrics.port = 8080;
       };
     };
   };
