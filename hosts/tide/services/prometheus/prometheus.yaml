@@ -42,9 +42,10 @@ scrape_configs:
   - job_name: federation
     honor_labels: true
     metrics_path: /federate
+    scheme: https
 
     params:
       match[]: ['{job=~".+"}']
 
     static_configs:
-      - targets: ["harpy.myth-cobia.ts.net:9090"]
+      - targets: ["prometheus.harpy.x.auxves.dev"]

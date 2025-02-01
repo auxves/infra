@@ -13,8 +13,6 @@ in
         image = "prom/prometheus:v2.55.1@sha256:2659f4c2ebb718e7695cb9b25ffa7d6be64db013daba13e05c875451cf51b0d3";
         user = "root:root";
 
-        ports = [ "9090:9090" ];
-
         volumes = [
           "/var/run/podman/podman.sock:/var/run/docker.sock:ro" # container scraping
           "${cfg.volumes.prometheus.path}:/prometheus"
