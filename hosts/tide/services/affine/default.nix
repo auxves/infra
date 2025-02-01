@@ -13,7 +13,7 @@ in
     };
 
     containers = {
-      app = {
+      affine = {
         image = "ghcr.io/toeverything/affine-graphql:stable@sha256:396f81415c2394c9718f25f9f39d0fdc07389cb24548a482c103017730e4d742";
 
         volumes = [
@@ -71,7 +71,7 @@ in
     };
 
     ingress = {
-      container = "app";
+      container = "affine";
       host = "affine.x.auxves.dev";
       port = 3010;
     };

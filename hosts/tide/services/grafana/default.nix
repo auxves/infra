@@ -9,7 +9,7 @@ in
     };
 
     containers = {
-      app = {
+      grafana = {
         image = "grafana/grafana:11.5.0@sha256:0a2874cf39c6487093c682215f7c7903ed8646d78ae5f911af945d2dfcc0a447";
         user = "root:root";
 
@@ -25,7 +25,7 @@ in
     };
 
     ingress = {
-      container = "app";
+      container = "grafana";
       host = "grafana.x.auxves.dev";
       port = 3000;
     };
