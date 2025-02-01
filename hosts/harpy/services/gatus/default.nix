@@ -49,7 +49,7 @@ in
     };
 
     containers = {
-      app = {
+      gatus = {
         image = "ghcr.io/twin/gatus:v5.15.0@sha256:45686324db605e57dfa8b0931d8d57fe06298f52685f06aa9654a1f710d461bb";
 
         environmentFiles = [ config.sops.secrets."gatus/env".path ];
@@ -62,7 +62,7 @@ in
     };
 
     ingress = {
-      container = "app";
+      container = "gatus";
       host = "status.x.auxves.dev";
       port = 8080;
     };

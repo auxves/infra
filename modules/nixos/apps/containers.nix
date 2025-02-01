@@ -30,13 +30,23 @@ let
     in
     lib.nameValuePair name (builtins.removeAttrs (lib.recursiveUpdate container changes) [ "metrics" ]);
 
+  containers = lib.mapAttrsToList processContainers config.apps;
+
   processContainers = _: app: lib.mapAttrs'
     (processContainer app)
     app.containers;
 in
 {
   config = lib.mkIf (config.apps != { }) {
-    virtualisation.oci-containers.containers = lib.foldl' lib.recursiveUpdate { }
-      (lib.mapAttrsToList processContainers config.apps);
+    assertions = builtins.concatLists (lib.mapAttrsToList
+      (_: app: [
+        {
+          assertion = app.ingress != null -> app.containers ? "${app.ingress.container}";
+          message = "Ingress must point to a valid container";
+        }
+      ])
+      config.apps);
+
+    virtualisation.oci-containers.containers = lib.foldl' lib.recursiveUpdate { } containers;
   };
 }
