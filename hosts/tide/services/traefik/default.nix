@@ -36,8 +36,8 @@ in
           "[${config.meta.addresses.public.v6}]:443:8443/udp"
         ] ++ lib.optionals (config.meta.addresses.public.v4 != null) [
           # Public
-          "${config.meta.addresses.public.v4}:443:8443/tcp"
-          "${config.meta.addresses.public.v4}:443:8443/udp"
+          "192.168.7.209:443:8443/tcp"
+          "192.168.7.209:443:8443/udp"
         ];
 
         extraOptions = [

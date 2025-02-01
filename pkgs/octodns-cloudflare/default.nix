@@ -18,6 +18,8 @@ buildPythonPackage rec {
     hash = "sha256-GbZbmfAaku+IJwmxKm6f5Qj/Dam+CRax6z49uMerOlA=";
   };
 
+  patches = [ ./keyerror-fix.patch ];
+
   build-system = [
     setuptools
   ];
