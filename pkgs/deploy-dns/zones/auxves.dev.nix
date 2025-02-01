@@ -9,7 +9,6 @@ let
       { type = "A"; value = tide.public.v4; }
       { type = "AAAA"; value = tide.public.v6; }
     ];
-
     "*.tide" = records."tide";
 
     # Internal tide
@@ -17,7 +16,6 @@ let
       { type = "A"; value = tide.internal.v4; }
       { type = "AAAA"; value = tide.internal.v6; }
     ];
-
     "*.tide.x" = records."tide.x";
 
     # Internal harpy
@@ -25,7 +23,6 @@ let
       { type = "A"; value = harpy.internal.v4; }
       { type = "AAAA"; value = harpy.internal.v6; }
     ];
-
     "*.harpy.x" = records."harpy.x";
 
     "_minecraft._tcp.mc" = [{

@@ -1,4 +1,4 @@
-{ config, ... }:
+{ lib, config, ... }:
 let
   cfg = config.apps.traefik;
 in
@@ -22,18 +22,22 @@ in
 
         environmentFiles = [ config.sops.secrets."traefik/env".path ];
 
-        ports = [
+        ports = lib.optionals (config.meta.addresses.internal.v6 != "") [
           # Internal
-          "[fd7a:115c:a1e0::3901:1456]:443:443/tcp"
-          "[fd7a:115c:a1e0::3901:1456]:443:443/udp"
-          "100.126.20.86:443:443/tcp"
-          "100.126.20.86:443:443/udp"
-
+          "[${config.meta.addresses.internal.v6}]:443:443/tcp"
+          "[${config.meta.addresses.internal.v6}]:443:443/udp"
+        ] ++ lib.optionals (config.meta.addresses.internal.v4 != "") [
+          # Internal
+          "${config.meta.addresses.internal.v4}:443:443/tcp"
+          "${config.meta.addresses.internal.v4}:443:443/udp"
+        ] ++ lib.optionals (config.meta.addresses.public.v6 != "") [
           # Public
-          "[2600:1700:78c0:130f:2e0:4cff:fe88:9afa]:443:8443/tcp"
-          "[2600:1700:78c0:130f:2e0:4cff:fe88:9afa]:443:8443/udp"
-          "192.168.7.209:443:8443/tcp"
-          "192.168.7.209:443:8443/udp"
+          "[${config.meta.addresses.public.v6}]:443:8443/tcp"
+          "[${config.meta.addresses.public.v6}]:443:8443/udp"
+        ] ++ lib.optionals (config.meta.addresses.public.v4 != "") [
+          # Public
+          "${config.meta.addresses.public.v4}:443:8443/tcp"
+          "${config.meta.addresses.public.v4}:443:8443/udp"
         ];
 
         extraOptions = [
@@ -43,6 +47,8 @@ in
 
         labels = {
           "traefik.http.routers.traefik.service" = "api@internal";
+          "traefik.http.routers.traefik.tls.domains[0].main" = "${config.networking.hostName}.x.auxves.dev";
+          "traefik.http.routers.traefik.tls.domains[0].sans" = "*.${config.networking.hostName}.x.auxves.dev";
         };
 
         metrics.port = 8080;
