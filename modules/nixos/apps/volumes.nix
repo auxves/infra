@@ -8,9 +8,9 @@ let
     let
       acls = [
         "g:wheel:rwx"
-        "d:wheel:rwx"
-        "u:services:rwx"
-        "g:services:rwx"
+        "d:g:wheel:rwx"
+        "m::rwx"
+        "d:m::rwx"
       ];
     in
     lib.optionalString (volume.type == "ephemeral") ''
@@ -25,7 +25,11 @@ in
 
     system.activationScripts.ensure-zfs-datasets.text =
       let
-        commands = builtins.map (volume: "${pkgs.zfs}/bin/zfs create -p ${lib.removePrefix "/" volume.path}") volumes;
+        commands = builtins.map
+          (volume: lib.optionalString
+            (volume.type == "zfs")
+            "${pkgs.zfs}/bin/zfs create -p ${lib.removePrefix "/" volume.path}")
+          volumes;
       in
       builtins.concatStringsSep "\n" commands;
   };

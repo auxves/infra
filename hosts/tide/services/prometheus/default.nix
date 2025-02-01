@@ -47,7 +47,7 @@ in
         image = "quay.io/navidys/prometheus-podman-exporter:v1.14.1@sha256:0976a0f5dea80a1988984d617b7d83efde99d1564a0e820ee3b17d1fb1d19861";
         user = "root:root";
 
-        cmd = [ "--collector.enable-all" "-b" ];
+        cmd = [ "--collector.enable-all" "-w" "app.service,app.component" ];
 
         environment = {
           CONTAINER_HOST = "unix:///run/podman/podman.sock";

@@ -8,15 +8,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    users.users.services = {
-      uid = 508;
-      group = "services";
-    };
-
-    users.groups.services = {
-      gid = 508;
-    };
-
     networking.firewall.interfaces."podman+".allowedUDPPorts = [ 53 ];
 
     virtualisation.podman = {
