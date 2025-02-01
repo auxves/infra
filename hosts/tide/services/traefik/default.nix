@@ -51,7 +51,7 @@ in
 
     ingress = {
       container = "traefik";
-      host = "traefik.x.auxves.dev";
+      host = "traefik.${config.networking.hostName}.x.auxves.dev";
       port = 9999;
     };
   };

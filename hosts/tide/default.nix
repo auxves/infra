@@ -94,4 +94,11 @@
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     defaultSopsFile = ./secrets.yaml;
   };
+
+  meta.addresses = {
+    public.v4 = "162.196.81.91";
+    public.v6 = "2600:1700:78c0:130f:2e0:4cff:fe88:9afa";
+    internal.v4 = "100.126.20.86";
+    internal.v6 = "fd7a:115c:a1e0::3901:1456";
+  };
 }

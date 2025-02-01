@@ -27,7 +27,7 @@ in
           ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME = "postgres";
           ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE = "disable";
           ZITADEL_EXTERNALSECURE = "true";
-          ZITADEL_EXTERNALDOMAIN = cfg.ingress.host;
+          ZITADEL_EXTERNALDOMAIN = cfg.ingress.domain;
           ZITADEL_EXTERNALPORT = "443";
         };
 
@@ -59,7 +59,7 @@ in
 
     ingress = {
       container = "zitadel";
-      host = "auth.auxves.dev";
+      domain = "auth.auxves.dev";
       type = "public";
       port = 8080;
     };
@@ -68,7 +68,7 @@ in
   monitoring.checks = [{
     name = "zitadel";
     group = "services";
-    url = "https://${cfg.ingress.host}";
+    url = "https://${cfg.ingress.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

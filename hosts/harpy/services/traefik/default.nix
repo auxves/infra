@@ -38,5 +38,11 @@ in
         metrics.port = 8080;
       };
     };
+
+    ingress = {
+      container = "traefik";
+      host = "traefik.${config.networking.hostName}.x.auxves.dev";
+      port = 9999;
+    };
   };
 }

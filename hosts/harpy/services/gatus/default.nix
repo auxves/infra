@@ -33,7 +33,7 @@ let
 
     # security.oidc = {
     #   issuer-url = "https://auth.auxves.dev";
-    #   redirect-url = "https://status.x.auxves.dev/authorization-code/callback";
+    #   redirect-url = "https://status.auxves.dev/authorization-code/callback";
     #   client-id = "$OIDC_CLIENT_ID";
     #   client-secret = "$OIDC_CLIENT_SECRET";
     #   scopes = [ "openid" ];
@@ -63,7 +63,7 @@ in
 
     ingress = {
       container = "gatus";
-      host = "status.x.auxves.dev";
+      domain = "status.auxves.dev";
       port = 8080;
     };
   };

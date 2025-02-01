@@ -88,9 +88,9 @@ let
         description = "The container port to use for ingress";
       };
 
-      host = mkOption {
+      domain = mkOption {
         type = types.str;
-        description = "The hostname to use for ingress";
+        description = "The domain to use for ingress";
       };
     };
   };
