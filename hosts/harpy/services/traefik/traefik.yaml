@@ -45,3 +45,7 @@ metrics:
 
 serversTransport:
   insecureSkipVerify: true
+
+log:
+  level: INFO
+  format: json
