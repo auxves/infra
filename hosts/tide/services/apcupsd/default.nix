@@ -12,7 +12,7 @@
       };
 
       exporter = {
-        image = "sfudeus/apcupsd_exporter:latest@sha256:944f53d0fd288931686fe01ad850b2274f7d661c646934da4daaff3644e38010";
+        image = "sfudeus/apcupsd_exporter:latest@sha256:5138b68329b3543101eb8bb3841104304ef4a004b2591175760b1ac8b71e86d0";
         cmd = [ "-apcupsd.addr=apcupsd-daemon:3551" ];
         metrics.port = 9162;
       };
