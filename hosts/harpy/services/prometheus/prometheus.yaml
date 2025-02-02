@@ -38,3 +38,9 @@ scrape_configs:
       - regex: __meta_docker_container_label_app_(.+)
         action: labelmap
         replacement: $1
+
+  - job_name: comin
+    static_configs:
+      - targets: ["host.containers.internal:4243"]
+        labels:
+          node: harpy

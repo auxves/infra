@@ -49,3 +49,9 @@ scrape_configs:
 
     static_configs:
       - targets: ["prometheus.harpy.x.auxves.dev"]
+
+  - job_name: comin
+    static_configs:
+      - targets: ["host.containers.internal:4243"]
+        labels:
+          node: tide

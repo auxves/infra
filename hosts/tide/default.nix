@@ -16,7 +16,12 @@
 
   networking.firewall = {
     trustedInterfaces = [ "tailscale0" ];
-    interfaces."podman+".allowedUDPPorts = [ 5353 ];
+    interfaces."podman+".allowedUDPPorts = [
+      5353 # mDNS
+    ];
+    interfaces."podman+".allowedTCPPorts = [
+      4243 # comin
+    ];
   };
 
   services.comin = {

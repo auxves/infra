@@ -12,6 +12,13 @@
 
   networking.hostId = "c2079aa6";
 
+  networking.firewall = {
+    trustedInterfaces = [ "tailscale0" ];
+    interfaces."podman+".allowedTCPPorts = [
+      4243 # comin
+    ];
+  };
+
   services.comin = {
     enable = true;
     remotes = [{
@@ -21,9 +28,6 @@
   };
 
   services.tailscale.enable = true;
-  networking.firewall.trustedInterfaces = [ "tailscale0" ];
-
-  services.zfs.health.enable = true;
 
   sops = {
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
