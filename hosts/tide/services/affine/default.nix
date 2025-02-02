@@ -42,11 +42,6 @@ in
 
       redis = {
         image = "redis:7.2.5@sha256:fb534a36ac2034a6374933467d971fbcbfa5d213805507f560d564851a720355";
-
-        extraOptions = [
-          "--health-cmd=redis-cli ping"
-          "--health-on-failure=stop"
-        ];
       };
 
       postgres = {
@@ -62,11 +57,6 @@ in
           POSTGRES_USER = "postgres";
           POSTGRES_DB = "affine";
         };
-
-        extraOptions = [
-          "--health-cmd=pg_isready -d \${POSTGRES_USER} -U \${POSTGRES_DB}"
-          "--health-on-failure=stop"
-        ];
       };
     };
 

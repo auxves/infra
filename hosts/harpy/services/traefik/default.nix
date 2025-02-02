@@ -40,11 +40,6 @@ in
           "${config.meta.addresses.public.v4}:443:8443/udp"
         ];
 
-        extraOptions = [
-          "--health-cmd=traefik healthcheck"
-          "--health-on-failure=stop"
-        ];
-
         labels = {
           "traefik.http.routers.traefik.service" = "api@internal";
           "traefik.http.routers.traefik.tls.certresolver" = "letsencrypt";
