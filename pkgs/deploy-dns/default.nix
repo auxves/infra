@@ -69,16 +69,13 @@ let
     };
 
     processors = {
-      type-whitelist = {
-        class = "octodns.processor.filter.TypeAllowlistFilter";
-        allowlist = [ "A" "AAAA" "SRV" ];
-      };
+      ownership.class = "octodns.processor.ownership.OwnershipProcessor";
     };
 
     zones = {
       "*" = {
         sources = [ "zones" ];
-        processors = [ "type-whitelist" ];
+        processors = [ "ownership" ];
         targets = [ "cloudflare" ];
       };
     };
