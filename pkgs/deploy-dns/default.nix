@@ -14,9 +14,10 @@ let
 
   calculateZone = name: config:
     let
-      applicableHosts = lib.filterHosts (host: host.cfg ? apps);
+      appsHosts = lib.filterHosts (host: host.cfg ? apps);
+      metaHosts = lib.filterHosts (host: host.cfg ? meta);
 
-      ingresses = lib.pipe applicableHosts [
+      ingresses = lib.pipe appsHosts [
         (builtins.concatMap lib.ingressesOfHost)
         (builtins.filter (ingress: lib.hasSuffix name ingress.domain))
         (builtins.filter (ingress: !(lib.hasInfix ".x." ingress.domain)))
@@ -35,7 +36,28 @@ let
         ];
       };
 
-      records = builtins.map ingressToRecord ingresses;
+      hostToRecords = host:
+        let
+          addrs = host.cfg.meta.addresses;
+
+          publicRecords = [ ]
+            ++ lib.optional (addrs.public.v4 != null) { type = "A"; value = addrs.public.v4; }
+            ++ lib.optional (addrs.public.v6 != null) { type = "AAAA"; value = addrs.public.v6; };
+
+          internalRecords = [ ]
+            ++ lib.optional (addrs.internal.v4 != null) { type = "A"; value = addrs.internal.v4; }
+            ++ lib.optional (addrs.internal.v6 != null) { type = "AAAA"; value = addrs.internal.v6; };
+        in
+        { } // lib.optionalAttrs (publicRecords != [ ]) {
+          "${host.name}" = publicRecords;
+          "*.${host.name}" = publicRecords;
+        } // lib.optionalAttrs (internalRecords != [ ]) {
+          "${host.name}.x" = internalRecords;
+          "*.${host.name}.x" = internalRecords;
+        };
+
+      records = builtins.map ingressToRecord ingresses
+        ++ builtins.map hostToRecords metaHosts;
     in
     lib.foldl' lib.recursiveUpdate config records;
 
