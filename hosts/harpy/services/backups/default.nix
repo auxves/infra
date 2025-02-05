@@ -2,7 +2,6 @@
   services.zfs = {
     autoScrub.enable = true;
     trim.enable = true;
-    health.enable = true;
   };
 
   users.groups.syncoid = { };
