@@ -7,7 +7,6 @@ rec {
   all = lib.composeManyExtensions [
     default
     inputs.fenix.overlays.default
-    inputs.lix.overlays.default
   ];
 
   default = final: prev: lib.mapAttrs
