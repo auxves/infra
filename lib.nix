@@ -4,12 +4,6 @@ let
   pkgsFor = system: import inputs.nixpkgs { inherit system overlays; };
 
   hostList = builtins.attrValues self.hosts;
-
-  buildWith = builder: host: builder {
-    pkgs = pkgsFor host.system;
-    specialArgs = { inherit self host lib; };
-    modules = [ ./modules/common ./modules/${host.variant} ./hosts/${host.name} ];
-  };
 in
 inputs.nixpkgs.lib.extend (_: _: {
   inherit pkgsFor;
@@ -33,8 +27,21 @@ inputs.nixpkgs.lib.extend (_: _: {
     map (n: dir + "/${n}") (builtins.attrNames files);
 
   variants = {
-    nixos = buildWith inputs.nixpkgs.lib.nixosSystem;
-    darwin = buildWith inputs.darwin.lib.darwinSystem;
+    nixos = host: inputs.nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit self host lib; };
+      modules = [
+        ./modules/common ./modules/${host.variant} ./hosts/${host.name}
+        { nixpkgs.pkgs = pkgsFor host.system; }
+      ];
+    };
+
+    darwin = host: inputs.darwin.lib.darwinSystem {
+      specialArgs = { inherit self host lib; };
+      modules = [
+        ./modules/common ./modules/${host.variant} ./hosts/${host.name}
+        { nixpkgs.pkgs = pkgsFor host.system; }
+      ];
+    };
   };
 
   buildVariant = variant:
