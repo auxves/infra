@@ -2,7 +2,7 @@
   apps.apcupsd = {
     containers = {
       daemon = {
-        image = "gregewing/apcupsd:latest@sha256:67c34d6b993f60f5d953e385b07d8db6276050c9237c092d357964f9fd702ee9";
+        image = "gregewing/apcupsd:latest@sha256:0b0ffda45942bbc5d8d6bda30a33f1c6dc4fdd16db672085aa6a757b96110467";
 
         extraOptions = [ "--device=/dev/usb/hiddev0" ];
 
