@@ -58,6 +58,8 @@ in
           "${cfg.volumes.gatus.path}:/data"
           "${yaml.generate "gatus.yaml" gatusConfig}:/config/config.yaml"
         ];
+
+        metrics.port = 8080;
       };
     };
 
