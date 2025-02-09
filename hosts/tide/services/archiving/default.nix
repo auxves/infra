@@ -39,7 +39,7 @@ in
   };
 
   systemd.services.podman-archiving-ao3 = {
-    startAt = "*:*:00";
+    # startAt = "*:*:00";
     serviceConfig.Restart = lib.mkForce "no";
   };
 }
