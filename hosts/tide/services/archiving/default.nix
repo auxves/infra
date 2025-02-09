@@ -7,8 +7,7 @@ in
 
   apps.archiving = {
     volumes = {
-      books = { type = "zfs"; path = "/storage/media/books"; };
-      ao3 = { type = "zfs"; };
+      ao3 = { type = "zfs"; path = "/storage/media/books/ao3"; };
     };
 
     containers = {
@@ -25,21 +24,19 @@ in
 
         environment = {
           STATE_DIR = "/state";
-          ARCHIVE_DIR = "/media/ao3";
         };
 
         environmentFiles = [ config.sops.secrets."ao3/env".path ];
 
         volumes = [
           "${cfg.volumes.ao3.path}:/state"
-          "${cfg.volumes.books.path}:/media"
         ];
       };
     };
   };
 
   systemd.services.podman-archiving-ao3 = {
-    # startAt = "*:*:00";
+    startAt = "daily";
     serviceConfig.Restart = lib.mkForce "no";
   };
 }

@@ -17,13 +17,16 @@ export def "bookmarks get" [
             | parse "/{type}/{id}" | get 0.id
 
         let name = $el | pup -p 'h4 a:first-child text{}' | str trim
-        let author = $el | pup -p 'a[rel=author] text{}' | str trim
+        let author = $el | pup -p 'a[rel=author]:nth-child(2) text{}' | str trim
         let updated = $el | pup -p 'ul.required-tags + p.datetime text{}' | into datetime
+        let series = $el | pup -p 'h6:contains("Series") + ul a text{}' | str trim
+            | if ($in | is-not-empty) { $in } else { null }
 
         {
             id: $id
             name: $name
             author: $author
+            series: $series
             updated: $updated
         }
     }

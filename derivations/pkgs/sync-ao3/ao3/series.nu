@@ -4,8 +4,8 @@ export def "series get" [id] {
     let url = $"https://archiveofourown.org/series/($id)"
     let res = auth curl -L $url
 
-    let name = $res | pup -p 'h2 text{}' | str trim
-    let author = $res | pup -p 'dl a[rel=author] text{}'
+    let series_name = $res | pup -p 'h2 text{}' | str trim
+    let author = $res | pup -p 'dl a[rel=author] text{}' | str trim
     let description = $res | pup -p 'dl.series > :nth-child(8) text{}' | str trim
     let published = $res | pup -p 'dl.series > :nth-child(4) text{}' | into datetime
     let updated = $res | pup -p 'dl.series > :nth-child(6) text{}' | into datetime
@@ -19,13 +19,14 @@ export def "series get" [id] {
                 | parse "/{type}/{id}" | get 0.id
 
             let name = $el | pup -p 'h4 a:first-child text{}' | str trim
-            let author = $el | pup -p 'a[rel=author] text{}' | str trim
+            let author = $el | pup -p 'a[rel=author]:nth-child(2) text{}' | str trim
             let updated = $el | pup -p 'p.datetime text{}' | into datetime
 
             {
                 id: $id
                 name: $name
                 author: $author
+                series: $series_name
                 updated: $updated
             }
         }
@@ -33,7 +34,7 @@ export def "series get" [id] {
     {
         id: $id
         url: $url
-        name: $name
+        name: $series_name
         author: $author
         description: $description
         published: $published

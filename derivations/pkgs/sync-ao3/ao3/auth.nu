@@ -1,4 +1,4 @@
-def cookie_file [] { $env.STATE_DIR | path join "session.txt" }
+def cookie_file [] { $env.STATE_DIR | path join ".session.txt" }
 
 export def --wrapped "auth curl" [...rest] {
     if (cookie_file | path exists) {
