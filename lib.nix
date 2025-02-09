@@ -56,7 +56,7 @@ inputs.nixpkgs.lib.extend (_: _: {
       final = pkgsFor system;
       prev = import inputs.nixpkgs { inherit system; };
     in
-    self.overlays.default final prev;
+    self.overlays.packages final prev;
 
   replaceAll = attrs: builtins.replaceStrings
     (builtins.attrNames attrs)

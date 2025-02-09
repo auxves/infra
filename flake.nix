@@ -34,7 +34,7 @@
     packages = self.lib.forAllSystems self.lib.buildPackages;
     devShells = self.lib.forAllSystems (import ./shells self);
 
-    overlays = import ./pkgs/overlays.nix self;
+    overlays = import ./overlays.nix self;
 
     nixosConfigurations = self.lib.buildVariant "nixos";
     darwinConfigurations = self.lib.buildVariant "darwin";
