@@ -1,11 +1,18 @@
 def cookie_file [] { $env.STATE_DIR | path join ".session.txt" }
 
 export def --wrapped "auth curl" [...rest] {
-    if (cookie_file | path exists) {
+    let result = if (cookie_file | path exists) {
         curl -s -c (cookie_file) -b (cookie_file) ...$rest
     } else {
         curl -s -c (cookie_file) ...$rest
     }
+
+    if $result != "Retry later" { return $result }
+
+    print "[warn] Rate limit has been reached, retrying in 5 minutes"
+
+    sleep 5min
+    auth curl ...$rest
 }
 
 export def "auth login" [user: string, password: string] {
