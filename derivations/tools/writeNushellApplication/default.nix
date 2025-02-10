@@ -10,11 +10,18 @@ let
   # way easier.
   toNu = v: "(\"${lib.escape ["\"" "\\"] (builtins.toJSON v)}\" | from json)";
 
-  makeBinPathArray = pkgs:
-    let
-      binOutputs = builtins.filter (x: x != null) (map (pkg: lib.getOutput "bin" pkg) pkgs);
-    in
-    map (output: output + "/bin") binOutputs;
+  makeBinPathArray = pkgs: lib.pipe pkgs [
+    (map (lib.getOutput "bin"))
+    (builtins.filter (x: x != null))
+    (map (output: output + "/bin"))
+  ];
+
+  makeNuLibPathArray = pkgs: lib.pipe pkgs [
+    (builtins.filter (drv: drv ? nuModule))
+    (map (lib.getOutput "out"))
+    (builtins.filter (x: x != null))
+    (map (output: output + "/lib"))
+  ];
 in
 
 {
@@ -33,11 +40,6 @@ in
   Type: [String|Derivation]
    */
   runtimeInputs ? [ ]
-, /*
-  Modules to make available to the nu script
-  Type: [{ name: string; path: string | derivation; }]
-   */
-  modules ? [ ]
 , /*
   Extra environment variables to set at runtime.
   Type: AttrSet
@@ -88,9 +90,10 @@ writeTextFile {
   '' + lib.optionalString (runtimeInputs != [ ]) ''
 
     $env.PATH = ${toNu (makeBinPathArray runtimeInputs)} ++ $env.PATH
-  '' + lib.optionalString (modules != [ ]) ''
 
-    const NU_LIB_DIRS = [ "${linkFarm "${name}-modules" modules}" ]
+    const NU_LIB_DIRS = [ ${builtins.concatStringsSep " " (
+      builtins.map (s: "'${s}'") (makeNuLibPathArray runtimeInputs)
+    )} ]
   '' + ''
 
     ${text}
