@@ -47,7 +47,7 @@ def main [
         }
         | flatten
         | uniq-by id
-        | reject type
+        | reject -i type
 
     let saved_state = get_saved_state
         | select id updated

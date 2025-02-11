@@ -1,7 +1,9 @@
 use utils.nu *
 
-export def "series parse" [html: string] {
-    let id = $html | | pup 'h6:contains("Series") + ul a attr{href}' | parse "/series/{id}" | get 0.id
+export def "series parse" [
+    id: string      # id of the series
+    html: string    # html content of the series page
+] {
     let name = $html | pup -p 'h2 text{}' | str trim
     let author = $html | pup -p 'dl a[rel=author] json{}' | from json | each { $in.text } | str join ", "
     let description = $html | pup -p 'dt:contains("Description") + dd text{}' | str trim
@@ -51,7 +53,7 @@ export def "series get" [
     let url = $"/series/($id)"
     let res = do $client.get $url
 
-    let series = series parse $res
+    let series = series parse $id $res
     let works = $series | get works
 
     let pages = $res | pup -p 'ul + h4 + ol[role=navigation] li:not([class]) text{}' | lines | skip 1
@@ -62,7 +64,7 @@ export def "series get" [
         let url = $"/series/($id)?page=($page)"
         let res = do $client.get $url
 
-        $acc ++ (series parse $res | get works)
+        $acc ++ (series parse $id $res | get works)
     }
 
     $series | upsert works $works

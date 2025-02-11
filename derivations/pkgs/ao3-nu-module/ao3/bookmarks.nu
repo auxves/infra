@@ -1,7 +1,9 @@
 use series.nu *
 use utils.nu *
 
-export def "bookmarks parse" [html] {
+export def "bookmarks parse" [
+    html: string    # html of the bookmarks page
+] {
     $html | pup 'li.bookmark attr{id}'
     | lines
     | each { |css_id|

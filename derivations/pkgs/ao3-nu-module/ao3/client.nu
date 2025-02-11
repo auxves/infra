@@ -5,15 +5,15 @@ export def "client new" [
 ] {
     let login_url = "https://archiveofourown.org/users/login"
 
-    let state_dir = $state_dir | default (mktemp -d)
+    let state_dir = if $state_dir != null { $state_dir } else { mktemp -d }
     mkdir $state_dir
 
     let cookie_file = $state_dir | path join "ao3.session"
 
-    let authenticity_token = curl -L $login_url -c $cookie_file
+    let authenticity_token = curl -sL $login_url -c $cookie_file
         | pup 'meta[name=csrf-token] attr{content}'
 
-    let login_resp = (curl -X POST -c $cookie_file -b $cookie_file
+    let login_resp = (curl -s -X POST -c $cookie_file -b $cookie_file
         -H "Content-Type: application/x-www-form-urlencoded"
         --data-urlencode $"user[login]=($user)"
         --data-urlencode $"user[password]=($password)"
