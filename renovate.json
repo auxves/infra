@@ -46,7 +46,15 @@
   },
 
   "nix": {
-    "enabled": true
+    "enabled": true,
+    "automerge": false,
+
+    "packageRules": [
+      {
+        "matchPackageNames": ["comin"],
+        "enabled": false
+      }
+    ]
   },
 
   "customManagers": [
