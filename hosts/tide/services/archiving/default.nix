@@ -24,6 +24,7 @@ in
 
         environment = {
           STATE_DIR = "/state";
+          LOG_LEVEL = "DEBUG";
         };
 
         environmentFiles = [ config.sops.secrets."ao3/env".path ];
