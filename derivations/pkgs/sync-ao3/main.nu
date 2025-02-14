@@ -1,5 +1,5 @@
 export-env {
-    $env.NU_LOG_FORMAT = "%ANSI_START%level=%LEVEL% | %MSG%%ANSI_STOP%"
+    $env.NU_LOG_FORMAT = "%ANSI_START%[%LEVEL%] %MSG%%ANSI_STOP%"
     $env.NU_LOG_LEVEL = $env.NU_LOG_LEVEL? | default $env.LOG_LEVEL? | default "INFO"
 }
 
