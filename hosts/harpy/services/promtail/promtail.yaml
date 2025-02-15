@@ -3,7 +3,7 @@ server:
   grpc_listen_port: 0
 
 positions:
-  filename: /tmp/positions.yaml
+  filename: /data/positions.yaml
 
 clients:
   - url: https://loki.tide.x.auxves.dev/loki/api/v1/push
