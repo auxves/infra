@@ -35,7 +35,14 @@ export def "works get" [
     let url = $"/works/($id)"
     let res = do $client.get $url
 
-    works parse $id $res
+    if $res.code == 404 {
+        error make {
+            msg: "work not found"
+            label: { text: "id", span: (metadata $id).span }
+        }
+    }
+
+    works parse $id $res.body
 }
 
 export def "works download" [

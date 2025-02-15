@@ -53,10 +53,17 @@ export def "series get" [
     let url = $"/series/($id)"
     let res = do $client.get $url
 
-    let series = series parse $id $res
+    if $res.code == 404 {
+        error make {
+            msg: "series not found"
+            label: { text: "id", span: (metadata $id).span }
+        }
+    }
+
+    let series = series parse $id $res.body
     let works = $series | get works
 
-    let pages = $res | pup -p 'ul + h4 + ol[role=navigation] li:not([class]) text{}' | lines | skip 1
+    let pages = $res.body | pup -p 'ul + h4 + ol[role=navigation] li:not([class]) text{}' | lines | skip 1
 
     let works = $pages | reduce --fold $works { |page, acc|
         sleep $delay
@@ -64,7 +71,7 @@ export def "series get" [
         let url = $"/series/($id)?page=($page)"
         let res = do $client.get $url
 
-        $acc ++ (series parse $id $res | get works)
+        $acc ++ (series parse $id $res.body | get works)
     }
 
     $series | upsert works $works

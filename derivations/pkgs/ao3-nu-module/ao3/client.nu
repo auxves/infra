@@ -3,16 +3,19 @@ use std/log
 const BASE_URI = "https://archiveofourown.org"
 
 def --wrapped curl-retry [
-    --interval (-i) = 1min      # Interval between attempts
+    --interval (-i) = 2min      # Interval between attempts
     --times (-t) = 5            # Number of attempts to make before throwing an error
     ...rest
 ] {
     for attempt in 1..=$times {
-        let resp = curl ...$rest
+        let res = curl -s -w "%{stderr}%{json}" ...$rest | complete
+        let meta = $res.stderr | from json
 
-        if ($resp != "Retry later") { return $resp }
+        if ($meta.response_code != 429) {
+            return {body: $res.stdout, code: $meta.response_code}
+        }
 
-        log warning $"ao3: Rate limit exceeded, waiting ($interval)"
+        log warning $"Rate limit exceeded, waiting ($interval)"
         sleep $interval
     }
 
@@ -20,9 +23,10 @@ def --wrapped curl-retry [
 }
 
 export def "client new" [
-    user: string                # ao3 user to log in as
-    password: string            # ao3 password to use
-    --state-dir (-s): path      # path to store session information; if not specified will be a tmpdir
+    user: string                        # ao3 user to log in as
+    password: string                    # ao3 password to use
+    --state-dir (-s): path              # path to store session information; if not specified will be a tmpdir
+    --interval (-i) = 2min              # time between retry attempts when rate-limited
 ] {
     let login_url = $"($BASE_URI)/users/login"
 
@@ -31,29 +35,37 @@ export def "client new" [
 
     let cookie_file = $state_dir | path join "ao3.session"
 
-    let authenticity_token = curl-retry -sL $login_url -c $cookie_file
-        | pup 'meta[name=csrf-token] attr{content}'
+    let res = curl-retry -i $interval -L $login_url -c $cookie_file
 
-    let login_resp = (curl-retry -s -X POST -c $cookie_file -b $cookie_file
+    if $res.code == 302 {
+        return # already logged in
+    }
+
+    let token = $res.body | pup 'meta[name=csrf-token] attr{content}'
+
+    let res = (curl-retry  -i $interval -X POST
+        -c $cookie_file -b $cookie_file
         -H "Content-Type: application/x-www-form-urlencoded"
         --data-urlencode $"user[login]=($user)"
         --data-urlencode $"user[password]=($password)"
-        --data-urlencode $"authenticity_token=($authenticity_token)"
+        --data-urlencode $"authenticity_token=($token)"
         $login_url)
 
-    if ($login_resp | str contains "auth_error") {
+    if $res.code != 302 {
         error make {msg: "authentication error"}
     }
 
     {
-        get: { |path| curl-retry -sL -c $cookie_file -b $cookie_file $"($BASE_URI)($path)" }
-        download: { |url, filepath| curl-retry -sL -c $cookie_file -b $cookie_file -o $filepath $"($BASE_URI)($url)" }
+        get: { |path| curl-retry -i $interval -L -c $cookie_file -b $cookie_file $"($BASE_URI)($path)" }
+        download: { |url, filepath| curl-retry -i $interval -L -c $cookie_file -b $cookie_file -o $filepath $"($BASE_URI)($url)" }
     }
 }
 
-export def "client new-guest" [] {
+export def "client new-guest" [
+    --interval (-i) = 2min   # time between retry attempts when rate-limited
+] {
     {
-        get: { |path| curl-retry -sL $"($BASE_URI)($path)" }
-        download: { |url, filepath| curl-retry -sL -o $filepath $"($BASE_URI)($url)" }
+        get: { |path| curl-retry -i $interval -L $"($BASE_URI)($path)" }
+        download: { |url, filepath| curl-retry -i $interval -L -o $filepath $"($BASE_URI)($url)" }
     }
 }

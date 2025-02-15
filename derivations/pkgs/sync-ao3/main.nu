@@ -1,5 +1,5 @@
 export-env {
-    $env.NU_LOG_FORMAT = "%ANSI_START%[%LEVEL%] %MSG%%ANSI_STOP%"
+    $env.NU_LOG_FORMAT = "%ANSI_START%lvl=%LEVEL% | %MSG%%ANSI_STOP%"
     $env.NU_LOG_LEVEL = $env.NU_LOG_LEVEL? | default $env.LOG_LEVEL? | default "INFO"
 }
 
@@ -18,13 +18,12 @@ def read-state [] {
     }
 }
 
-def save-state [state] {
-    if ($state | is-empty) and (read-state | is-not-empty) {
-        log warning "New state is empty, not overwriting!"
-    } else {
-        $state | save -f $state_file
-        log info "Saved new state successfully"
-    }
+def update-state [delta] {
+    $delta
+    | select id name author series fandoms updated
+    | append (read-state)
+    | uniq-by id
+    | save -f $state_file
 }
 
 def main [
@@ -36,7 +35,7 @@ def main [
     log info "Logging into Archive of Our Own..."
 
     let cli = try {
-        client new $user $password -s $state_dir
+        client new $user $password -s $state_dir -i 5min
     } catch { |err|
         log error $"Unable to log in: ($err.msg)"
         exit 1
@@ -51,12 +50,12 @@ def main [
         | each { |entry|
             match $entry.type {
                 "work" => [ $entry ]
-                "series" => (do {
+                "series" => {
                     log debug $"Fetching series id=($entry.id)"
 
                     sleep 5sec
                     series get -c $cli -d 5sec $entry.id | get works
-                })
+                }
             }
         }
         | flatten
@@ -75,8 +74,7 @@ def main [
 
     let modified_entries = $incoming_state
         | join -l $saved_state id
-        | default null last_updated
-        | where { $in.updated != $in.last_updated }
+        | where { $in.updated != $in.last_updated? }
 
     log debug $"Modified: ($modified_entries | get id | to json --raw)"
 
@@ -88,8 +86,7 @@ def main [
         let pos = $entry.index + 1
         let work = $entry.item
 
-        log info $"Downloading work ($pos)/($total)"
-        log debug $"Work ID: ($work.id)"
+        log info $"Downloading work id=($work.id) \(($pos)/($total)\)"
 
         let filepath = $state_dir | path join $"($work.id).epub"
 
@@ -107,6 +104,7 @@ def main [
     }
 
     if not $dry_run {
-        save-state $incoming_state
+        update-state $incoming_state
+        log info "Updated state successfully"
     }
 }

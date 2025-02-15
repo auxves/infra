@@ -44,9 +44,16 @@ export def "bookmarks get" [
     let url = $"/users/($user)/bookmarks?page=1"
     let res = do $client.get $url
 
-    let entries = bookmarks parse $res
+    if $res.code == 404 {
+        error make {
+            msg: "user not found"
+            label: { text: "user", span: (metadata $user).span }
+        }
+    }
 
-    let pages = $res | pup -p 'ul + h4 + ol[role=navigation] li:not([class]) text{}' | lines | skip 1
+    let entries = bookmarks parse $res.body
+
+    let pages = $res.body | pup -p 'ul + h4 + ol[role=navigation] li:not([class]) text{}' | lines | skip 1
 
     $pages | reduce --fold $entries { |page, acc|
         sleep $delay
@@ -54,6 +61,6 @@ export def "bookmarks get" [
         let url = $"/users/($user)/bookmarks?page=($page)"
         let res = do $client.get $url
 
-        $acc ++ (bookmarks parse $res)
+        $acc ++ (bookmarks parse $res.body)
     }
 }
