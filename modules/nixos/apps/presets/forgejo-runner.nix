@@ -32,6 +32,13 @@ let
   '';
 
   configFile = yaml.generate "runner-config.yml" {
+    runner = {
+      capacity = 5;
+      shutdown_timeout = 0;
+    };
+
+    cache.enable = true;
+
     containers.enable_ipv6 = true;
   };
 in
@@ -78,6 +85,7 @@ in
       podman = {
         image = "quay.io/podman/stable:v5.3.2@sha256:5bd04fc5b196eaf1a9ecfd5544f4c435edb09f69c2befe45e511cb9681c996fd";
         user = "podman";
+        extraOptions = [ "--privileged" ];
         cmd = [ "podman" "system" "service" "-t=0" "tcp://0.0.0.0:2375" ];
       };
     };
