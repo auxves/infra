@@ -11,7 +11,7 @@
       tokenFile = config.sops.secrets."forgejo/runner-env".path;
 
       labels = [
-        "ubuntu-latest:docker://ubuntu:noble"
+        "ubuntu-latest:docker://node:23-bookworm"
         "nixos-latest:docker://nixos/nix"
       ];
 
