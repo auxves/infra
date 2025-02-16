@@ -67,6 +67,12 @@ let
             else "/storage/services/${appName}";
         }.${config.type};
       };
+
+      acls = mkOption {
+        type = types.listOf types.str;
+        description = "Additional ACLs to assign to this volume";
+        default = [ ];
+      };
     };
   };
 

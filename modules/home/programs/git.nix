@@ -51,5 +51,7 @@ in
         signByDefault = true;
       };
     };
+
+    programs.git-credential-oauth.enable = true;
   };
 }

@@ -11,7 +11,7 @@ let
         "d:g:wheel:rwx"
         "m::rwx"
         "d:m::rwx"
-      ];
+      ] ++ volume.acls;
     in
     lib.optionalString (volume.type == "ephemeral") ''
       d ${volume.path} 0770 root root -

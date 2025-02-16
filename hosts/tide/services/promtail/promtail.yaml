@@ -19,6 +19,10 @@ scrape_configs:
       - decolorize:
 
     relabel_configs:
+      - source_labels: [__meta_docker_container_label_app_service]
+        action: keep
+        regex: ".+"
+
       - source_labels: ["__meta_docker_container_name"]
         regex: "/(.*)"
         target_label: container
