@@ -3,8 +3,6 @@ let
   cfg = config.apps.forgejo;
 in
 {
-  sops.secrets."forgejo/runner-env" = { };
-
   apps.forgejo = {
     volumes = {
       forgejo = { type = "zfs"; };
