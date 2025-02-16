@@ -1,4 +1,4 @@
-{ lib, config, options, ... }:
+{ self, lib, config, options, pkgs, ... }:
 let
   metricsOptions = {
     options = with lib; {
@@ -39,7 +39,7 @@ let
     };
   };
 
-  volumeOptions = appName: { name, config, ... }: {
+  volumeOptions = { name, appName, config, ... }: {
     options = with lib; {
       name = mkOption {
         type = types.str;
@@ -76,7 +76,7 @@ let
     };
   };
 
-  ingressOptions = appName: {
+  ingressOptions = { appName, ... }: {
     options = with lib; {
       type = mkOption {
         type = types.enum [ "internal" "public" ];
@@ -103,6 +103,8 @@ let
   };
 
   appOptions = { name, ... }: {
+    imports = [ ./presets ];
+
     options = with lib; {
       name = mkOption {
         type = types.str;
@@ -112,19 +114,28 @@ let
       };
 
       containers = mkOption {
-        type = types.attrsOf (types.submodule containerOptions);
+        type = types.attrsOf (types.submoduleWith {
+          modules = [ containerOptions ];
+          specialArgs = { appName = name; };
+        });
         default = { };
         description = "The containers that provide the application";
       };
 
       volumes = mkOption {
-        type = types.attrsOf (types.submodule (volumeOptions name));
+        type = types.attrsOf (types.submoduleWith {
+          modules = [ volumeOptions ];
+          specialArgs = { appName = name; };
+        });
         default = { };
         description = "The volumes to create";
       };
 
       ingress = mkOption {
-        type = types.nullOr (types.submodule (ingressOptions name));
+        type = types.nullOr (types.submoduleWith {
+          modules = [ ingressOptions ];
+          specialArgs = { appName = name; };
+        });
         default = null;
         description = "Ingress options for the application";
       };
@@ -133,12 +144,18 @@ let
 
 in
 {
-  imports = lib.readModules ./.;
+  imports = [ ./containers.nix ./volumes.nix ];
 
   options = with lib; {
     apps = mkOption {
       default = { };
-      type = types.attrsOf (types.submodule appOptions);
+      type = types.attrsOf (types.submoduleWith {
+        modules = [ appOptions ];
+        specialArgs = {
+          inherit self lib pkgs;
+          osConfig = config;
+        };
+      });
       description = "Applications to host on this node";
     };
   };
