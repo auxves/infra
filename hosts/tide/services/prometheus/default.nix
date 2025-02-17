@@ -30,7 +30,7 @@ in
   apps.exporters = {
     containers = {
       node = {
-        image = "quay.io/prometheus/node-exporter:v1.8.2@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706";
+        image = "quay.io/prometheus/node-exporter:v1.9.0@sha256:c99d7ee4d12a38661788f60d9eca493f08584e2e544bbd3b3fca64749f86b848";
         extraOptions = [ "--pid=host" ];
         volumes = [ "/:/host:ro,rslave" ];
         cmd = [ "--path.rootfs=/host" ];
