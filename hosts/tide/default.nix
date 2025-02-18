@@ -1,8 +1,5 @@
-{ self, config, pkgs, ... }:
-{
+{ config, pkgs, ... }: {
   imports = [
-    self.inputs.comin.nixosModules.comin
-    self.inputs.sops.nixosModules.sops
     ./hardware.nix
     ./services
   ];
@@ -10,6 +7,12 @@
   presets = {
     home.enable = true;
     containers.enable = true;
+    emulation.enable = true;
+
+    builders = {
+      volunteer = true;
+      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUNWcC8vMlNYcHY1bWdQT0dxZ2NSUnVYMXRrS1VQN2dRNVk2SWRKb0YxTHAgcm9vdEB0aWRlCg==";
+    };
   };
 
   networking.hostId = "c2079ac5";

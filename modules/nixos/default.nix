@@ -3,6 +3,8 @@
   imports = lib.readModules ./. ++ [
     self.inputs.lanzaboote.nixosModules.lanzaboote
     self.inputs.disko.nixosModules.disko
+    self.inputs.comin.nixosModules.comin
+    self.inputs.sops.nixosModules.sops
   ];
 
   nix.settings = {

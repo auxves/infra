@@ -1,7 +1,5 @@
-{ self, ... }: {
+{ ... }: {
   imports = [
-    self.inputs.comin.nixosModules.comin
-    self.inputs.sops.nixosModules.sops
     ./hardware.nix
     ./services
   ];
