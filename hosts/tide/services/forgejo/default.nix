@@ -12,6 +12,11 @@ in
       forgejo = {
         image = "codeberg.org/forgejo/forgejo:10.0.1@sha256:7bb6f1e34a5669f634948ecb613c301bf756de93e8ecc1247d57012d4d649e64";
 
+        environment = {
+          FORGEJO__SERVER__DOMAIN = cfg.ingress.domain;
+          FORGEJO__SERVER__ROOT_URL = "https://${cfg.ingress.domain}/";
+        };
+
         volumes = [
           "${cfg.volumes.forgejo.path}:/data"
           "/etc/timezone:/etc/timezone:ro"
