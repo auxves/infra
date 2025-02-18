@@ -22,7 +22,7 @@ in
 
     ingress = {
       container = "forgejo";
-      domain = "git.auxves.dev";
+      domain = "forge.auxves.dev";
       port = 3000;
     };
   };
