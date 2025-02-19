@@ -29,6 +29,7 @@ in
 
       # Containers
       docker-client
+      docker-credential-helpers
       podman
 
       # Man
