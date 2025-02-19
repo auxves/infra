@@ -26,6 +26,18 @@ def update-state [delta] {
     | save -f $state_file
 }
 
+def size-of [file: path] {
+    du $file | get physical | into int
+}
+
+def is-safe-to-overwrite [old: path, new: path] {
+    let size_new = size-of $new
+    let size_old = size-of $old
+    let min_size = $size_old * 0.8
+
+    $size_new > $min_size
+}
+
 def main [
     --dry-run   # if enabled, no changes will be done to disk
 ] {
@@ -82,29 +94,39 @@ def main [
 
     log info $"There are ($total) works that need to be archived"
 
-    for entry in ($modified_entries | enumerate) {
-        let pos = $entry.index + 1
-        let work = $entry.item
+    if $dry_run { return }
 
-        log info $"Downloading work id=($work.id) \(($pos)/($total)\)"
+    let delta = $modified_entries
+        | enumerate
+        | each { |entry|
+            let pos = $entry.index + 1
+            let work = $entry.item
 
-        let filepath = $state_dir | path join $"($work.id).epub"
+            let final_path = $state_dir | path join $"($work.id).epub"
+            $final_path | path dirname | mkdir $in
+            let download_path = $final_path ++ ".download"
 
-        if not $dry_run {
+            log info $"Downloading work id=($work.id) \(($pos)/($total)\)"
+            sleep 10sec # to avoid rate-limiting
+
             try {
-                $filepath | path dirname | mkdir $in
-                works download -c $cli $work.id $filepath
+                works download -c $cli $work.id $download_path
             } catch { |err|
-                log error $"Unable to download: ($err.msg)"
-                exit 1
+                log error $"Work id=($work.id) did not download successfully: ($err.msg)"
+                return
             }
 
-            sleep 10sec # to avoid rate-limiting
-        }
-    }
+            if ($final_path | exists) and not (is-safe-to-overwrite $final_path $download_path) {
+                log warning $"Work id=($work.id) cannot be overwritten safely, skipping..."
+                rm -f $download_path
+                return
+            }
 
-    if not $dry_run {
-        update-state $incoming_state
-        log info "Updated state successfully"
-    }
+            mv -f $download_path $final_path
+
+            $work
+        }
+
+    update-state $delta
+    log info "Updated state successfully"
 }

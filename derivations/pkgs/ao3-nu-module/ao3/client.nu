@@ -57,7 +57,6 @@ export def "client new" [
 
     {
         get: { |path| curl-retry -i $interval -L -c $cookie_file -b $cookie_file $"($BASE_URI)($path)" }
-        download: { |url, filepath| curl-retry -i $interval -L -c $cookie_file -b $cookie_file -o $filepath $"($BASE_URI)($url)" }
     }
 }
 
@@ -66,6 +65,5 @@ export def "client new-guest" [
 ] {
     {
         get: { |path| curl-retry -i $interval -L $"($BASE_URI)($path)" }
-        download: { |url, filepath| curl-retry -i $interval -L -o $filepath $"($BASE_URI)($url)" }
     }
 }

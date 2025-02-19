@@ -51,5 +51,16 @@ export def "works download" [
     --client (-c): record       # client obtained from client new-<type>
 ] {
     let url = $"/downloads/($id)/Work.epub"
-    do $client.download $url $path
+
+    let res = do $client.get $url $path
+
+    if $res.code != 200 {
+        error make {msg: $"got status ($res.code)"}
+    }
+
+    if ($res.body | describe) != "binary" {
+        error make {msg: $"invalid body"}
+    }
+
+    $res.body | save -f $path
 }

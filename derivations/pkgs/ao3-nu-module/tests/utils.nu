@@ -13,7 +13,5 @@ export def "client new-mock" [] {
                 { body: "", code: 404 }
             }
         }
-
-        download: { |url, filepath| }
     }
 }
