@@ -1,4 +1,4 @@
-{ stdenv, nushell, pup }:
+{ stdenv, unstable, pup }:
 
 { name
 , src
@@ -15,7 +15,7 @@ stdenv.mkDerivation {
   '';
 
   checkPhase = ''
-    ${nushell}/bin/nu ${./test.nu}
+    ${unstable.nushell}/bin/nu ${./test.nu}
   '';
 
   passthru.nuModule = true;

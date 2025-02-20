@@ -27,7 +27,7 @@ def update-state [delta] {
 }
 
 def size-of [file: path] {
-    du $file | get physical | into int
+    du $file | get 0.apparent | into int
 }
 
 def is-safe-to-overwrite [old: path, new: path] {
@@ -116,7 +116,7 @@ def main [
                 return
             }
 
-            if ($final_path | exists) and not (is-safe-to-overwrite $final_path $download_path) {
+            if ($final_path | path exists) and not (is-safe-to-overwrite $final_path $download_path) {
                 log warning $"Work id=($work.id) cannot be overwritten safely, skipping..."
                 rm -f $download_path
                 return
