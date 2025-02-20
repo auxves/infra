@@ -1,22 +1,22 @@
 { lib, config, ... }:
 let
-  processContainer = app: containerName: container:
+  processContainer = app: _: container:
     let
-      name =
-        if app.name != containerName
-        then "${app.name}-${containerName}"
+      fullName =
+        if app.name != container.name
+        then "${app.name}-${container.name}"
         else app.name;
 
       changes = {
-        serviceName = "podman-${name}";
+        serviceName = "podman-${fullName}";
 
         labels = {
           "app.service" = app.name;
-          "app.component" = containerName;
+          "app.component" = container.name;
           "app.node" = config.networking.hostName;
-        } // lib.optionalAttrs (app.ingress != null && app.ingress.container == containerName) {
+        } // lib.optionalAttrs (app.ingress != null && app.ingress.container == container.name) {
           "traefik.enable" = "true";
-          "traefik.http.routers.${app.name}.rule" = "Host(`${app.ingress.domain}`)";
+          "traefik.http.routers.${app.name}.rule" = app.ingress.rule;
           "traefik.http.routers.${app.name}.entrypoints" = app.ingress.type;
           "traefik.http.services.${app.name}.loadbalancer.server.port" = toString app.ingress.port;
         } // lib.optionalAttrs (container.metrics != null) {
@@ -28,7 +28,10 @@ let
         };
       };
     in
-    lib.nameValuePair name (builtins.removeAttrs (lib.recursiveUpdate container changes) [ "metrics" ]);
+    lib.nameValuePair fullName (builtins.removeAttrs (lib.recursiveUpdate container changes) [
+      "name"
+      "metrics"
+    ]);
 
   containers = lib.mapAttrsToList processContainers config.apps;
 
@@ -46,6 +49,8 @@ in
         }
       ])
       config.apps);
+
+    presets.containers.enable = true;
 
     virtualisation.oci-containers.containers = lib.foldl' lib.recursiveUpdate { } containers;
   };
