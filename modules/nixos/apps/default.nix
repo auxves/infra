@@ -1,10 +1,12 @@
 { self, lib, config, options, pkgs, ... }:
 let
-  metricsOptions = { appName, ... }: {
+  osConfig = config;
+
+  metricsOptions = { app, ... }: {
     options = with lib; {
       job = mkOption {
         type = types.str;
-        default = appName;
+        default = app.name;
         description = "The name of this scraping job";
       };
 
@@ -27,14 +29,21 @@ let
     };
   };
 
-  containerOptions = { appName, ... }: {
+  containerOptions = { name, app, ... }: {
     options = with lib; builtins.removeAttrs
       (options.virtualisation.oci-containers.containers.type.getSubOptions [ ])
       [ "_module" ] // {
+      name = mkOption {
+        type = types.str;
+        default = name;
+        readOnly = true;
+        description = "The name of the container";
+      };
+
       metrics = mkOption {
         type = types.nullOr (types.submoduleWith {
           modules = [ metricsOptions ];
-          specialArgs = { inherit appName; };
+          specialArgs = { inherit app; };
         });
         default = null;
         description = "Metrics options for the container";
@@ -42,7 +51,7 @@ let
     };
   };
 
-  volumeOptions = { name, appName, config, ... }: {
+  volumeOptions = { name, app, config, ... }: {
     options = with lib; {
       name = mkOption {
         type = types.str;
@@ -61,13 +70,13 @@ let
         description = "The filesystem path to this volume";
         default = {
           ephemeral =
-            if appName != name
-            then "/var/cache/${appName}-${name}"
-            else "/var/cache/${appName}";
+            if app.name != name
+            then "/var/cache/${app.name}-${name}"
+            else "/var/cache/${app.name}";
           zfs =
-            if appName != name
-            then "/storage/services/${appName}/${name}"
-            else "/storage/services/${appName}";
+            if app.name != name
+            then "/storage/services/${app.name}/${name}"
+            else "/storage/services/${app.name}";
         }.${config.type};
       };
 
@@ -79,7 +88,7 @@ let
     };
   };
 
-  ingressOptions = { appName, ... }: {
+  ingressOptions = { config, app, ... }: {
     options = with lib; {
       type = mkOption {
         type = types.enum [ "internal" "public" ];
@@ -99,13 +108,19 @@ let
 
       domain = mkOption {
         type = types.str;
-        default = "${appName}.${config.networking.hostName}.x.auxves.dev";
+        default = "${app.name}.${osConfig.networking.hostName}.x.auxves.dev";
         description = "The domain to use for ingress";
+      };
+
+      rule = mkOption {
+        type = types.str;
+        default = "Host(`${config.domain}`)";
+        description = "The traefik rule to use for this ingress";
       };
     };
   };
 
-  appOptions = { name, ... }: {
+  appOptions = { config, name, ... }: {
     imports = [ ./presets ];
 
     options = with lib; {
@@ -119,7 +134,7 @@ let
       containers = mkOption {
         type = types.attrsOf (types.submoduleWith {
           modules = [ containerOptions ];
-          specialArgs = { appName = name; };
+          specialArgs = { app = config; };
         });
         default = { };
         description = "The containers that provide the application";
@@ -128,7 +143,7 @@ let
       volumes = mkOption {
         type = types.attrsOf (types.submoduleWith {
           modules = [ volumeOptions ];
-          specialArgs = { appName = name; };
+          specialArgs = { app = config; };
         });
         default = { };
         description = "The volumes to create";
@@ -137,7 +152,7 @@ let
       ingress = mkOption {
         type = types.nullOr (types.submoduleWith {
           modules = [ ingressOptions ];
-          specialArgs = { appName = name; };
+          specialArgs = { app = config; };
         });
         default = null;
         description = "Ingress options for the application";
