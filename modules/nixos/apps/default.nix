@@ -1,10 +1,10 @@
 { self, lib, config, options, pkgs, ... }:
 let
-  metricsOptions = {
+  metricsOptions = { appName, ... }: {
     options = with lib; {
       job = mkOption {
         type = types.str;
-        default = "";
+        default = appName;
         description = "The name of this scraping job";
       };
 
@@ -27,12 +27,15 @@ let
     };
   };
 
-  containerOptions = {
+  containerOptions = { appName, ... }: {
     options = with lib; builtins.removeAttrs
       (options.virtualisation.oci-containers.containers.type.getSubOptions [ ])
       [ "_module" ] // {
       metrics = mkOption {
-        type = types.nullOr (types.submodule metricsOptions);
+        type = types.nullOr (types.submoduleWith {
+          modules = [ metricsOptions ];
+          specialArgs = { inherit appName; };
+        });
         default = null;
         description = "Metrics options for the container";
       };

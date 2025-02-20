@@ -21,7 +21,7 @@ let
           "traefik.http.services.${app.name}.loadbalancer.server.port" = toString app.ingress.port;
         } // lib.optionalAttrs (container.metrics != null) {
           "metrics.enable" = "true";
-          "metrics.job" = if container.metrics.job != "" then container.metrics.job else app.name;
+          "metrics.job" = container.metrics.job;
           "metrics.path" = container.metrics.path;
           "metrics.scheme" = container.metrics.scheme;
           "metrics.port" = toString container.metrics.port;
