@@ -1,0 +1,25 @@
+From bdb5c1fe9ad20faac6c32eb3171c80eac617ad54 Mon Sep 17 00:00:00 2001
+From: Arno Hovhannisyan <me@auxves.dev>
+Date: Thu, 20 Feb 2025 10:51:52 -0800
+Subject: [PATCH] use rfc3339nano format for compat logs
+
+The current implementation uses RFC3339 which results in loss of timestamp precision when querying over the socket. This change mitigates the issue by using RFC3339Nano.
+
+Signed-off-by: Arno Hovhannisyan <me@auxves.dev>
+---
+ pkg/api/handlers/compat/containers_logs.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pkg/api/handlers/compat/containers_logs.go b/pkg/api/handlers/compat/containers_logs.go
+index f956a2b05c..255241534c 100644
+--- a/pkg/api/handlers/compat/containers_logs.go
++++ b/pkg/api/handlers/compat/containers_logs.go
+@@ -155,7 +155,7 @@ func LogsFromContainer(w http.ResponseWriter, r *http.Request) {
+ 		}
+ 
+ 		if query.Timestamps {
+-			frame.WriteString(line.Time.Format(time.RFC3339))
++			frame.WriteString(line.Time.Format(time.RFC3339Nano))
+ 			frame.WriteString(" ")
+ 		}
+ 
