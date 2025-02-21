@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, ... }: {
   imports = [
     ./hardware.nix
     ./services
@@ -55,7 +55,6 @@
 
   services.sanoid = {
     enable = true;
-    package = pkgs.sanoid-unstable;
 
     interval = "*:0/15";
 
@@ -84,7 +83,6 @@
 
   services.syncoid = {
     enable = true;
-    package = pkgs.sanoid-unstable;
     sshKey = config.sops.secrets."syncoid/ssh".path;
 
     commands = {

@@ -19,7 +19,7 @@ in
           name = "sync-ao3";
           tag = "latest";
           contents = with pkgs.dockerTools; [ binSh caCertificates ];
-          config.Cmd = [ "${pkgs.sync-ao3}/bin/sync-ao3" ];
+          config.Cmd = [ "${pkgs.scripts.sync-ao3}/bin/sync-ao3" ];
         };
 
         environment = {

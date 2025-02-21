@@ -1,11 +1,10 @@
 { lib
-, python3Packages
 , fetchFromGitHub
+, buildPythonPackage
 , octodns
+, requests
+, setuptools
 }:
-let
-  inherit (python3Packages) buildPythonPackage requests setuptools;
-in
 buildPythonPackage rec {
   pname = "octodns-cloudflare";
   version = "0.0.7";

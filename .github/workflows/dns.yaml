@@ -21,7 +21,7 @@ jobs:
       - name: Update DNS Records
         env:
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
-        run: nix run .#deploy-dns -- --doit
+        run: nix run .#scripts.deploy-dns -- --doit
 
   dry-run:
     runs-on: ubuntu-latest
@@ -39,4 +39,4 @@ jobs:
       - name: Dry Update DNS Records
         env:
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN_RO }}
-        run: nix run .#deploy-dns
+        run: nix run .#scripts.deploy-dns

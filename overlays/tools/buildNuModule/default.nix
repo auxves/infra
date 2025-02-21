@@ -3,11 +3,10 @@
 { name
 , src
 , doCheck ? true
+, buildInputs ? [ ]
 }:
 stdenv.mkDerivation {
-  inherit name src doCheck;
-
-  buildInputs = [ pup ];
+  inherit name src doCheck buildInputs;
 
   installPhase = ''
     mkdir -p $out/lib

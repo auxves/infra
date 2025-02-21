@@ -15,6 +15,9 @@ inputs.nixpkgs.lib.extend (_: _: {
     "x86_64-darwin"
   ];
 
+  prefixAttrs = prefix: lib.mapAttrs'
+    (name: value: lib.nameValuePair "${prefix}-${name}" value);
+
   platformOf = system: builtins.elemAt (lib.splitString "-" system) 1;
 
   filterHosts = predicate: builtins.filter predicate hostList;
@@ -56,7 +59,15 @@ inputs.nixpkgs.lib.extend (_: _: {
       final = pkgsFor system;
       prev = import inputs.nixpkgs { inherit system; };
     in
-    self.overlays.packages final prev;
+    self.overlays.exports final prev;
+
+  buildChecks = system:
+    let
+      pkgs = pkgsFor system;
+    in
+    lib.filterAttrs
+      (_: lib.meta.availableOn pkgs.stdenv.hostPlatform)
+      pkgs.auxves.checks;
 
   replaceAll = attrs: builtins.replaceStrings
     (builtins.attrNames attrs)
