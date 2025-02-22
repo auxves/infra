@@ -11,23 +11,12 @@ loki.process "containers" {
 }
 
 discovery.relabel "logs" {
-	targets = discovery.docker.local.targets
+	targets = discovery.relabel.app_labels.output
 
 	rule {
-		source_labels = ["__meta_docker_container_label_app_service"]
+		source_labels = ["service"]
 		regex         = ".+"
 		action        = "keep"
-	}
-
-	rule {
-		source_labels = ["__meta_docker_container_name"]
-		regex         = "/(.*)"
-		target_label  = "container"
-	}
-
-	rule {
-		regex  = "__meta_docker_container_label_app_(.+)"
-		action = "labelmap"
 	}
 }
 

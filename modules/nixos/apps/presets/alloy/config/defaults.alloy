@@ -1,3 +1,18 @@
 discovery.docker "local" {
 	host = "unix:///var/run/docker.sock"
 }
+
+discovery.relabel "app_labels" {
+	targets = discovery.docker.local.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+
+	rule {
+		regex  = "__meta_docker_container_label_app_(.+)"
+		action = "labelmap"
+	}
+}
