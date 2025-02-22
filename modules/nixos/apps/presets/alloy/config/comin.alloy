@@ -1,0 +1,9 @@
+prometheus.scrape "comin" {
+	targets = [{
+		__address__ = "host.containers.internal:4243",
+		node        = sys.env("HOSTNAME"),
+	}]
+	forward_to      = [prometheus.remote_write.default.receiver]
+	job_name        = "comin"
+	scrape_interval = "15s"
+}

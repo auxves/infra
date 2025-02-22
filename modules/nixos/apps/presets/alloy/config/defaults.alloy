@@ -1,0 +1,3 @@
+discovery.docker "local" {
+	host = "unix:///var/run/docker.sock"
+}

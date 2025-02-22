@@ -40,6 +40,13 @@ let
         description = "The name of the container";
       };
 
+      fullName = mkOption {
+        type = types.str;
+        default = if name == app.name then app.name else "${app.name}-${name}";
+        readOnly = true;
+        description = "The full name of the container as seen by podman";
+      };
+
       metrics = mkOption {
         type = types.nullOr (types.submoduleWith {
           modules = [ metricsOptions ];

@@ -43,7 +43,13 @@ let
 
     api.insecure = true;
 
-    metrics.prometheus = { };
+    metrics.otlp = {
+      http.endpoint = "http://${osConfig.apps.alloy.containers.alloy.fullName}:4318/v1/metrics";
+    };
+
+    tracing.otlp = {
+      http.endpoint = "http://${osConfig.apps.alloy.containers.alloy.fullName}:4318/v1/traces";
+    };
 
     serversTransport.insecureSkipVerify = true;
 

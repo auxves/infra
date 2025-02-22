@@ -1,0 +1,60 @@
+discovery.relabel "metrics" {
+	targets = discovery.docker.local.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_label_metrics_enable"]
+		regex         = "true"
+		action        = "keep"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_metrics_job"]
+		target_label  = "job"
+	}
+
+	rule {
+		source_labels = ["__address__", "__meta_docker_container_label_metrics_port"]
+		regex         = "([^:]+)(?::\\d+)?;(\\d+)"
+		target_label  = "__address__"
+		replacement   = "$1:$2"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_metrics_scheme"]
+		regex         = "(https?)"
+		target_label  = "__scheme__"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_metrics_path"]
+		regex         = "(.+)"
+		target_label  = "__metrics_path__"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+
+	rule {
+		regex  = "__meta_docker_container_label_app_(.+)"
+		action = "labelmap"
+	}
+}
+
+prometheus.scrape "containers" {
+	targets         = discovery.relabel.metrics.output
+	forward_to      = [prometheus.remote_write.default.receiver]
+	job_name        = "containers"
+	scrape_interval = "15s"
+}
+
+prometheus.remote_write "default" {
+	endpoint {
+		url = string.format(
+			"https://%s/api/v1/write",
+			sys.env("PROMETHEUS_DOMAIN"),
+		)
+	}
+}

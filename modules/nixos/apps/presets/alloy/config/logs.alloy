@@ -1,0 +1,48 @@
+loki.process "containers" {
+	forward_to = [loki.write.default.receiver]
+
+	stage.decolorize { }
+
+	stage.multiline {
+		firstline     = "^[^\\s]"
+		max_lines     = 128
+		max_wait_time = "1s"
+	}
+}
+
+discovery.relabel "logs" {
+	targets = discovery.docker.local.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_label_app_service"]
+		regex         = ".+"
+		action        = "keep"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+
+	rule {
+		regex  = "__meta_docker_container_label_app_(.+)"
+		action = "labelmap"
+	}
+}
+
+loki.source.docker "containers" {
+	host             = "unix:///var/run/docker.sock"
+	targets          = discovery.relabel.logs.output
+	forward_to       = [loki.process.containers.receiver]
+	refresh_interval = "5s"
+}
+
+loki.write "default" {
+	endpoint {
+		url = string.format(
+			"https://%s/loki/api/v1/push",
+			sys.env("LOKI_DOMAIN"),
+		)
+	}
+}

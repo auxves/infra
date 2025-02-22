@@ -2,13 +2,8 @@
 let
   processContainer = app: _: container:
     let
-      fullName =
-        if app.name != container.name
-        then "${app.name}-${container.name}"
-        else app.name;
-
       changes = {
-        serviceName = "podman-${fullName}";
+        serviceName = "podman-${container.fullName}";
 
         labels = {
           "app.service" = app.name;
@@ -28,8 +23,9 @@ let
         };
       };
     in
-    lib.nameValuePair fullName (builtins.removeAttrs (lib.recursiveUpdate container changes) [
+    lib.nameValuePair container.fullName (builtins.removeAttrs (lib.recursiveUpdate container changes) [
       "name"
+      "fullName"
       "metrics"
     ]);
 

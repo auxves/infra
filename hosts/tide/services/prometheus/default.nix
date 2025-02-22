@@ -1,38 +1,34 @@
-{ lib, config, host, ... }:
+{ config, ... }:
 let
-  federationHosts = lib.filterHosts (h: h != host && h.cfg ? apps.prometheus.ingress.domain);
-  federationTargets = map (h: h.cfg.apps.prometheus.ingress.domain) federationHosts;
+  cfg = config.apps.prometheus;
 in
 {
   apps.prometheus = {
-    presets.prometheus.enable = true;
-
     volumes = {
       prometheus = { type = "zfs"; };
     };
 
-    presets.prometheus.configs = [
-      {
-        job_name = "comin";
-        static_configs = [{
-          targets = [ "host.containers.internal:4243" ];
-          labels.node = config.networking.hostName;
-        }];
-      }
-      {
-        job_name = "federation";
-        honor_labels = true;
-        metrics_path = "/federate";
-        scheme = "https";
+    containers = {
+      prometheus = {
+        image = "prom/prometheus:v3.2.0@sha256:5888c188cf09e3f7eebc97369c3b2ce713e844cdbd88ccf36f5047c958aea120";
+        user = "root:root";
 
-        params."match[]" = [ ''{job=~".+"}'' ];
+        volumes = [
+          "${cfg.volumes.prometheus.path}:/prometheus"
+          "${./prometheus.yml}:/etc/prometheus/prometheus.yml:ro"
+        ];
 
-        static_configs = [{ targets = federationTargets; }];
-      }
-    ];
-  };
+        cmd = [
+          "--config.file=/etc/prometheus/prometheus.yml"
+          "--storage.tsdb.path=/prometheus"
+          "--web.enable-remote-write-receiver"
+        ];
+      };
+    };
 
-  apps.exporters = {
-    presets.exporters.enable = true;
+    ingress = {
+      container = "prometheus";
+      port = 9090;
+    };
   };
 }
