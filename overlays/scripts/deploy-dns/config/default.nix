@@ -5,7 +5,7 @@ let
   calculateZone = name: config:
     let
       appsHosts = lib.filterHosts (host: host.cfg ? apps);
-      metaHosts = lib.filterHosts (host: host.cfg ? meta);
+      metaHosts = lib.filterHosts (host: host.cfg ? meta.addresses);
 
       ingresses = lib.pipe appsHosts [
         (builtins.concatMap lib.ingressesOfHost)
