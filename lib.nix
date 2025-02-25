@@ -57,7 +57,10 @@ inputs.nixpkgs.lib.extend (_: _: {
   buildPackages = system:
     let
       final = pkgsFor system;
-      prev = import inputs.nixpkgs { inherit system; };
+      prev = import inputs.nixpkgs {
+        inherit system;
+        overlays = with self.overlays; [ overlayTools ];
+      };
     in
     self.overlays.exports final prev;
 
