@@ -52,7 +52,8 @@ export def "works download" [
 ] {
     let url = $"/downloads/($id)/Work.epub"
 
-    let res = do $client.get $url
+    let success = { |res| $res.code == 200 }
+    let res = retry -i 10sec --until $success { do $client.get $url }
 
     if $res.code != 200 {
         error make {msg: $"got status ($res.code)"}

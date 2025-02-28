@@ -10,6 +10,11 @@ use ao3 *
 let state_dir = $env.STATE_DIR
 let state_file = $state_dir | path join "state.nuon"
 
+def "str indent-by" [amt: int]: string -> string {
+    let prefix = 0..$amt | each { " " } | str join
+    $in | lines | each { $prefix ++ $in } | str join "\n"
+}
+
 def read-state [] {
     if ($state_file | path exists) {
         open $state_file
@@ -58,15 +63,23 @@ def main [
     log info "Fetching user bookmarks"
 
     let incoming_state = try {
-        bookmarks get -c $cli -d 10sec $user
+        let bookmarks = bookmarks get -c $cli -d 10sec $user
+
+        log debug $"Bookmarks:
+($bookmarks | select id type name | table | str indent-by 4)"
+
+        $bookmarks
         | each { |entry|
             match $entry.type {
                 "work" => [ $entry ]
                 "series" => {
-                    log debug $"Fetching series id=($entry.id)"
-
                     sleep 5sec
-                    series get -c $cli -d 5sec $entry.id | get works
+                    let works = series get -c $cli -d 5sec $entry.id | get works
+
+                    log debug $"Fetched series id=($entry.id) with works:
+($works | select id name | table | str indent-by 4)"
+
+                    $works
                 }
             }
         }
@@ -74,11 +87,13 @@ def main [
         | uniq-by id
         | reject -i type
     } catch { |err|
-        log error $"Unable to get bookmarks: ($err.msg)"
+        log error $"Unable to get bookmarks: ($err.msg)
+($err.rendered | str indent-by 4)"
         exit 1
     }
 
-    log debug $"Incoming: ($incoming_state | get id | to json --raw)"
+    log debug $"Incoming:
+($incoming_state | select id name | table | str indent-by 4)"
 
     let saved_state = read-state
         | select id updated
@@ -88,7 +103,8 @@ def main [
         | join -l $saved_state id
         | where { $in.updated != $in.last_updated? }
 
-    log debug $"Modified: ($modified_entries | get id | to json --raw)"
+    log debug $"Modified:
+($modified_entries | select id name | table | str indent-by 4)"
 
     let total = $modified_entries | length
 

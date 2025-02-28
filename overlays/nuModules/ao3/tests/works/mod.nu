@@ -1,7 +1,7 @@
 use std/assert
 
 use ../utils.nu *
-use ../../ao3/works.nu *
+use ../../ao3 ["works get"]
 
 export def works-get [] {
     let cli = client new-mock

@@ -1,7 +1,7 @@
 use std/assert
 
 use ../utils.nu *
-use ../../ao3/series.nu *
+use ../../ao3 ["series get"]
 
 export def series-get [] {
     let cli = client new-mock

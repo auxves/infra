@@ -1,7 +1,7 @@
 use std/assert
 
 use ../utils.nu *
-use ../../ao3/bookmarks.nu *
+use ../../ao3 ["bookmarks get"]
 
 export def bookmarks-get [] {
     let cli = client new-mock

@@ -1,25 +1,20 @@
 use std/log
 
+use utils.nu *
+
 const BASE_URI = "https://archiveofourown.org"
 
 def --wrapped curl-retry [
     --interval (-i) = 2min      # Interval between attempts
-    --times (-t) = 5            # Number of attempts to make before throwing an error
     ...rest
 ] {
-    for attempt in 1..=$times {
+    let success = { |res| $res.code != 429 }
+
+    retry -i $interval --until $success {
         let res = curl -s -w "%{stderr}%{json}" ...$rest | complete
         let meta = $res.stderr | from json
-
-        if ($meta.response_code != 429) {
-            return {body: $res.stdout, code: $meta.response_code}
-        }
-
-        log warning $"Rate limit exceeded, waiting ($interval)"
-        sleep $interval
+        {body: $res.stdout, code: $meta.response_code}
     }
-
-    error make {msg: "too many failed attempts"}
 }
 
 export def "client new" [

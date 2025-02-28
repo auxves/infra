@@ -5,7 +5,7 @@ loki.process "containers" {
 
 	stage.multiline {
 		firstline     = "^[^\\s]"
-		max_lines     = 128
+		max_lines     = 1000
 		max_wait_time = "1s"
 	}
 }

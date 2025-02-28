@@ -42,7 +42,12 @@ export def "bookmarks get" [
     --delay (-d) = 0sec     # delay between loading of additional pages
 ] {
     let url = $"/users/($user)/bookmarks?page=1"
-    let res = do $client.get $url
+
+    let success = { |res|
+        ($res.code == 200) and ($res.body | pup -n 'ol.index.group' | into int) == 1
+    }
+    
+    let res = retry -i 10sec --until $success { do $client.get $url }
 
     if $res.code == 404 {
         error make {
@@ -59,7 +64,8 @@ export def "bookmarks get" [
         sleep $delay
 
         let url = $"/users/($user)/bookmarks?page=($page)"
-        let res = do $client.get $url
+
+        let res = retry -i 10sec --until $success { do $client.get $url }
 
         $acc ++ (bookmarks parse $res.body)
     }
