@@ -2,16 +2,12 @@ self@{ inputs, lib, ... }:
 rec {
   all = lib.composeManyExtensions [
     overlayTools
-    exports
-    tools
-    inputs.fenix.overlays.default
-  ];
-
-  exports = lib.composeManyExtensions [
     pythonPackages
     nuModules
     scripts
     patches
+    tools
+    inputs.fenix.overlays.default
   ];
 
   overlayTools = final: prev: {

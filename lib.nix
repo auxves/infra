@@ -54,15 +54,7 @@ inputs.nixpkgs.lib.extend (_: _: {
     in
     lib.mapAttrs (_: host: host.configuration) hosts;
 
-  buildPackages = system:
-    let
-      final = pkgsFor system;
-      prev = import inputs.nixpkgs {
-        inherit system;
-        overlays = with self.overlays; [ overlayTools ];
-      };
-    in
-    self.overlays.exports final prev;
+  buildPackages = pkgsFor;
 
   buildChecks = system:
     let
