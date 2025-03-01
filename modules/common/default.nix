@@ -43,4 +43,6 @@
   };
 
   environment.shells = with pkgs; [ fish ];
+
+  nixpkgs.hostPlatform = host.system;
 }

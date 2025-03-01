@@ -34,7 +34,7 @@ inputs.nixpkgs.lib.extend (_: _: {
       specialArgs = { inherit self host lib; };
       modules = [
         ./modules/common ./modules/${host.variant} ./hosts/${host.name}
-        { nixpkgs.pkgs = pkgsFor host.system; }
+        { nixpkgs.overlays = overlays; }
       ];
     };
 
@@ -42,7 +42,7 @@ inputs.nixpkgs.lib.extend (_: _: {
       specialArgs = { inherit self host lib; };
       modules = [
         ./modules/common ./modules/${host.variant} ./hosts/${host.name}
-        { nixpkgs.pkgs = pkgsFor host.system; }
+        { nixpkgs.overlays = overlays; }
       ];
     };
   };
