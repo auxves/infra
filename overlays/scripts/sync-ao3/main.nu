@@ -96,12 +96,24 @@ def main [
 ($incoming_state | select id name | table | str indent-by 4)"
 
     let saved_state = read-state
-        | select id updated
-        | rename id last_updated
 
-    let modified_entries = $incoming_state
-        | join -l $saved_state id
-        | where { $in.updated != $in.last_updated? }
+    let missing = $saved_state ++ $incoming_state
+        | uniq-by -u id
+
+    if ($missing | is-not-empty) {
+        log debug $"Missing:
+($missing | select id name | table | str indent-by 4)"
+    }
+
+    let modified_entries = do {
+        let saved_state = $saved_state
+            | select id updated
+            | rename id last_updated
+
+        $incoming_state
+            | join -l $saved_state id
+            | where { $in.updated != $in.last_updated? }
+    }
 
     log debug $"Modified:
 ($modified_entries | select id name | table | str indent-by 4)"
