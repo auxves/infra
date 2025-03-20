@@ -1,14 +1,13 @@
-{ lib, fetchFromGitea, rustPlatform }:
+{ lib, fetchFromGitHub, rustPlatform }:
 
 rustPlatform.buildRustPackage rec {
   pname = "resty-kv";
   version = "0.1.0";
 
-  src = fetchFromGitea {
-    domain = "forge.auxves.dev";
-    owner = "arno";
+  src = fetchFromGitHub {
+    owner = "auxves";
     repo = pname;
-    rev = "714c1207cec50b5ea5b73ac1739b6949f18020ab";
+    rev = "v${version}";
     hash = "sha256-rAEm2PoWC4SLNrJg5tIRkGd9aks2XQzKmDRJlyBmtTA=";
   };
 
