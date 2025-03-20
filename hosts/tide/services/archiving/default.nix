@@ -40,31 +40,4 @@ in
     startAt = "daily";
     serviceConfig.Restart = lib.mkForce "no";
   };
-
-  apps.ao3-db = {
-    volumes = {
-      data = { type = "zfs"; path = "/storage/services/ao3/db"; };
-    };
-
-    containers = {
-      json-server = {
-        image = "json-server:latest";
-        imageStream = pkgs.dockerTools.streamLayeredImage {
-          name = "json-server";
-          tag = "latest";
-          contents = with pkgs.dockerTools; [ binSh caCertificates ];
-          config.Cmd = [ "${pkgs.nodePackages.json-server}/bin/json-server" "/data/db.json" "-h" "0.0.0.0" ];
-        };
-
-        volumes = [
-          "${config.apps.ao3-db.volumes.data.path}:/data"
-        ];
-      };
-    };
-
-    ingress = {
-      container = "json-server";
-      port = 3000;
-    };
-  };
 }

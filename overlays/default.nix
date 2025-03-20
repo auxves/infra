@@ -5,6 +5,7 @@ rec {
     pythonPackages
     nuModules
     scripts
+    packages
     patches
     tools
     inputs.fenix.overlays.default
@@ -15,6 +16,7 @@ rec {
   };
 
   scripts = import ./scripts/overlay.nix;
+  packages = import ./packages/overlay.nix;
   pythonPackages = import ./pythonPackages/overlay.nix;
   nuModules = import ./nuModules/overlay.nix;
   patches = import ./patches/overlay.nix;
