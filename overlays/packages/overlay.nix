@@ -1,7 +1,5 @@
 final: prev: {
   auxves.checks = prev.auxves.checks or { } // final.lib.prefixAttrs "packages" {
-    inherit (final) resty-kv;
+    # inherit (final);
   };
-
-  resty-kv = final.callPackage ./resty-kv { };
 }
