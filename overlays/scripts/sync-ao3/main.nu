@@ -97,8 +97,10 @@ def main [
 
     let saved_state = read-state
 
-    let missing = $saved_state ++ $incoming_state
-        | uniq-by -u id
+    let missing = do {
+        let incoming_ids = $incoming_state | get id
+        $saved_state | filter { $in.id not-in $incoming_ids }
+    }
 
     if ($missing | is-not-empty) {
         log debug $"Missing:
