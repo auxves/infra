@@ -49,4 +49,8 @@ export def bookmarks-get [] {
         [work, "6281467", "Taking Responsibility", Somewei, "Taking Responsibility Universe", "Powerpuff Girls", 2016-03-18T00:00:00+00:00]
         [work, "28631379", "internal travesties", thexanwillshine, "remember me when the stars align", "Shingeki no Kyojin | Attack on Titan", 2021-01-20T00:00:00+00:00]
     ]
+
+    # ensure bookmarks can be lazy iterated
+    let entries = bookmarks get -c $cli zvi | take 5
+    assert length $entries 5
 }

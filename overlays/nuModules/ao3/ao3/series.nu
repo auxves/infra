@@ -65,7 +65,11 @@ export def "series get" [
     let series = series parse $id $res.body
     let works = $series | get works
 
-    let pages = $res.body | pup -p 'ul + h4 + ol[role=navigation] li:not([class]) text{}' | lines | skip 1
+    let last_page = $res.body | pup -p 'ul + h4 + ol[role=navigation] li:not([class]) text{}'
+        | lines
+        | if ($in | is-not-empty) { last | into int } else { 1 }
+
+    let pages = if $last_page > 1 { 2..$last_page } else { [] }
 
     let works = $pages | reduce --fold $works { |page, acc|
         sleep $delay
