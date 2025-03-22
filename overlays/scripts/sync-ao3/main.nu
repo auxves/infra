@@ -77,7 +77,7 @@ def main [
     log info "Fetching new bookmarks"
 
     let new_bookmarks = try {
-        bookmarks get $user -c $cli -d 10sec -s "created_at"
+        bookmarks get $user -c $cli -d 2sec -s "created_at"
         | take while { |bm| $bm.id not-in ($ids | get $bm.type) }
     } catch { |err|
         log error $"Unable to get new bookmarks: ($err.msg)
@@ -91,7 +91,7 @@ def main [
     log info "Fetching updated bookmarks"
 
     let updated_bookmarks = try {
-        bookmarks get $user -c $cli -d 10sec -s "bookmarkable_date"
+        bookmarks get $user -c $cli -d 2sec -s "bookmarkable_date"
         | take while { $in.updated >= $state.last_updated }
     } catch { |err|
         log error $"Unable to get updated bookmarks: ($err.msg)
@@ -108,8 +108,8 @@ def main [
             match $entry.type {
                 "work" => $entry
                 "series" => {
-                    sleep 5sec
-                    let works = series get -c $cli -d 5sec $entry.id | get works
+                    sleep 2sec
+                    let works = series get -c $cli -d 2sec $entry.id | get works
 
                     log debug $"Fetched series id=($entry.id) with works:
 ($works | select id name | table | str indent-by 4)"
