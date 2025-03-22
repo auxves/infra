@@ -3,6 +3,7 @@ use std/log
 use utils.nu *
 
 const BASE_URI = "https://archiveofourown.org"
+const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15"
 
 def --wrapped curl-retry [
     --interval (-i) = 2min      # Interval between attempts
@@ -11,7 +12,7 @@ def --wrapped curl-retry [
     let success = { |res| $res.code != 429 }
 
     retry -i $interval --until $success {
-        let res = curl -s -w "%{stderr}%{json}" ...$rest | complete
+        let res = curl -s -w "%{stderr}%{json}" -H $"User-Agent: ($USER_AGENT)" ...$rest | complete
         let meta = $res.stderr | from json
         {body: $res.stdout, code: $meta.response_code}
     }
