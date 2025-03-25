@@ -1,31 +1,27 @@
-{ config, ... }: {
-  sops.secrets."ao3/db-env" = { };
-
-  apps.ao3-db = {
+{ config, ... }:
+let
+  cfg = config.apps.ao3;
+in
+{
+  apps.ao3 = {
     volumes = {
-      data = { type = "zfs"; path = "/storage/services/ao3/db"; };
+      pocketbase = { type = "zfs"; path = "/storage/services/ao3/pocketbase"; };
     };
 
     containers = {
-      resty-kv = {
-        image = "ghcr.io/auxves/resty-kv:v0.1.0@sha256:77bedab2694c8c8696e8a9e28e1947db52fa8abd1d47777b6aa2c0053aa97f08";
+      pocketbase = {
+        image = "ghcr.io/muchobien/pocketbase:0.26.3@sha256:0e97e1178a7e1ff0f5a03ccb43b986bb40852611172e23a04f29ec8976cd6766";
 
-        volumes = [
-          "${config.apps.ao3-db.volumes.data.path}:/data"
-        ];
-
-        environment = {
-          RESTY_KV_FILE = "/data/ao3.db";
-          RESTY_KV_HOST = "0.0.0.0";
+        labels = {
+          "traefik.enable" = "true";
+          "traefik.http.routers.ao3-pocketbase.rule" = "Host(`pocketbase.ao3.${config.networking.hostName}.x.auxves.dev`)";
+          "traefik.http.services.ao3-pocketbase.loadbalancer.server.port" = "8090";
         };
 
-        environmentFiles = [ config.sops.secrets."ao3/db-env".path ];
+        volumes = [
+          "${cfg.volumes.pocketbase.path}:/pb_data"
+        ];
       };
-    };
-
-    ingress = {
-      container = "resty-kv";
-      port = 3000;
     };
   };
 }
