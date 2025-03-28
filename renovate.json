@@ -10,6 +10,7 @@
 
   "automergeType": "pr",
   "automergeSchedule": ["after 2am and before 7am"],
+  "platformAutomerge": false,
 
   "pin": {
     "automerge": true
