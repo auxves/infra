@@ -8,8 +8,8 @@
 
   "timezone": "America/Los_Angeles",
 
-  "automergeType": "branch",
-  "automergeSchedule": ["after 2am and before 5am"],
+  "automergeType": "pr",
+  "automergeSchedule": ["after 2am and before 7am"],
 
   "pin": {
     "automerge": true
@@ -33,7 +33,9 @@
         "redis",
         "postgres",
         "tensorchord/pgvecto-rs",
-        "itzg/minecraft-server"
+        "itzg/minecraft-server",
+        "sfudeus/apcupsd_exporter",
+        "gregewing/apcupsd"
       ],
       "enabled": false
     }
@@ -47,11 +49,9 @@
 
   "nix": {
     "enabled": true,
-    "automerge": false,
-
     "packageRules": [
       {
-        "matchPackageNames": ["comin"],
+        "matchPackageNames": ["*"],
         "enabled": false
       }
     ]
