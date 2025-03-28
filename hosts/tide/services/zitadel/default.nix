@@ -14,7 +14,7 @@ in
 
     containers = {
       zitadel = {
-        image = "ghcr.io/zitadel/zitadel:v2.71.5@sha256:871301f51a0d80a9307622d321784ee8ee8adb5e96242032688c65c2a99e8ecf";
+        image = "ghcr.io/zitadel/zitadel:v2.71.4@sha256:f8b0922bc0ce35200d2946b0db984d8ff9448698773c76e664143f28f43b384a";
 
         environmentFiles = [ config.sops.secrets."zitadel/env".path ];
 
