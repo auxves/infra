@@ -10,7 +10,7 @@ in
 
     containers = {
       pocketbase = {
-        image = "ghcr.io/muchobien/pocketbase:0.26.3@sha256:0e97e1178a7e1ff0f5a03ccb43b986bb40852611172e23a04f29ec8976cd6766";
+        image = "ghcr.io/muchobien/pocketbase:0.26.6@sha256:adb625bbcf260a8d2a596a3ae4b32ac87f2ecb2a03096ba084db1c3fde7eaa04";
 
         labels = {
           "traefik.enable" = "true";
