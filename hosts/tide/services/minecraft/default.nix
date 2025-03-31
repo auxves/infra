@@ -21,7 +21,6 @@ in
           SEED = "-1254774536";
           USE_AIKAR_FLAGS = "true";
           USE_SIMD_FLAGS = "true";
-          TZ = "America/Los_Angeles";
           MOD_PLATFORM = "MODRINTH";
           MODRINTH_MODPACK = "/mods.mrpack";
 

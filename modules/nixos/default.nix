@@ -1,5 +1,4 @@
-{ self, lib, pkgs, ... }:
-{
+{ self, lib, pkgs, ... }: {
   imports = lib.readModules ./. ++ [
     self.inputs.lanzaboote.nixosModules.lanzaboote
     self.inputs.disko.nixosModules.disko
@@ -11,8 +10,6 @@
     experimental-features = [ "cgroups" ];
     use-cgroups = true;
   };
-
-  time.timeZone = "America/Los_Angeles";
 
   systemd.network.enable = lib.mkDefault true;
   networking.useNetworkd = lib.mkDefault true;

@@ -19,8 +19,6 @@ in
 
         volumes = [
           "${cfg.volumes.forgejo.path}:/data"
-          "/etc/timezone:/etc/timezone:ro"
-          "/etc/localtime:/etc/localtime:ro"
         ];
       };
     };
