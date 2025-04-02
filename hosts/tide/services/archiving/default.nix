@@ -37,7 +37,7 @@ in
   };
 
   systemd.services.podman-archiving-ao3 = {
-    startAt = "daily";
+    startAt = "*-*-* 04:00:00 America/Los_Angeles";
     serviceConfig.Restart = lib.mkForce "no";
   };
 }
