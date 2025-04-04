@@ -19,7 +19,6 @@ in
 
         volumes = [
           "${cfg.volumes.immich.path}:/usr/src/app/upload"
-          "/etc/localtime:/etc/localtime:ro"
         ];
 
         environmentFiles = [ config.sops.secrets."immich/env".path ];
