@@ -24,7 +24,7 @@ in
 
         environment = {
           AFFINE_SERVER_EXTERNAL_URL = "https://${cfg.ingress.domain}";
-          REDIS_SERVER_HOST = "affine-redis";
+          REDIS_SERVER_HOST = cfg.containers.redis.fullName;
 
           OAUTH_OIDC_SCOPE = "openid email profile offline_access";
           OAUTH_OIDC_CLAIM_MAP_ID = "preferred_username";
@@ -37,7 +37,10 @@ in
           "node ./scripts/self-host-predeploy.js && node --import ./scripts/register.js ./dist/index.js"
         ];
 
-        dependsOn = [ "affine-redis" "affine-postgres" ];
+        dependsOn = [
+          cfg.containers.redis.fullName
+          cfg.containers.postgres.fullName
+        ];
       };
 
       redis = {

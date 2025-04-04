@@ -24,15 +24,18 @@ in
         environmentFiles = [ config.sops.secrets."immich/env".path ];
 
         environment = {
-          DB_HOSTNAME = "immich-postgres";
+          REDIS_HOSTNAME = cfg.containers.redis.fullName;
+          DB_HOSTNAME = cfg.containers.postgres.fullName;
           DB_USERNAME = "immich";
           DB_DATABASE_NAME = "immich";
-          REDIS_HOSTNAME = "immich-redis";
         };
 
         extraOptions = [ "--device=/dev/dri" ];
 
-        dependsOn = [ "immich-redis" "immich-postgres" ];
+        dependsOn = [
+          cfg.containers.redis.fullName
+          cfg.containers.postgres.fullName
+        ];
       };
 
       machine-learning = {

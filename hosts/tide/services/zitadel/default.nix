@@ -19,7 +19,7 @@ in
         environmentFiles = [ config.sops.secrets."zitadel/env".path ];
 
         environment = {
-          ZITADEL_DATABASE_POSTGRES_HOST = "zitadel-postgres";
+          ZITADEL_DATABASE_POSTGRES_HOST = cfg.containers.postgres.fullName;
           ZITADEL_DATABASE_POSTGRES_PORT = "5432";
           ZITADEL_DATABASE_POSTGRES_DATABASE = "zitadel";
           ZITADEL_DATABASE_POSTGRES_USER_USERNAME = "zitadel";
@@ -33,7 +33,7 @@ in
 
         cmd = [ "start-from-init" "--masterkeyFromEnv" "--tlsMode=external" ];
 
-        dependsOn = [ "zitadel-postgres" ];
+        dependsOn = [ cfg.containers.postgres.fullName ];
       };
 
       postgres = {

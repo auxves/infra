@@ -1,4 +1,4 @@
-{ self, name, config, osConfig, lib, pkgs, ... }:
+{ self, config, osConfig, lib, pkgs, ... }:
 let
   cfg = config.presets.forgejo-runner;
 
@@ -79,7 +79,7 @@ in
 
         cmd = [ "/init-runner.sh" ];
 
-        dependsOn = [ "${name}-podman" ];
+        dependsOn = [ config.containers.podman.fullName ];
       };
 
       podman = {
