@@ -1,5 +1,5 @@
 { self, lib, ... }: {
-  imports = lib.readModules ./. ++ [
+  imports = lib.internal.readModules ./. ++ [
     self.inputs.sops.darwinModules.sops
   ];
 

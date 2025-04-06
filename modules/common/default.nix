@@ -1,6 +1,6 @@
 { self, lib, config, host, pkgs, ... }:
 {
-  imports = lib.readModules ./.;
+  imports = lib.internal.readModules ./.;
 
   nix = {
     settings = {

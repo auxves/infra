@@ -3,7 +3,7 @@ let
   user = "nixremote";
 
   isVolunteer = h: h != host && h.cfg ? presets.builders && h.cfg.presets.builders.volunteer;
-  builderHosts = lib.filterHosts isVolunteer;
+  builderHosts = lib.internal.filterHosts isVolunteer;
 
   buildRemoteMachine = host: {
     hostName = host.name;

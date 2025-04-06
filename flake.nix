@@ -27,17 +27,20 @@
     sops.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, ... }: {
-    lib = import ./lib.nix self;
-    hosts = import ./hosts self;
+  outputs = { self, nixpkgs, ... }:
+    let
+      lib' = self.lib.internal;
+    in
+    {
+      lib = nixpkgs.lib.extend self.overlays.lib;
+      hosts = import ./hosts self;
 
-    legacyPackages = self.lib.forAllSystems self.lib.buildPackages;
-    checks = self.lib.forAllSystems self.lib.buildChecks;
-    devShells = self.lib.forAllSystems (import ./shells self);
+      legacyPackages = lib'.forAllSystems lib'.buildPackages;
+      checks = lib'.forAllSystems lib'.buildChecks;
+      devShells = import ./shells self;
+      overlays = import ./overlays self;
 
-    overlays = import ./overlays self;
-
-    nixosConfigurations = self.lib.buildVariant "nixos";
-    darwinConfigurations = self.lib.buildVariant "darwin";
-  };
+      nixosConfigurations = lib'.buildVariant "nixos";
+      darwinConfigurations = lib'.buildVariant "darwin";
+    };
 }

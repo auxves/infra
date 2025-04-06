@@ -4,11 +4,11 @@ let
 
   calculateZone = name: config:
     let
-      appsHosts = lib.filterHosts (host: host.cfg ? apps);
-      metaHosts = lib.filterHosts (host: host.cfg ? meta.addresses);
+      appsHosts = lib.internal.filterHosts (host: host.cfg ? apps);
+      metaHosts = lib.internal.filterHosts (host: host.cfg ? meta.addresses);
 
       ingresses = lib.pipe appsHosts [
-        (builtins.concatMap lib.ingressesOfHost)
+        (builtins.concatMap lib.internal.ingressesOfHost)
         (builtins.filter (ingress: lib.hasSuffix name ingress.domain))
         (builtins.filter (ingress: !(lib.hasInfix ".x." ingress.domain)))
       ];
@@ -56,7 +56,7 @@ let
       name = lib.removeSuffix ".nix" (builtins.baseNameOf (toString path));
       value = calculateZone name (import path self);
     })
-    (lib.readModules ./zones));
+    (lib.internal.readModules ./zones));
 
   zoneDir = linkFarm "zones" (lib.mapAttrsToList
     (zone: config: {

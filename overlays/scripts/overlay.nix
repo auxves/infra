@@ -1,5 +1,5 @@
 final: prev: {
-  auxves.checks = prev.auxves.checks or { } // final.lib.prefixAttrs "scripts" {
+  auxves.checks = prev.auxves.checks or { } // prev.lib.internal.prefixAttrs "scripts" {
     inherit (final.scripts) deploy-dns sync-ao3;
   };
 

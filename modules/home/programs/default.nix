@@ -1,3 +1,3 @@
 { lib, ... }: {
-  imports = lib.readModules ./.;
+  imports = lib.internal.readModules ./.;
 }

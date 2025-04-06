@@ -4,8 +4,8 @@ let
     let
       host = rec {
         inherit name system variant;
-        platform = lib.platformOf system;
-        configuration = lib.variants.${variant} host;
+        platform = lib.internal.platformOf system;
+        configuration = lib.internal.variants.${variant} host;
         cfg = configuration.config;
       };
     in

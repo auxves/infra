@@ -1,5 +1,5 @@
 { self, lib, pkgs, ... }: {
-  imports = lib.readModules ./. ++ [
+  imports = lib.internal.readModules ./. ++ [
     self.inputs.lanzaboote.nixosModules.lanzaboote
     self.inputs.disko.nixosModules.disko
     self.inputs.comin.nixosModules.comin

@@ -1,5 +1,5 @@
 { lib, ... }: {
-  imports = lib.readModules ./.;
+  imports = lib.internal.readModules ./.;
 
   home.sessionVariables = {
     EDITOR = "nvim";

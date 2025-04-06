@@ -1,5 +1,5 @@
 final: prev: {
-  auxves.checks = prev.auxves.checks or { } // final.lib.prefixAttrs "patches" {
+  auxves.checks = prev.auxves.checks or { } // prev.lib.internal.prefixAttrs "patches" {
     inherit (final) podman sanoid;
   };
 
