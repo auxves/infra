@@ -1,4 +1,4 @@
-{ ... }: {
+{ pkgs, ... }: {
   boot = {
     initrd.systemd.enable = true;
 
@@ -8,7 +8,15 @@
       enable = true;
       pkiBundle = "/etc/secureboot";
     };
+
+    kernelPackages = pkgs.linuxPackages_6_12;
+
+    kernelParams = [ "i915.modeset=0" "xe.force_probe=a7a1" ];
+
+    blacklistedKernelModules = [ "i915" ];
   };
+
+  hardware.enableRedistributableFirmware = true;
 
   disko.devices = {
     disk = {
