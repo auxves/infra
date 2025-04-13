@@ -14,7 +14,7 @@ in
 
     containers = {
       alloy = {
-        image = "grafana/alloy:v1.7.5@sha256:b92703c13c32c20d629ffd89f40287ed385c12a335a7c9f31c720a5f912f9d6f";
+        image = "grafana/alloy:v1.8.1@sha256:7790f6f7fbd8e4486b4b6c6fc6a7293a73605bb79aaa7f49003cb366943724f6";
         user = "root:root";
 
         environment = {
