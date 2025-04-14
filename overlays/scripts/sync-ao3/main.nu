@@ -161,8 +161,9 @@ def main [
             let pos = $entry.index + 1
             let work = $entry.item
 
-            let final_path = $state_dir | path join $"($work.id).epub"
-            $final_path | path dirname | mkdir $in
+            let dir = $state_dir | path join $work.id
+            mkdir $dir
+            let final_path = $dir | path join "work.epub"
             let download_path = $final_path ++ ".download"
 
             log info $"Downloading work id=($work.id) \(($pos)/($total)\)"
