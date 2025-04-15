@@ -78,8 +78,8 @@ in
         labels = {
           "traefik.http.routers.traefik-app.service" = "api@internal";
           "traefik.http.routers.traefik-app.tls.certresolver" = "letsencrypt";
-          "traefik.http.routers.traefik-app.tls.domains[0].main" = "${config.ingresses.app.domain}";
-          "traefik.http.routers.traefik-app.tls.domains[0].sans" = "*.${config.ingresses.app.domain}";
+          "traefik.http.routers.traefik-app.tls.domains[0].main" = "${osConfig.networking.hostName}.x.auxves.dev";
+          "traefik.http.routers.traefik-app.tls.domains[0].sans" = "*.${osConfig.networking.hostName}.x.auxves.dev";
         };
 
         metrics.port = 8080;
