@@ -2,6 +2,20 @@
 let
   processContainer = app: _: container:
     let
+      ingresses = lib.filterAttrs (_: ingress: ingress.container == container.name) app.ingresses;
+
+      traefikLabels = lib.concatMapAttrs
+        (_: ingress:
+          let
+            router = "${app.name}-${ingress.name}";
+          in
+          {
+            "traefik.http.routers.${router}.rule" = ingress.rule;
+            "traefik.http.routers.${router}.entrypoints" = ingress.type;
+            "traefik.http.services.${router}.loadbalancer.server.port" = toString ingress.port;
+          })
+        ingresses;
+
       changes = {
         serviceName = "podman-${container.fullName}";
 
@@ -9,11 +23,8 @@ let
           "app.service" = app.name;
           "app.component" = container.name;
           "app.node" = config.networking.hostName;
-        } // lib.optionalAttrs (app.ingress != null && app.ingress.container == container.name) {
+        } // traefikLabels // lib.optionalAttrs (traefikLabels != { }) {
           "traefik.enable" = "true";
-          "traefik.http.routers.${app.name}.rule" = app.ingress.rule;
-          "traefik.http.routers.${app.name}.entrypoints" = app.ingress.type;
-          "traefik.http.services.${app.name}.loadbalancer.server.port" = toString app.ingress.port;
         } // lib.optionalAttrs (container.metrics != null) {
           "metrics.enable" = "true";
           "metrics.job" = container.metrics.job;
@@ -37,15 +48,6 @@ let
 in
 {
   config = lib.mkIf (config.apps != { }) {
-    assertions = builtins.concatLists (lib.mapAttrsToList
-      (_: app: [
-        {
-          assertion = app.ingress != null -> app.containers ? "${app.ingress.container}";
-          message = "Ingress must point to a valid container";
-        }
-      ])
-      config.apps);
-
     presets.containers.enable = true;
 
     virtualisation.oci-containers.containers = lib.foldl' lib.recursiveUpdate { } containers;

@@ -95,8 +95,15 @@ let
     };
   };
 
-  ingressOptions = { config, app, ... }: {
+  ingressOptions = { name, config, app, ... }: {
     options = with lib; {
+      name = mkOption {
+        type = types.str;
+        default = name;
+        readOnly = true;
+        description = "The name of the ingress";
+      };
+
       type = mkOption {
         type = types.enum [ "internal" "public" ];
         default = "internal";
@@ -104,7 +111,7 @@ let
       };
 
       container = mkOption {
-        type = types.str;
+        type = types.enum (builtins.attrNames app.containers);
         description = "The container to use for ingress";
       };
 
@@ -115,7 +122,11 @@ let
 
       domain = mkOption {
         type = types.str;
-        default = "${app.name}.${osConfig.networking.hostName}.x.auxves.dev";
+        default =
+          let
+            prefix = if name == "app" then app.name else "${name}.${app.name}";
+          in
+          "${prefix}.${osConfig.networking.hostName}.x.auxves.dev";
         description = "The domain to use for ingress";
       };
 
@@ -156,13 +167,13 @@ let
         description = "The volumes to create";
       };
 
-      ingress = mkOption {
-        type = types.nullOr (types.submoduleWith {
+      ingresses = mkOption {
+        type = types.attrsOf (types.submoduleWith {
           modules = [ ingressOptions ];
           specialArgs = { app = config; };
         });
-        default = null;
-        description = "Ingress options for the application";
+        default = { };
+        description = "Ingresses for the application";
       };
     };
   };

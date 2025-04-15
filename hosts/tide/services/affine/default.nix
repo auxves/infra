@@ -23,7 +23,7 @@ in
         environmentFiles = [ config.sops.secrets."affine/env".path ];
 
         environment = {
-          AFFINE_SERVER_EXTERNAL_URL = "https://${cfg.ingress.domain}";
+          AFFINE_SERVER_EXTERNAL_URL = "https://${cfg.ingresses.app.domain}";
           REDIS_SERVER_HOST = cfg.containers.redis.fullName;
 
           OAUTH_OIDC_SCOPE = "openid email profile offline_access";
@@ -63,17 +63,19 @@ in
       };
     };
 
-    ingress = {
-      container = "affine";
-      domain = "affine.auxves.dev";
-      port = 3010;
+    ingresses = {
+      app = {
+        domain = "affine.auxves.dev";
+        container = "affine";
+        port = 3010;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "affine";
     group = "services";
-    url = "https://${cfg.ingress.domain}";
+    url = "https://${cfg.ingresses.app.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

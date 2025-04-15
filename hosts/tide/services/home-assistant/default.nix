@@ -43,17 +43,19 @@ in
       };
     };
 
-    ingress = {
-      container = "home-assistant";
-      domain = "home.auxves.dev";
-      port = 8123;
+    ingresses = {
+      app = {
+        domain = "home.auxves.dev";
+        container = "home-assistant";
+        port = 8123;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "home-assistant";
     group = "services";
-    url = "https://${cfg.ingress.domain}";
+    url = "https://${cfg.ingresses.app.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

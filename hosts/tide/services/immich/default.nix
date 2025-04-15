@@ -64,17 +64,19 @@ in
       };
     };
 
-    ingress = {
-      container = "immich";
-      domain = "immich.auxves.dev";
-      port = 2283;
+    ingresses = {
+      app = {
+        domain = "immich.auxves.dev";
+        container = "immich";
+        port = 2283;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "immich";
     group = "services";
-    url = "https://${cfg.ingress.domain}";
+    url = "https://${cfg.ingresses.app.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

@@ -32,22 +32,24 @@ in
         ];
 
         environment = {
-          JELLYFIN_PublishedServerUrl = "https://${cfg.ingress.domain}";
+          JELLYFIN_PublishedServerUrl = "https://${cfg.ingresses.app.domain}";
         };
       };
     };
 
-    ingress = {
-      container = "jellyfin";
-      domain = "jellyfin.auxves.dev";
-      port = 8096;
+    ingresses = {
+      app = {
+        domain = "jellyfin.auxves.dev";
+        container = "jellyfin";
+        port = 8096;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "jellyfin";
     group = "services";
-    url = "https://${cfg.ingress.domain}";
+    url = "https://${cfg.ingresses.app.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

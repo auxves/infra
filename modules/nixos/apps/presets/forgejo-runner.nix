@@ -61,7 +61,7 @@ in
           DOCKER_HOST = "tcp://forgejo-podman:2375";
 
           NAME = osConfig.networking.hostName;
-          INSTANCE = "https://${self.hosts.tide.cfg.apps.forgejo.ingress.domain}";
+          INSTANCE = "https://${self.hosts.tide.cfg.apps.forgejo.ingresses.app.domain}";
 
           LABELS = builtins.concatStringsSep "," [
             "ubuntu-latest:docker://node:23-bookworm"

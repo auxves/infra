@@ -18,23 +18,25 @@ in
         ];
 
         environment = {
-          HOSTNAME = cfg.ingress.domain;
-          GF_SERVER_ROOT_URL = "https://${cfg.ingress.domain}";
+          HOSTNAME = cfg.ingresses.app.domain;
+          GF_SERVER_ROOT_URL = "https://${cfg.ingresses.app.domain}";
         };
       };
     };
 
-    ingress = {
-      container = "grafana";
-      domain = "grafana.auxves.dev";
-      port = 3000;
+    ingresses = {
+      app = {
+        domain = "grafana.auxves.dev";
+        container = "grafana";
+        port = 3000;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "grafana";
     group = "services";
-    url = "https://${cfg.ingress.domain}";
+    url = "https://${cfg.ingresses.app.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

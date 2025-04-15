@@ -63,10 +63,12 @@ in
       };
     };
 
-    ingress = {
-      container = "gatus";
-      domain = "status.auxves.dev";
-      port = 8080;
+    ingresses = {
+      app = {
+        domain = "status.auxves.dev";
+        container = "gatus";
+        port = 8080;
+      };
     };
   };
 }

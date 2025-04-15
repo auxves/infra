@@ -19,8 +19,8 @@ in
 
         environment = {
           HOSTNAME = osConfig.networking.hostName;
-          PROMETHEUS_DOMAIN = self.hosts.tide.cfg.apps.prometheus.ingress.domain;
-          LOKI_DOMAIN = self.hosts.tide.cfg.apps.loki.ingress.domain;
+          PROMETHEUS_DOMAIN = self.hosts.tide.cfg.apps.prometheus.ingresses.app.domain;
+          LOKI_DOMAIN = self.hosts.tide.cfg.apps.loki.ingresses.app.domain;
         };
 
         volumes = [
@@ -38,9 +38,11 @@ in
       };
     };
 
-    ingress = {
-      container = "alloy";
-      port = 12345;
+    ingresses = {
+      app = {
+        container = "alloy";
+        port = 12345;
+      };
     };
   };
 }

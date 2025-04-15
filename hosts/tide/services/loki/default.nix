@@ -19,16 +19,18 @@ in
       };
     };
 
-    ingress = {
-      container = "loki";
-      port = 3100;
+    ingresses = {
+      app = {
+        container = "loki";
+        port = 3100;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "loki";
     group = "infra";
-    url = "https://${cfg.ingress.domain}/ready";
+    url = "https://${cfg.ingresses.app.domain}/ready";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

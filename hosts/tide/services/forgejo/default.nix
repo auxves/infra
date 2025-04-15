@@ -13,8 +13,8 @@ in
         image = "codeberg.org/forgejo/forgejo:10.0.3@sha256:99b6c15a1bc98e623103a83a04023662a93fd035dac4f0a856d781afa9d71095";
 
         environment = {
-          FORGEJO__SERVER__DOMAIN = cfg.ingress.domain;
-          FORGEJO__SERVER__ROOT_URL = "https://${cfg.ingress.domain}/";
+          FORGEJO__SERVER__DOMAIN = cfg.ingresses.app.domain;
+          FORGEJO__SERVER__ROOT_URL = "https://${cfg.ingresses.app.domain}/";
         };
 
         volumes = [
@@ -23,17 +23,19 @@ in
       };
     };
 
-    ingress = {
-      container = "forgejo";
-      domain = "forge.auxves.dev";
-      port = 3000;
+    ingresses = {
+      app = {
+        domain = "forge.auxves.dev";
+        container = "forgejo";
+        port = 3000;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "forgejo";
     group = "services";
-    url = "https://${cfg.ingress.domain}";
+    url = "https://${cfg.ingresses.app.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

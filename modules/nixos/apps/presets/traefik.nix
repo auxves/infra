@@ -76,19 +76,21 @@ in
         environmentFiles = [ osConfig.sops.secrets."traefik/env".path ];
 
         labels = {
-          "traefik.http.routers.traefik.service" = "api@internal";
-          "traefik.http.routers.traefik.tls.certresolver" = "letsencrypt";
-          "traefik.http.routers.traefik.tls.domains[0].main" = "${config.ingress.domain}";
-          "traefik.http.routers.traefik.tls.domains[0].sans" = "*.${config.ingress.domain}";
+          "traefik.http.routers.traefik-app.service" = "api@internal";
+          "traefik.http.routers.traefik-app.tls.certresolver" = "letsencrypt";
+          "traefik.http.routers.traefik-app.tls.domains[0].main" = "${config.ingresses.app.domain}";
+          "traefik.http.routers.traefik-app.tls.domains[0].sans" = "*.${config.ingresses.app.domain}";
         };
 
         metrics.port = 8080;
       };
     };
 
-    ingress = {
-      container = "traefik";
-      port = 9999;
+    ingresses = {
+      app = {
+        container = "traefik";
+        port = 9999;
+      };
     };
   };
 }

@@ -2,13 +2,19 @@
 let
   yaml = formats.yaml { };
 
+  ingressesOfHost = host: lib.pipe host.cfg.apps [
+    (lib.mapAttrsToList (_: app: builtins.attrValues app.ingresses))
+    lib.flatten
+    (map (x: x // { inherit host; }))
+  ];
+
   calculateZone = name: config:
     let
       appsHosts = lib.internal.filterHosts (host: host.cfg ? apps);
       metaHosts = lib.internal.filterHosts (host: host.cfg ? meta.addresses);
 
       ingresses = lib.pipe appsHosts [
-        (builtins.concatMap lib.internal.ingressesOfHost)
+        (builtins.concatMap ingressesOfHost)
         (builtins.filter (ingress: lib.hasSuffix name ingress.domain))
         (builtins.filter (ingress: !(lib.hasInfix ".x." ingress.domain)))
       ];

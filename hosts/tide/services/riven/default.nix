@@ -84,16 +84,18 @@ in
       };
     };
 
-    ingress = {
-      container = "frontend";
-      port = 3000;
+    ingresses = {
+      app = {
+        container = "frontend";
+        port = 3000;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "riven-frontend";
     group = "services";
-    url = "https://${cfg.ingress.domain}";
+    url = "https://${cfg.ingresses.app.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [

@@ -26,16 +26,18 @@ in
       };
     };
 
-    ingress = {
-      container = "prometheus";
-      port = 9090;
+    ingresses = {
+      app = {
+        container = "prometheus";
+        port = 9090;
+      };
     };
   };
 
   monitoring.checks = [{
     name = "prometheus";
     group = "infra";
-    url = "https://${cfg.ingress.domain}";
+    url = "https://${cfg.ingresses.app.domain}";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [
