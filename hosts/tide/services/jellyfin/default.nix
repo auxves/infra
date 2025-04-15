@@ -43,4 +43,15 @@ in
       port = 8096;
     };
   };
+
+  monitoring.checks = [{
+    name = "jellyfin";
+    group = "services";
+    url = "https://${cfg.ingress.domain}";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 }

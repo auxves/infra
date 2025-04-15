@@ -24,4 +24,15 @@ in
       port = 3100;
     };
   };
+
+  monitoring.checks = [{
+    name = "loki";
+    group = "infra";
+    url = "https://${cfg.ingress.domain}/ready";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 }

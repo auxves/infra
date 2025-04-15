@@ -31,4 +31,15 @@ in
       port = 9090;
     };
   };
+
+  monitoring.checks = [{
+    name = "prometheus";
+    group = "infra";
+    url = "https://${cfg.ingress.domain}";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 }

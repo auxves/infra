@@ -89,4 +89,15 @@ in
       port = 3000;
     };
   };
+
+  monitoring.checks = [{
+    name = "riven-frontend";
+    group = "services";
+    url = "https://${cfg.ingress.domain}";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 }
