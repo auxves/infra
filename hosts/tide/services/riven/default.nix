@@ -23,7 +23,7 @@ in
           PUID = "0";
           PGID = "0";
           RIVEN_FORCE_ENV = "true";
-          RIVEN_DATABASE_HOST = "postgresql+psycopg2://postgres@riven-postgres/riven";
+          RIVEN_DATABASE_HOST = "postgresql+psycopg2://postgres@${cfg.containers.postgres.fullName}/riven";
         };
 
         volumes = [
@@ -32,7 +32,10 @@ in
           "${cfg.volumes.rd.path}:/data/rd:rshared"
         ];
 
-        dependsOn = [ cfg.containers.postgres.fullName ];
+        dependsOn = [
+          cfg.containers.postgres.fullName
+          cfg.containers.rclone.fullName
+        ];
       };
 
       frontend = {

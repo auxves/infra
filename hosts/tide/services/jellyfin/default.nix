@@ -34,6 +34,8 @@ in
         environment = {
           JELLYFIN_PublishedServerUrl = "https://${cfg.ingresses.app.domain}";
         };
+
+        dependsOn = [ config.apps.riven.containers.rclone.fullName ];
       };
     };
 
