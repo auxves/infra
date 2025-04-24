@@ -15,9 +15,9 @@ export def series-get [] {
         published: 2008-09-16T00:00:00
         updated: 2008-09-16T00:00:00
         works: [
-            [id, name, author, series, fandoms, updated];
-            ["58", Balance, $rec.author, $rec.name, "Stargate Atlantis", 2008-09-16T00:00:00]
-            ["59", Brace, $rec.author, $rec.name, "Stargate Atlantis", 2008-09-16T00:00:00]
+            [id, type, name, author, series, fandoms, updated];
+            ["58", work, Balance, $rec.author, $rec.name, "Stargate Atlantis", 2008-09-16T00:00:00]
+            ["59", work, Brace, $rec.author, $rec.name, "Stargate Atlantis", 2008-09-16T00:00:00]
         ]
     }
 

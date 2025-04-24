@@ -1,3 +1,4 @@
+use blurbs.nu *
 use series.nu *
 use utils.nu *
 
@@ -20,34 +21,7 @@ export def "bookmarks parse" [
 ] {
     $html | pup 'li.bookmark attr{id}'
     | lines
-    | each { |css_id|
-        let el = $html | pup $'li#($css_id)'
-        let href = $el | pup 'h4 a:first-child attr{href}'
-            | parse "/{type}/{id}"
-            | if ($in | length) < 1 { return null } else { get 0 }
-
-        let type = match $href.type {
-            "works" => "work"
-            "series" => "series"
-        }
-
-        let id = $href.id
-        let name = $el | pup -p 'h4 a:first-child text{}' | str trim
-        let author = $el | pup -p 'a[rel=author] json{}' | from json | each { $in.text } | str join ", "
-        let updated = $el | pup -p 'ul.required-tags + p.datetime text{}' | into date
-        let fandoms = $el | pup -p 'h5.fandoms a json{}' | from json | each { $in.text } | str join ", "
-        let series = $el | pup -p 'h6:contains("Series") + ul a text{}' | str trim
-
-        {
-            type: $type
-            id: $id
-            name: $name
-            author: $author
-            series: $series
-            fandoms: $fandoms
-            updated: $updated
-        }
-    }
+    | each { |css_id| $html | pup $'li#($css_id)' | blurbs parse $in }
 }
 
 export def "bookmarks get" [
