@@ -50,6 +50,8 @@ in
         key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINHiwuwSpFayBr5vka7mNjmFkPlKXK7bUkRYxJspY5WE";
         signByDefault = true;
       };
+
+      lfs.enable = true;
     };
 
     programs.git-credential-oauth.enable = true;
