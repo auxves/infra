@@ -7,17 +7,15 @@
 }:
 buildPythonPackage rec {
   pname = "octodns-cloudflare";
-  version = "0.0.7";
+  version = "0.0.9";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "octodns";
     repo = "octodns-cloudflare";
     tag = "v${version}";
-    hash = "sha256-GbZbmfAaku+IJwmxKm6f5Qj/Dam+CRax6z49uMerOlA=";
+    hash = "sha256-VHmi/ClCZCruz0wSSZC81nhN7i31vK29TsYzyrRJNTY=";
   };
-
-  patches = [ ./keyerror-fix.patch ];
 
   build-system = [
     setuptools
