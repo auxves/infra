@@ -11,6 +11,11 @@
     group = "syncoid";
     home = "/home/tide";
     openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHXrz2geCofvG1mAsSrYw+JG4XVTdLgNP2yuHVqXCiRy syncoid@tide" ];
+
+    packages = with pkgs; [
+      lzop
+      mbuffer
+    ];
   };
 
   systemd.services.allow-remote-users = {

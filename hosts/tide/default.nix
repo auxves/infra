@@ -90,7 +90,7 @@
         target = "tide@harpy:backups/tide";
         recursive = true;
         sendOptions = "w p";
-        extraArgs = [ "--exclude-snaps=autosnap" ];
+        extraArgs = [ "--exclude-snaps=autosnap" "--no-stream" ];
       };
     };
   };
