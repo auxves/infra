@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   extraConfig = {
     init.defaultBranch = "main";
@@ -16,6 +16,9 @@ let
     merge.autoStash = true;
     merge.tool = "code";
     "mergetool \"code\"".cmd = ''code --wait "$MERGED"'';
+
+    credential.helper = lib.optional pkgs.stdenv.isDarwin "osxkeychain"
+      ++ lib.optional pkgs.stdenv.isLinux "libsecret";
   };
 
   ignores = [
