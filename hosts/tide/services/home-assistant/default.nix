@@ -3,13 +3,9 @@ let
   cfg = config.apps.home-assistant;
 in
 {
-  networking.firewall.interfaces.podman0.allowedTCPPorts = [ 5580 ];
-  networking.firewall.allowedUDPPorts = [ 5353 ]; # needed for mDNS
-
   apps.home-assistant = {
     volumes = {
       home-assistant = { type = "zfs"; };
-      matter = { type = "zfs"; };
     };
 
     containers = {
@@ -30,16 +26,6 @@ in
           path = "/api/prometheus";
           port = 8123;
         };
-      };
-
-      matter-server = {
-        image = "ghcr.io/home-assistant-libs/python-matter-server:7.0.1@sha256:828c1cd3f957bb0287a099a439505457a25f5d65ed34281acf19cfbf537fe346";
-
-        volumes = [
-          "${cfg.volumes.matter.path}:/data"
-        ];
-
-        extraOptions = [ "--network=host" ];
       };
     };
 
