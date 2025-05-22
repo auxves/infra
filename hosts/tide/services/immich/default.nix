@@ -3,9 +3,6 @@ let
   cfg = config.apps.immich;
 in
 {
-  sops.secrets."immich/env" = { };
-  sops.secrets."immich/postgres/env" = { };
-
   apps.immich = { lib', ... }: {
     volumes = {
       immich = { type = "zfs"; };
@@ -20,8 +17,6 @@ in
         volumes = [
           "${cfg.volumes.immich.path}:/usr/src/app/upload"
         ];
-
-        environmentFiles = [ config.sops.secrets."immich/env".path ];
 
         environment = {
           REDIS_HOSTNAME = cfg.containers.redis.fullName;

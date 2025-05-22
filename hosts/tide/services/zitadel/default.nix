@@ -4,9 +4,8 @@ let
 in
 {
   sops.secrets."zitadel/env" = { };
-  sops.secrets."zitadel/postgres/env" = { };
 
-  apps.zitadel = {
+  apps.zitadel = { lib', ... }: {
     volumes = {
       zitadel = { type = "zfs"; };
       postgres = { type = "zfs"; };
@@ -36,19 +35,9 @@ in
         dependsOn = [ cfg.containers.postgres.fullName ];
       };
 
-      postgres = {
-        image = "postgres:16-alpine@sha256:de3d7b6e4b5b3fe899e997579d6dfe95a99539d154abe03f0b6839133ed05065";
-
-        volumes = [
-          "${cfg.volumes.postgres.path}:/var/lib/postgresql/data"
-        ];
-
-        environmentFiles = [ config.sops.secrets."zitadel/postgres/env".path ];
-
-        environment = {
-          POSTGRES_USER = "postgres";
-          POSTGRES_DB = "zitadel";
-        };
+      postgres = lib'.mkPostgres {
+        data = cfg.volumes.postgres.path;
+        db = "zitadel";
       };
     };
 

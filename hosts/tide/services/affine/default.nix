@@ -3,10 +3,7 @@ let
   cfg = config.apps.affine;
 in
 {
-  sops.secrets."affine/env" = { };
-  sops.secrets."affine/postgres/env" = { };
-
-  apps.affine = {
+  apps.affine = { lib', ... }: {
     volumes = {
       data = { type = "zfs"; };
       postgres = { type = "zfs"; };
@@ -20,15 +17,10 @@ in
           "${cfg.volumes.data.path}:/root/.affine"
         ];
 
-        environmentFiles = [ config.sops.secrets."affine/env".path ];
-
         environment = {
           AFFINE_SERVER_EXTERNAL_URL = "https://${cfg.ingresses.app.domain}";
           REDIS_SERVER_HOST = cfg.containers.redis.fullName;
-
-          OAUTH_OIDC_SCOPE = "openid email profile offline_access";
-          OAUTH_OIDC_CLAIM_MAP_ID = "preferred_username";
-          OAUTH_OIDC_CLAIM_MAP_EMAIL = "email";
+          DATABASE_URL = "postgresql://postgres@${cfg.containers.postgres.fullName}:5432/affine";
         };
 
         cmd = [
@@ -47,19 +39,9 @@ in
         image = "redis:7.2.5@sha256:fb534a36ac2034a6374933467d971fbcbfa5d213805507f560d564851a720355";
       };
 
-      postgres = {
-        image = "postgres:16-alpine@sha256:de3d7b6e4b5b3fe899e997579d6dfe95a99539d154abe03f0b6839133ed05065";
-
-        volumes = [
-          "${cfg.volumes.postgres.path}:/var/lib/postgresql/data"
-        ];
-
-        environmentFiles = [ config.sops.secrets."affine/postgres/env".path ];
-
-        environment = {
-          POSTGRES_USER = "postgres";
-          POSTGRES_DB = "affine";
-        };
+      postgres = lib'.mkPostgres {
+        data = cfg.volumes.postgres.path;
+        db = "affine";
       };
     };
 
