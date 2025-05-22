@@ -5,20 +5,16 @@
     "docker:enableMajor",
     "docker:pinDigests"
   ],
-
   "timezone": "America/Los_Angeles",
-
   "automergeType": "pr",
   "automergeSchedule": ["after 2am and before 7am"],
   "platformAutomerge": false,
-
   "pin": {
     "automerge": true
   },
   "pinDigest": {
     "automerge": true
   },
-
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
@@ -41,13 +37,11 @@
       "enabled": false
     }
   ],
-
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
     "extends": ["schedule:weekly"]
   },
-
   "nix": {
     "enabled": true,
     "packageRules": [
@@ -57,11 +51,10 @@
       }
     ]
   },
-
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [".nix$"],
+      "managerFilePatterns": ["/.nix$/"],
       "datasourceTemplate": "docker",
       "matchStringsStrategy": "any",
       "matchStrings": [
