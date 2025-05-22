@@ -29,7 +29,7 @@
       "matchPackageNames": [
         "redis",
         "postgres",
-        "tensorchord/pgvecto-rs",
+        "ghcr.io/immich-app/postgres",
         "itzg/minecraft-server",
         "sfudeus/apcupsd_exporter",
         "gregewing/apcupsd"

@@ -5,7 +5,7 @@
     , user ? "postgres"
     , db
     }: {
-      image = "postgres:16-alpine@sha256:de3d7b6e4b5b3fe899e997579d6dfe95a99539d154abe03f0b6839133ed05065";
+      inherit image;
 
       volumes = [
         "${data}:/var/lib/postgresql/data"
@@ -15,6 +15,7 @@
         POSTGRES_USER = user;
         POSTGRES_DB = db;
         POSTGRES_HOST_AUTH_METHOD = "trust";
+        POSTGRES_INITDB_ARGS = "--data-checksums";
       };
     };
 }
