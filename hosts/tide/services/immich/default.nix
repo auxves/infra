@@ -6,7 +6,7 @@ in
   sops.secrets."immich/env" = { };
   sops.secrets."immich/postgres/env" = { };
 
-  apps.immich = {
+  apps.immich = { lib', ... }: {
     volumes = {
       immich = { type = "zfs"; };
       postgres = { type = "zfs"; };
@@ -15,7 +15,7 @@ in
 
     containers = {
       immich = {
-        image = "ghcr.io/immich-app/immich-server:v1.132.3@sha256:6680d88486251b0264a78a1934fe82eef875555aa6d84d703a0980328a5d5c31";
+        image = "ghcr.io/immich-app/immich-server:v1.133.0@sha256:4d667c5fd6ffac0395c429fc8a335c607272587643f29fb2ddd9bfe16f1f874e";
 
         volumes = [
           "${cfg.volumes.immich.path}:/usr/src/app/upload"
@@ -39,7 +39,7 @@ in
       };
 
       machine-learning = {
-        image = "ghcr.io/immich-app/immich-machine-learning:v1.131.2@sha256:29836cf73146057ac388546021fff3e00c923e22a28587cceb5108a5e537987d";
+        image = "ghcr.io/immich-app/immich-machine-learning:v1.133.0@sha256:4e2f17bf9a368201e8641af1d73722cddf7a71da9afc3c14e4e9d144e3c57f67";
         volumes = [ "${cfg.volumes.ml.path}:/cache" ];
       };
 
@@ -47,20 +47,11 @@ in
         image = "redis:7.2.5@sha256:fb534a36ac2034a6374933467d971fbcbfa5d213805507f560d564851a720355";
       };
 
-      postgres = {
-        image = "tensorchord/pgvecto-rs:pg16-v0.2.1@sha256:ff2288833f32aa863ba46f4c6f5b5c143f526a2d27f4cca913c232f917a66602";
-
-        volumes = [
-          "${cfg.volumes.postgres.path}:/var/lib/postgresql/data"
-        ];
-
-        environmentFiles = [ config.sops.secrets."immich/postgres/env".path ];
-
-        environment = {
-          POSTGRES_USER = "immich";
-          POSTGRES_DB = "immich";
-          POSTGRES_INITDB_ARGS = "--data-checksums";
-        };
+      postgres = lib'.mkPostgres {
+        image = "ghcr.io/immich-app/postgres:16-vectorchord0.3.0@sha256:7ac7fc515326587697ca149a352cbb88ce19a904cd110c6b1d42af67c72603eb";
+        data = cfg.volumes.postgres.path;
+        db = "immich";
+        user = "immich";
       };
     };
 
