@@ -5,16 +5,22 @@
     "docker:enableMajor",
     "docker:pinDigests"
   ],
+
   "timezone": "America/Los_Angeles",
+  "schedule": ["after 2am and before 7am"],
+
   "automergeType": "pr",
-  "automergeSchedule": ["after 2am and before 7am"],
-  "platformAutomerge": false,
+  "platformAutomerge": true,
+  "minimumReleaseAge": "2 days",
+
   "pin": {
     "automerge": true
   },
+
   "pinDigest": {
     "automerge": true
   },
+
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
@@ -37,11 +43,13 @@
       "enabled": false
     }
   ],
+
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
     "extends": ["schedule:weekly"]
   },
+
   "nix": {
     "enabled": true,
     "packageRules": [
@@ -51,6 +59,7 @@
       }
     ]
   },
+
   "customManagers": [
     {
       "customType": "regex",
