@@ -12,6 +12,7 @@
   "automergeType": "pr",
   "platformAutomerge": true,
   "minimumReleaseAge": "2 days",
+  "rebaseWhen": "conflicted",
 
   "pin": {
     "automerge": true
@@ -47,6 +48,7 @@
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
+    "rebaseWhen": "auto",
     "extends": ["schedule:weekly"]
   },
 
