@@ -21,12 +21,13 @@ in
           AFFINE_SERVER_EXTERNAL_URL = "https://${cfg.ingresses.app.domain}";
           REDIS_SERVER_HOST = cfg.containers.redis.fullName;
           DATABASE_URL = "postgresql://postgres@${cfg.containers.postgres.fullName}:5432/affine";
+          AFFINE_INDEXER_ENABLED = "false";
         };
 
         cmd = [
           "sh"
           "-c"
-          "node ./scripts/self-host-predeploy.js && node --import ./scripts/register.js ./dist/index.js"
+          "node ./scripts/self-host-predeploy.js && node ./dist/main.js"
         ];
 
         dependsOn = [
@@ -40,6 +41,7 @@ in
       };
 
       postgres = lib'.mkPostgres {
+        image = "pgvector/pgvector:pg16@sha256:5f411947f0bc83fbdfdde1459098ceead166c6908eadd08da8a6b7e2177e225d";
         data = cfg.volumes.postgres.path;
         db = "affine";
       };

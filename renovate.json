@@ -36,6 +36,7 @@
       "matchPackageNames": [
         "redis",
         "postgres",
+        "pgvector/pgvector",
         "ghcr.io/immich-app/postgres",
         "itzg/minecraft-server",
         "sfudeus/apcupsd_exporter",
