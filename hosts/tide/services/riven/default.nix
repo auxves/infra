@@ -83,7 +83,6 @@ in
         ];
 
         extraOptions = [ "--privileged" ];
-        dependsOn = [ cfg.containers.zurg.fullName ];
       };
     };
 
