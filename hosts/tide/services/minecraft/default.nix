@@ -32,7 +32,7 @@ in
         volumes = [
           "${cfg.volumes.vz.path}:/data"
           "${./icon.png}:/data/server-icon.png"
-          "${./vz.mrpack}:/mods.mrpack:ro"
+          "${./vz.mrpack}:/mods.mrpack"
         ];
 
         metrics.port = 25585;

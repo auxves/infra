@@ -73,8 +73,8 @@ in
 
         volumes = [
           "${config.volumes.runner.path}:/data"
-          "${initScript}:/init-runner.sh:ro"
-          "${configFile}:/data/config.yml:ro"
+          "${initScript}:/init-runner.sh"
+          "${configFile}:/data/config.yml"
         ];
 
         cmd = [ "/init-runner.sh" ];

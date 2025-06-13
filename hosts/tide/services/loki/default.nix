@@ -14,7 +14,7 @@ in
         user = "root:root";
         volumes = [
           "${cfg.volumes.loki.path}:/loki"
-          "${./loki.yaml}:/etc/loki/local-config.yaml:ro"
+          "${./loki.yaml}:/etc/loki/local-config.yaml"
         ];
       };
     };

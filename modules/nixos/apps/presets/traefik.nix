@@ -68,9 +68,9 @@ in
         image = "traefik:v3.4.1@sha256:cd40ab7bc1f047731d5b22595203812343efcb6538014c4e93221cfc3a77217a";
 
         volumes = [
-          "/run/podman/podman.sock:/var/run/docker.sock:ro"
+          "/run/podman/podman.sock:/var/run/docker.sock"
           "${config.volumes.traefik.path}:/etc/traefik"
-          "${configFile}:/etc/traefik/traefik.yaml:ro"
+          "${configFile}:/etc/traefik/traefik.yaml"
         ];
 
         environmentFiles = [ osConfig.sops.secrets."traefik/env".path ];

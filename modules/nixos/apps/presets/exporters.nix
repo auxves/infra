@@ -43,7 +43,7 @@ in
           CONTAINER_HOST = "unix:///run/podman/podman.sock";
         };
 
-        volumes = [ "/run/podman/podman.sock:/run/podman/podman.sock:ro" ];
+        volumes = [ "/run/podman/podman.sock:/run/podman/podman.sock" ];
 
         metrics = {
           job = "podman";

@@ -24,7 +24,7 @@ in
         };
 
         volumes = [
-          "/run/podman/podman.sock:/var/run/docker.sock:ro"
+          "/run/podman/podman.sock:/var/run/docker.sock"
           "${config.volumes.alloy.path}:/data"
           "${./config}:/etc/alloy"
         ];

@@ -15,7 +15,7 @@ in
 
         volumes = [
           "${cfg.volumes.prometheus.path}:/prometheus"
-          "${./prometheus.yml}:/etc/prometheus/prometheus.yml:ro"
+          "${./prometheus.yml}:/etc/prometheus/prometheus.yml"
         ];
 
         cmd = [
