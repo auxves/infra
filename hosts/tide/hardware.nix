@@ -115,6 +115,4 @@
       };
     };
   };
-
-  fileSystems."/storage".options = [ "noauto" ];
 }
