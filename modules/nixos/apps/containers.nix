@@ -19,6 +19,8 @@ let
       changes = {
         serviceName = "podman-${container.fullName}";
 
+        podman = { };
+
         labels = {
           "app.service" = app.name;
           "app.component" = container.name;

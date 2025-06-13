@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 let
   cfg = config.services.skhd;
 
@@ -64,44 +64,10 @@ let
 
   mkBinding = key: command: "${key} : ${builtins.replaceStrings ["\n"] ["; "] command}";
 
-  configFile = pkgs.writeText "skhdrc"
-    (builtins.concatStringsSep "\n\n" (lib.mapAttrsToList mkBinding keybindings));
+  configText = builtins.concatStringsSep "\n\n" (lib.mapAttrsToList mkBinding keybindings);
 in
 {
-  options.services.skhd = with lib; {
-    enable = mkEnableOption "Enable Simple Hotkey Daemon";
-
-    package = mkOption {
-      type = types.package;
-      default = pkgs.skhd;
-      description = "This option specifies the skhd package to use.";
-    };
-  };
-
   config = lib.mkIf cfg.enable {
-    launchd.agents.skhd = {
-      enable = true;
-      config = {
-        Label = "com.koekeishiya.skhd";
-        ProgramArguments = [ SKHD "-c" "${configFile}" ];
-
-        EnvironmentVariables = {
-          PATH = "/usr/bin:/usr/local/bin:/run/current-system/sw/bin";
-        };
-
-        KeepAlive = {
-          SuccessfulExit = false;
-          Crashed = true;
-        };
-
-        RunAtLoad = true;
-        ProcessType = "Interactive";
-        StandardOutPath = "/tmp/skhd_out.log";
-        StandardErrorPath = "/tmp/skhd_err.log";
-        Nice = -20;
-      };
-    };
-
-    home.packages = [ pkgs.skhd ];
+    services.skhd.config = configText;
   };
 }

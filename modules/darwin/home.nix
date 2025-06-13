@@ -4,6 +4,8 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
+    system.primaryUser = cfg.user;
+
     launchd.user.envVariables = {
       PATH = lib.internal.replaceAll
         {
