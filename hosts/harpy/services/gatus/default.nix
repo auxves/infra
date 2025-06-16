@@ -71,4 +71,15 @@ in
       };
     };
   };
+
+  monitoring.checks = [{
+    name = "healthcheck";
+    group = "infra";
+    url = "$GATUS_HEALTHCHECK_ENDPOINT";
+    interval = "2m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+    ];
+  }];
 }
