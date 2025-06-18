@@ -45,6 +45,10 @@
       "enabled": false
     },
     {
+      "matchPackageNames": ["rclone/rclone"],
+      "automerge": false
+    },
+    {
       "matchUpdateTypes": ["digest"],
       "matchPackageNames": ["quay.io/podman/stable"],
       "enabled": false
