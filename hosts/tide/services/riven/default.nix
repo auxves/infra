@@ -65,7 +65,7 @@ in
       };
 
       rclone = {
-        image = "rclone/rclone:1.70.0@sha256:223fbd5db2554214b1da148db589f300c193901c74b2a55336f486cf3af4ffae";
+        image = "rclone/rclone:1.70.1@sha256:01f220de5ee751913c95a6b92c02661b72d1821e36b9ec0ef31c03c3f4edcd23";
 
         volumes = [
           "${./rclone.conf}:/config/rclone/rclone.conf"
