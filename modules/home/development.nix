@@ -39,12 +39,11 @@ in
 
     programs.direnv = {
       enable = true;
+      silent = true;
       nix-direnv.enable = true;
     };
 
     home.sessionVariables = {
-      DIRENV_LOG_FORMAT = "";
-
       CARGO_HOME = "${config.xdg.cacheHome}/cargo";
       GRADLE_USER_HOME = "${config.xdg.cacheHome}/gradle";
     };
