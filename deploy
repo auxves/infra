@@ -21,7 +21,7 @@ if test $CFG
 end
 
 if test $(uname) = Darwin
-    darwin-rebuild switch --flake $FLAKE
+    sudo darwin-rebuild switch --flake $FLAKE
 else
     nixos-rebuild switch --flake $FLAKE
 end
