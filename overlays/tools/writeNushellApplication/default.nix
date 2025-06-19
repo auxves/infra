@@ -1,5 +1,5 @@
 { lib
-, unstable
+, nushell
 , writeTextFile
 , linkFarm
 }:
@@ -83,7 +83,7 @@ writeTextFile {
   allowSubstitutes = true;
   preferLocalBuild = false;
   text = ''
-    #!${unstable.nushell}/bin/nu -n
+    #!${nushell}/bin/nu -n
   '' + lib.optionalString (runtimeEnv != null) ''
 
     load-env ${toNu runtimeEnv}
@@ -102,7 +102,7 @@ writeTextFile {
   checkPhase =
     if checkPhase == null then ''
       runHook preCheck
-      ${unstable.nushell}/bin/nu --commands "nu-check --debug '$target'"
+      ${nushell}/bin/nu --commands "nu-check --debug '$target'"
       runHook postCheck
     ''
     else checkPhase;
