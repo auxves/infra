@@ -1,15 +1,13 @@
 { writeShellApplication
-, python3
 , octodns
 , config
 }:
 let
-  env = python3.withPackages (ps: with ps; [ octodns octodns-cloudflare ]);
+  octodns-with-providers = octodns.withProviders (ps: [ octodns.providers.cloudflare ]);
 in
 writeShellApplication {
   name = "deploy-dns";
-  runtimeInputs = [ env ];
   text = ''
-    exec octodns-sync --config-file=${config.entries."octodns.yaml"} "$@"
+    exec ${octodns-with-providers}/bin/octodns-sync --config-file=${config.entries."octodns.yaml"} "$@"
   '';
 }

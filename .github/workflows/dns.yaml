@@ -3,6 +3,7 @@ name: dns
 on:
   push:
     branches:
+      - "**"
       - "!renovate/**"
       - "renovate/lock-file-maintenance"
 
