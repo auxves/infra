@@ -10,7 +10,7 @@ in
 
     containers = {
       prometheus = {
-        image = "prom/prometheus:v3.4.2@sha256:3b1d5be5c3eef4f027665ddaa3b1a7de8a58d96a0a6de5dd45629afd267ecaf0";
+        image = "prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996";
         user = "root:root";
 
         volumes = [
