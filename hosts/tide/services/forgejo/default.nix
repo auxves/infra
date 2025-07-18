@@ -10,7 +10,7 @@ in
 
     containers = {
       forgejo = {
-        image = "codeberg.org/forgejo/forgejo:11.0.3@sha256:e2684fd8707d486329084a695ed91999a4072a798e5409d45c1eb8a2911ff4b9";
+        image = "codeberg.org/forgejo/forgejo:12.0.0@sha256:f4c16d0a40959cb83652cb4ac8cdad3273b68fee52dff64b5bf42db95c5c3baa";
 
         environment = {
           FORGEJO__SERVER__DOMAIN = cfg.ingresses.app.domain;
