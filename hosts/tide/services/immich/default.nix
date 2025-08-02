@@ -12,7 +12,7 @@ in
 
     containers = {
       immich = {
-        image = "ghcr.io/immich-app/immich-server:v1.137.1@sha256:fc2516bcd3a9e76a68447049bd3a69b84b618670c7a3a1d409b7d20606b2761f";
+        image = "ghcr.io/immich-app/immich-server:v1.137.3@sha256:e517f806457057d44695152a0af2dfa094225a7d85eb37f518925e68864c658d";
 
         volumes = [
           "${cfg.volumes.immich.path}:/usr/src/app/upload"
@@ -34,7 +34,7 @@ in
       };
 
       machine-learning = {
-        image = "ghcr.io/immich-app/immich-machine-learning:v1.137.1@sha256:591a7aef2a9ae087beb5aa24901ecffd441c8dc85db2a5addc6e08f4dbcddee3";
+        image = "ghcr.io/immich-app/immich-machine-learning:v1.137.3@sha256:ef517c041fa4a6a84a6c3c4f88a1124058e686c9c92bf09a973e7e60c3c3ea1e";
         volumes = [ "${cfg.volumes.ml.path}:/cache" ];
       };
 
