@@ -34,6 +34,11 @@
           "receive"
           "rollback"
           "destroy"
+
+          # dataset properties
+          "sharenfs"
+          "aclmode"
+          "aclinherit"
         ];
       in
       ''
