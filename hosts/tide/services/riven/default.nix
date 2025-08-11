@@ -10,7 +10,9 @@ in
       backend = { type = "zfs"; };
       postgres = { type = "zfs"; };
 
-      library = { type = "zfs"; path = "/storage/media"; };
+      movies = { type = "zfs"; path = "/storage/media/movies"; };
+      shows = { type = "zfs"; path = "/storage/media/shows"; };
+
       rd = { type = "ephemeral"; path = "/var/lib/realdebrid"; };
       zurg = { type = "ephemeral"; path = "/var/cache/zurg"; };
     };
@@ -28,7 +30,8 @@ in
 
         volumes = [
           "${cfg.volumes.backend.path}:/riven/data"
-          "${cfg.volumes.library.path}:/mnt/library"
+          "${cfg.volumes.movies.path}:/mnt/library/movies"
+          "${cfg.volumes.shows.path}:/mnt/library/shows"
           "${cfg.volumes.rd.path}:/data/rd:rshared"
         ];
 
