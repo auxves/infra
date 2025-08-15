@@ -42,7 +42,7 @@ in
       };
 
       frontend = {
-        image = "spoked/riven-frontend:0.20.0@sha256:2e4ddd26dca86d85237f059c70786ab917d1f0cedff906c90dc4b457bae32a8d";
+        image = "spoked/riven-frontend:v0.21.1@sha256:53e926cb4449256abf692ca838bb1a806e34fb1137da2edc385faa144eea110a";
 
         environment = {
           BACKEND_URL = "http://${cfg.containers.riven.fullName}:8080";
