@@ -19,7 +19,7 @@ in
 
     containers = {
       riven = {
-        image = "spoked/riven:0.21.19@sha256:50103b140949df86ebba8104fa31af4c7e8c902a80b97cb53d562b15320a02a7";
+        image = "spoked/riven:v0.23.4@sha256:17e67e3714280d321177066a84e4492ecf68824d96ac30cf0e01e2c43e6ddade";
 
         environment = {
           PUID = "0";
