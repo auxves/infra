@@ -61,8 +61,11 @@
     datasets = {
       "storage" = {
         useTemplate = [ "data" ];
-        recursive = "zfs";
+        recursive = true;
       };
+
+      "storage/media/movies".autosnap = false;
+      "storage/media/shows".autosnap = false;
     };
 
     templates.data = {
