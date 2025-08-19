@@ -50,7 +50,7 @@ in
 
     containers = {
       gatus = {
-        image = "ghcr.io/twin/gatus:v5.23.0@sha256:635107669b135b809b1628f97ac87584158740b07657a1079f8d6a89ca05decc";
+        image = "ghcr.io/twin/gatus:v5.23.1@sha256:43a12405c1bda5768026b0f75786a744678a472eb7f272039d95017e59ef50b6";
 
         environmentFiles = [ config.sops.secrets."gatus/env".path ];
 
