@@ -10,7 +10,7 @@ in
 
     containers = {
       pocket-id = {
-        image = "ghcr.io/pocket-id/pocket-id:v1.9.1@sha256:a93125b96ecdcf13dfd7b5b02383f672634d4bf64c3de2007954d90dc5b242cd";
+        image = "ghcr.io/pocket-id/pocket-id:v1.10.0@sha256:e0d48de48b9a2c030429a0f6566f94e009d228492506924ddd949d0bef26c955";
 
         volumes = [
           "${cfg.volumes.data.path}:/app/data"
