@@ -83,7 +83,7 @@ in
       };
 
       podman = {
-        image = "quay.io/podman/stable:v5.6.0@sha256:167415f737b5392b85407aea534a06135a58d36921b4feef01b2cc98790e4199";
+        image = "quay.io/podman/stable:v5.6.1@sha256:e18670977ab9cf94be3dec34f6118bf309da233d3258b4623471309c7c95d31d";
         user = "podman";
         extraOptions = [ "--privileged" ];
         cmd = [ "podman" "system" "service" "-t=0" "tcp://0.0.0.0:2375" ];
