@@ -17,8 +17,7 @@ let
     merge.tool = "code";
     "mergetool \"code\"".cmd = ''code --wait "$MERGED"'';
 
-    credential.helper = lib.optional pkgs.stdenv.isDarwin "osxkeychain"
-      ++ lib.optional pkgs.stdenv.isLinux "libsecret";
+    credential.helper = [ "cache --timeout=86400" ];
   };
 
   ignores = [
@@ -35,6 +34,7 @@ in
 {
   config = lib.mkIf config.programs.git.enable {
     programs.git = {
+      package = pkgs.gitMinimal;
       userName = "auxves";
       userEmail = "me@auxves.dev";
       inherit extraConfig ignores;
