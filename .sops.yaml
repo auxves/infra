@@ -2,7 +2,7 @@ keys:
   - &auxves age15k7x7umuau2ucnv09xcgr58s8vhz3tapr4rj0ah8j2r597shwelqfa60e0
   - &blaze age15hz2qpmdr5jrm0q0s02nfk05env9704n94rt73kqqmk2z8va83ps0zytt0
   - &tide age130smjsmgjrxqjke8knxta9f2l34v3ucdjx9qf07rtw0aulx5e4kq8wdvrs
-  - &harpy age1wew6l5smjtr79elezuu9yruw0dnjrer90fnyghcemrnwz0qtqudq5j0vak
+  - &harpy age1m6vwx635t5yef2cwvfz96f7r4ktwcv9ly0al5q0huxaagfrq0asq4zfpy5
 creation_rules:
   - path_regex: hosts/secrets.yaml
     key_groups:
