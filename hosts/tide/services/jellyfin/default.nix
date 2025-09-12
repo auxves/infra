@@ -14,6 +14,8 @@ in
     volumes = {
       jellyfin = { type = "zfs"; };
       library = { type = "zfs"; path = "/storage/media"; };
+
+      videos = { type = "zfs"; path = "/storage/media/videos"; };
     };
 
     containers = {
