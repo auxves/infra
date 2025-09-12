@@ -33,7 +33,7 @@
   };
 
   meta.addresses = {
-    internal.v4 = "100.92.74.18";
-    internal.v6 = "fd7a:115c:a1e0::e701:4a12";
+    internal.v4 = "100.79.148.31";
+    internal.v6 = "fd7a:115c:a1e0::1333:941f";
   };
 }
