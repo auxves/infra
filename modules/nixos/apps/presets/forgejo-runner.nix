@@ -34,7 +34,6 @@ let
   configFile = yaml.generate "runner-config.yml" {
     runner = {
       capacity = 5;
-      shutdown_timeout = 0;
     };
 
     cache.enable = true;
