@@ -20,7 +20,7 @@ let
             --token "$TOKEN" \
             --name "$NAME" \
             --labels "$LABELS" \
-            --config config.yml
+            --config /data/config.yml
 
         # and write back the configured labels
         echo "$LABELS" > "$LABELS_FILE"
@@ -28,7 +28,7 @@ let
 
     sleep 2
 
-    exec forgejo-runner daemon
+    exec forgejo-runner -c /data/config.yml daemon
   '';
 
   configFile = yaml.generate "runner-config.yml" {
@@ -36,9 +36,10 @@ let
       capacity = 5;
     };
 
-    cache.enable = true;
-
-    containers.enable_ipv6 = true;
+    container = {
+      enable_ipv6 = true;
+      force_pull = true;
+    };
   };
 in
 {
@@ -47,9 +48,8 @@ in
   };
 
   config = lib.mkIf (cfg.enable) {
-    volumes.runner = {
-      type = "ephemeral";
-      acls = [ "u:1000:rwx" ];
+    volumes = {
+      runner = { type = "ephemeral"; acls = [ "u:1000:rwx" ]; };
     };
 
     containers = {
@@ -63,8 +63,7 @@ in
           INSTANCE = "https://${self.hosts.tide.cfg.apps.forgejo.ingresses.app.domain}";
 
           LABELS = builtins.concatStringsSep "," [
-            "ubuntu-latest:docker://node:23-bookworm"
-            "nixos-latest:docker://nixos/nix"
+            "ubuntu-latest:docker://forge.auxves.dev/actions/runner-base:latest"
           ];
         };
 
@@ -83,7 +82,7 @@ in
 
       podman = {
         image = "quay.io/podman/stable:v5.6.1@sha256:e18670977ab9cf94be3dec34f6118bf309da233d3258b4623471309c7c95d31d";
-        user = "podman";
+        user = "root";
         extraOptions = [ "--privileged" ];
         cmd = [ "podman" "system" "service" "-t=0" "tcp://0.0.0.0:2375" ];
       };
