@@ -32,5 +32,16 @@ in
     };
 
     virtualisation.oci-containers.backend = "podman";
+
+    services.resolved.extraConfig =
+      let
+        gateways = builtins.concatStringsSep " "
+          (map (x: x.gateway) config.virtualisation.podman.defaultNetwork.settings.subnets);
+      in
+      lib.optionalString (gateways != "") ''
+        [Resolve]
+        DNS=${gateways}
+        Domains=~dns.podman
+      '';
   };
 }
