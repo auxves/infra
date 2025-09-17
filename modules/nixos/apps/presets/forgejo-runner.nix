@@ -57,7 +57,7 @@ in
         image = "data.forgejo.org/forgejo/runner:11.0.0@sha256:6e1cb83e64476a015c1182c39d5f9c0a5a62b22b826104a1b5ada5971246a6af";
 
         environment = {
-          DOCKER_HOST = "tcp://forgejo-podman:2375";
+          DOCKER_HOST = "tcp://${config.containers.podman.fullName}:2375";
 
           NAME = osConfig.networking.hostName;
           INSTANCE = "https://${self.hosts.tide.cfg.apps.forgejo.ingresses.app.domain}";
