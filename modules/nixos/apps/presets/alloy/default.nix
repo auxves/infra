@@ -33,6 +33,7 @@ in
           "run"
           "--storage.path=/data"
           "--server.http.listen-addr=0.0.0.0:12345"
+          "--disable-reporting"
           "/etc/alloy"
         ];
       };

@@ -20,6 +20,7 @@ in
         environment = {
           HOSTNAME = cfg.ingresses.app.domain;
           GF_SERVER_ROOT_URL = "https://${cfg.ingresses.app.domain}";
+          GF_ANALYTICS_REPORTING_ENABLED = "false";
         };
       };
     };
