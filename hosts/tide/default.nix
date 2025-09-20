@@ -86,6 +86,7 @@
 
   services.syncoid = {
     enable = true;
+    interval = "daily";
     sshKey = config.sops.secrets."syncoid/ssh".path;
 
     commands = {
