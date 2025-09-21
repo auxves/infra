@@ -29,6 +29,20 @@
 
   hardware.enableRedistributableFirmware = true;
 
+  systemd.network.links."10-lan" = {
+    matchConfig.MACAddress = "00:e0:4c:88:9a:fa";
+    linkConfig.Name = "lan";
+  };
+
+  systemd.network.networks."10-lan" = {
+    matchConfig.Name = "lan";
+
+    networkConfig = {
+      DHCP = "yes";
+      IPv6PrivacyExtensions = false;
+    };
+  };
+
   disko.devices = {
     disk = {
       root = {
