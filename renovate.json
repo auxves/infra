@@ -59,7 +59,7 @@
     "enabled": true,
     "automerge": true,
     "rebaseWhen": "auto",
-    "schedule": ["* 2-7 * * 1"]
+    "schedule": ["* 2-4 * * 1"]
   },
 
   "nix": {
