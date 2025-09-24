@@ -9,7 +9,10 @@
 
     supportedFilesystems = [ "zfs" ];
 
-    zfs.extraPools = [ "backups" ];
+    zfs = {
+      extraPools = [ "backups" ];
+      requestEncryptionCredentials = [ ];
+    };
   };
 
   disko.devices = {
