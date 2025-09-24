@@ -6,6 +6,7 @@
 
   presets = {
     containers.enable = true;
+    emulation.enable = true;
   };
 
   networking.hostId = "c2079aa6";
