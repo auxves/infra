@@ -8,6 +8,8 @@
     loader.efi.canTouchEfiVariables = true;
 
     supportedFilesystems = [ "zfs" ];
+
+    zfs.extraPools = [ "backups" ];
   };
 
   disko.devices = {
