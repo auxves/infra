@@ -40,7 +40,8 @@
         "ghcr.io/immich-app/postgres",
         "itzg/minecraft-server",
         "sfudeus/apcupsd_exporter",
-        "gregewing/apcupsd"
+        "gregewing/apcupsd",
+        "ghcr.io/tailscale/tailscale"
       ],
       "enabled": false
     },
