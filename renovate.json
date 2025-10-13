@@ -46,6 +46,10 @@
       "enabled": false
     },
     {
+      "matchPackageNames": ["forge.auxves.dev/{/,}**"],
+      "enabled": false
+    },
+    {
       "matchPackageNames": ["rclone/rclone"],
       "automerge": false
     },
