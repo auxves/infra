@@ -54,6 +54,10 @@ in
 
         environmentFiles = [ config.sops.secrets."gatus/env".path ];
 
+        environment = {
+          GATUS_LOG_LEVEL = "WARN";
+        };
+
         volumes = [
           "${cfg.volumes.gatus.path}:/data"
           "${yaml.generate "gatus.yaml" gatusConfig}:/config/config.yaml"
