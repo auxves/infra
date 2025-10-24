@@ -22,7 +22,7 @@ in
   config = lib.mkIf (cfg.enable) {
     containers = {
       node = lib.mkIf cfg.node.enable {
-        image = "quay.io/prometheus/node-exporter:v1.9.1@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a";
+        image = "quay.io/prometheus/node-exporter:v1.10.0@sha256:d464a7e3af9bbd7748e6c48c5d10e646450d8aab2f4732fbac1ae54af9e87b0e";
         extraOptions = [ "--pid=host" ];
         volumes = [ "/:/host:ro,rslave" ];
         cmd = [ "--path.rootfs=/host" ];
