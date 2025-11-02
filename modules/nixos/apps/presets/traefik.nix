@@ -65,7 +65,7 @@ in
 
     containers = {
       traefik = {
-        image = "traefik:v3.5.4@sha256:fa528d4565c8c279328c12d466325ee0f65804a75bcdbef737290664ad971d68";
+        image = "traefik:v3.5.4@sha256:4df0a50fcf71b454c0d7ad17675776dc8d37359deae3291895bdaa008c1b9972";
 
         volumes = [
           "/run/podman/podman.sock:/var/run/docker.sock"
