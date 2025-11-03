@@ -50,7 +50,7 @@
       "enabled": false
     },
     {
-      "matchPackageNames": ["rclone/rclone"],
+      "matchPackageNames": ["rclone/rclone", "jellyfin/jellyfin"],
       "automerge": false
     },
     {
