@@ -31,7 +31,7 @@ in
         environment = {
           TS_HOSTNAME = "sidestore-vpn";
           TS_AUTH_ONCE = "true";
-          TS_EXTRA_ARGS = "--advertise-tags=tag:sidestore-vpn,tag:infra";
+          TS_EXTRA_ARGS = "--advertise-tags=tag:infra";
           TS_ROUTES = "10.7.0.1/32";
           TS_USERSPACE = "false";
           TS_STATE_DIR = "/var/lib/tailscale";
