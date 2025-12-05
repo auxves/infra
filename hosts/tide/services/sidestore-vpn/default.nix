@@ -22,7 +22,7 @@ in
       };
 
       tailscale = {
-        image = "ghcr.io/tailscale/tailscale:v1.90.9@sha256:9975353aae933e8fbd1a81226d092a9225b9a0f98b173d365a9d525eca1cc298";
+        image = "ghcr.io/tailscale/tailscale:v1.88.3@sha256:b2a19f6b6402adc26a2aa8cb90da66afe3061e718ac67ed3f21ec3d4b366439f";
 
         volumes = [ "${cfg.volumes.tailscale.path}:/var/lib/tailscale" ];
 
