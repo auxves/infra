@@ -10,7 +10,7 @@ in
 
     containers = {
       home-assistant = {
-        image = "ghcr.io/home-assistant/home-assistant:2025.12.0@sha256:8951fcbb794da8f261e1639c668639bc90f9520b48099b5715f6d5fbfef08a0e";
+        image = "ghcr.io/home-assistant/home-assistant:2025.12.1@sha256:4e5e81917192e3fa730948964b19d6e03ff3b9c2694894bc6d6b76769e642055";
 
         volumes = [
           "${cfg.volumes.home-assistant.path}:/config"
