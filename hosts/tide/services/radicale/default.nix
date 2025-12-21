@@ -10,7 +10,7 @@ in
 
     containers = {
       radicale = {
-        image = "tomsquest/docker-radicale:3.5.9.0@sha256:b833f12e7fe02ef5fcb841bf331785b865325924c22e375b34279b96b29cf7b6";
+        image = "tomsquest/docker-radicale:3.5.10.0@sha256:e9d49beb7e459a915a9e828daf22db54d00c5835b4f57ff29419776870fd8687";
         volumes = [
           "${cfg.volumes.radicale.path}:/data"
           "${./radicale.conf}:/config/config"
