@@ -34,7 +34,7 @@ in
       };
 
       podman = lib.mkIf cfg.podman.enable {
-        image = "quay.io/navidys/prometheus-podman-exporter:v1.19.0@sha256:2c668ea312e866706ddf11e8031271b9e2bedf2d3b45819388638b90efb19f14";
+        image = "quay.io/navidys/prometheus-podman-exporter:v1.20.0@sha256:14ce7addbc7348875b3f74a6002def96b66e2b1eb5efb4bdecf8037b868ae0ee";
         user = "root:root";
 
         cmd = [ "--collector.enable-all" "-w" "app.service,app.component" ];
