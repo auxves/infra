@@ -3,6 +3,8 @@ let
   cfg = config.apps.pocket-id;
 in
 {
+  sops.secrets."pocket-id/env" = { };
+
   apps.pocket-id = {
     volumes = {
       data = { type = "zfs"; };
@@ -10,7 +12,7 @@ in
 
     containers = {
       pocket-id = {
-        image = "ghcr.io/pocket-id/pocket-id:v1.16.0@sha256:f8cde808e8e840acda25683fc2168e0206e3f3fb1a48cca89d211aafd87eaeef";
+        image = "ghcr.io/pocket-id/pocket-id:v2.1.0@sha256:f8ed26e8012ae60d5320735dcdecf7347778e2a31c69a147f5c030e017cb32d9";
 
         volumes = [
           "${cfg.volumes.data.path}:/app/data"
@@ -22,6 +24,8 @@ in
           PUID = "0";
           PGID = "0";
         };
+
+        environmentFiles = [ config.sops.secrets."pocket-id/env".path ];
       };
     };
 
