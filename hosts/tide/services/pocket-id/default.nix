@@ -3,6 +3,8 @@ let
   cfg = config.apps.pocket-id;
 in
 {
+  sops.secrets."pocket-id/env" = { };
+
   apps.pocket-id = {
     volumes = {
       data = { type = "zfs"; };
@@ -22,6 +24,8 @@ in
           PUID = "0";
           PGID = "0";
         };
+
+        environmentFiles = [ config.sops.secrets."pocket-id/env".path ];
       };
     };
 
