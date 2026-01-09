@@ -12,7 +12,7 @@ in
 
     containers = {
       vaultwarden = {
-        image = "vaultwarden/server:testing-alpine@sha256:c72cb86d394a40917bb0f6d89a31db70e764dfe83cd54bbe86fc28abd439ea7f";
+        image = "vaultwarden/server:testing-alpine@sha256:830c84653e147119b6f8d13ee1cdcfc1520d766f2d5f21eb06dde4acd5c3671b";
 
         volumes = [
           "${cfg.volumes.data.path}:/data"
