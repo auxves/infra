@@ -54,7 +54,7 @@ in
 
     containers = {
       runner = {
-        image = "data.forgejo.org/forgejo/runner:12.5.0@sha256:d1fa548c336febeb314afb06da8564e06b66b9514ccd06177cce997830233f31";
+        image = "data.forgejo.org/forgejo/runner:12.5.2@sha256:6617b2c22b3369b18bc2017f97c28026e87e8a5217058e9c08d1ae4091b3a357";
 
         environment = {
           DOCKER_HOST = "tcp://${config.containers.podman.fullName}:2375";
