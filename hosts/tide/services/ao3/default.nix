@@ -14,7 +14,7 @@ in
 
     containers = {
       pocketbase = {
-        image = "ghcr.io/muchobien/pocketbase:0.29.2@sha256:b12b8f647c6d4419000bc9861fab1b7bbad1e43126e08df5c5b40fb5f1c02acd";
+        image = "ghcr.io/muchobien/pocketbase:0.36.0@sha256:093220f6661a589fcf55124956c24603a0ffd935755fef1ad751198d96023e3f";
 
         volumes = [
           "${cfg.volumes.pocketbase.path}:/pb_data"
