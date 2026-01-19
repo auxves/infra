@@ -20,7 +20,7 @@ in
 
     containers = {
       jellyfin = {
-        image = "jellyfin/jellyfin:10.11.0@sha256:59417f441213e236a9f907d4e71a13472042409d85f9e9310dbdd87ee33d7bd4";
+        image = "jellyfin/jellyfin:10.11.6@sha256:333b647716631443a43c7fabac4b0c46b4e2f036bad19547e00958f10f721b85";
 
         volumes = [
           "${cfg.volumes.jellyfin.path}:/config"
