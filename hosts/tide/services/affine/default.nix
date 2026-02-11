@@ -11,7 +11,7 @@ in
 
     containers = {
       affine = {
-        image = "ghcr.io/toeverything/affine:0.25.7@sha256:e24e34c351e787dbfc61bf768bea5650447177a956649cecf06f6ddf01585716";
+        image = "ghcr.io/toeverything/affine:0.26.2@sha256:0690dd1be1feafe8a9a31f28391d2f531f2d2cac5d9f31b43c44ed7266d3be19";
 
         volumes = [
           "${cfg.volumes.data.path}:/root/.affine"
