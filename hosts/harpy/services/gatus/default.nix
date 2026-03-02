@@ -31,13 +31,10 @@ let
       };
     };
 
-    # security.oidc = {
-    #   issuer-url = "https://auth.auxves.dev";
-    #   redirect-url = "https://status.auxves.dev/authorization-code/callback";
-    #   client-id = "$OIDC_CLIENT_ID";
-    #   client-secret = "$OIDC_CLIENT_SECRET";
-    #   scopes = [ "openid" ];
-    # };
+    connectivity.checker = {
+      target = "1.1.1.1:53";
+      interval = "30s";
+    };
   };
 in
 {
