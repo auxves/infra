@@ -1,6 +1,9 @@
 { config, lib, pkgs, ... }:
 let
-  extraConfig = {
+  settings = {
+    user.name = "auxves";
+    user.email = "me@auxves.dev";
+
     init.defaultBranch = "main";
 
     pull.rebase = true;
@@ -35,19 +38,7 @@ in
   config = lib.mkIf config.programs.git.enable {
     programs.git = {
       package = pkgs.gitMinimal;
-      userName = "auxves";
-      userEmail = "me@auxves.dev";
-      inherit extraConfig ignores;
-
-      delta = {
-        enable = true;
-        options = {
-          side-by-side = true;
-          hunk-header-style = "omit";
-          syntax-theme = "Nord";
-          tabs = 2;
-        };
-      };
+      inherit settings ignores;
 
       signing = {
         key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINHiwuwSpFayBr5vka7mNjmFkPlKXK7bUkRYxJspY5WE";
@@ -55,6 +46,17 @@ in
       };
 
       lfs.enable = true;
+    };
+
+    programs.delta = {
+      enable = true;
+      enableGitIntegration = true;
+      options = {
+        side-by-side = true;
+        hunk-header-style = "omit";
+        syntax-theme = "Nord";
+        tabs = 2;
+      };
     };
 
     programs.git-credential-oauth.enable = true;

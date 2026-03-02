@@ -1,5 +1,7 @@
-{ ... }: {
+{ self, ... }: {
   imports = [
+    self.inputs.comin.nixosModules.comin
+    self.inputs.sops.nixosModules.sops
     ./hardware.nix
     ./services
   ];
@@ -17,6 +19,9 @@
       4243 # comin
     ];
   };
+
+  systemd.network.enable = true;
+  networking.useNetworkd = true;
 
   services.comin = {
     enable = true;
@@ -37,4 +42,6 @@
     internal.v4 = "100.79.148.31";
     internal.v6 = "fd7a:115c:a1e0::1333:941f";
   };
+
+  system.stateVersion = "23.05";
 }

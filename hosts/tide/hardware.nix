@@ -1,7 +1,13 @@
-{ pkgs, ... }: {
+{ self, lib, pkgs, ... }: {
+  imports = [
+    self.inputs.lanzaboote.nixosModules.lanzaboote
+    self.inputs.disko.nixosModules.disko
+  ];
+
   boot = {
     initrd.systemd.enable = true;
 
+    loader.systemd-boot.enable = lib.mkForce false; # lanzaboote replaces it
     loader.efi.canTouchEfiVariables = true;
 
     lanzaboote = {
@@ -16,6 +22,9 @@
     blacklistedKernelModules = [ "i915" ];
 
     kernel.sysctl = {
+      "net.ipv4.conf.all.forwarding" = true;
+      "net.ipv6.conf.all.forwarding" = true;
+
       "net.core.default_qdisc" = "fq";
       "net.ipv4.tcp_congestion_control" = "bbr";
       "net.core.rmem_max" = 16777216;

@@ -4,7 +4,10 @@ let
   lib = final;
 
   overlays = with self.overlays; [ all unstable ];
-  pkgsFor = system: import inputs.nixpkgs { inherit system overlays; };
+  pkgsFor = system: import inputs.nixpkgs {
+    localSystem = system;
+    inherit overlays;
+  };
 
   hostList = builtins.attrValues self.hosts;
 in

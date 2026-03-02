@@ -1,6 +1,7 @@
-{ modulesPath, ... }: {
+{ self, modulesPath, ... }: {
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
+    self.inputs.disko.nixosModules.disko
   ];
 
   boot = {

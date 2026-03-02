@@ -2,22 +2,22 @@
   description = "Nix Configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
+    home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.05";
+    darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
     fenix.url = "github:nix-community/fenix/monthly";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
 
-    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.2";
+    lanzaboote.url = "github:nix-community/lanzaboote/v1.0.0";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
 
-    disko.url = "github:nix-community/disko/v1.11.0";
+    disko.url = "github:nix-community/disko/v1.13.0";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
     comin.url = "github:nlewo/comin/v0.2.0";
