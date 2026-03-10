@@ -41,7 +41,8 @@
         "itzg/minecraft-server",
         "sfudeus/apcupsd_exporter",
         "gregewing/apcupsd",
-        "ghcr.io/tailscale/tailscale"
+        "ghcr.io/tailscale/tailscale",
+        "DeterminateSystems/determinate-nix-action"
       ],
       "enabled": false
     },
@@ -57,6 +58,10 @@
       "matchUpdateTypes": ["digest"],
       "matchPackageNames": ["quay.io/podman/stable"],
       "enabled": false
+    },
+    {
+      "matchDepTypes": ["action"],
+      "automerge": false
     }
   ],
 
