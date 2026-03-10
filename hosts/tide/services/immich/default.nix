@@ -34,8 +34,9 @@ in
       };
 
       machine-learning = {
-        image = "ghcr.io/immich-app/immich-machine-learning:v2.5.6@sha256:b213fa3c82d27a21a299c46ffbb38a091f18384db1ad67d409a3b34fe0fce556";
+        image = "ghcr.io/immich-app/immich-machine-learning:v2.5.6-openvino@sha256:fec6fd64c322b962a7f9830be805096c569b658d99b7732c43e0d7ea472b6e8f";
         volumes = [ "${cfg.volumes.ml.path}:/cache" ];
+        extraOptions = [ "--device=/dev/dri" ];
       };
 
       redis = {
