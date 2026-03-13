@@ -7,6 +7,7 @@ let
   pkgsFor = system: import inputs.nixpkgs {
     localSystem = system;
     inherit overlays;
+    config.allowUnfree = true;
   };
 
   hostList = builtins.attrValues self.hosts;
