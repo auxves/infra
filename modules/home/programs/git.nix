@@ -11,14 +11,7 @@ let
 
     gpg.format = "ssh";
 
-    core.editor = "code --wait";
-
-    diff.tool = "code";
-    "difftool \"code\"".cmd = ''code --wait --diff "$LOCAL" "$REMOTE"'';
-
     merge.autoStash = true;
-    merge.tool = "code";
-    "mergetool \"code\"".cmd = ''code --wait "$MERGED"'';
 
     credential.helper = [ "cache --timeout=86400" ];
   };
