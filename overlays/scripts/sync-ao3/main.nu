@@ -129,10 +129,10 @@ def main [
 
                     if $entry.id in $ids.series {
                         # series was updated, only include updated works
-                        $works | filter { $in.updated >= $state.last_updated }
+                        $works | where { $in.updated >= $state.last_updated }
                     } else {
                         # series is new, include works not already in bookmarks unless updated
-                        $works | filter { $in.id not-in $ids.work or $in.updated >= $state.last_updated }
+                        $works | where { $in.id not-in $ids.work or $in.updated >= $state.last_updated }
                     }
                 }
             }
