@@ -10,7 +10,7 @@ in
 
     containers = {
       loki = {
-        image = "grafana/loki:3.6.8@sha256:9db961170b729dc38277963cbb4a79941626388562cc455db61bf85564aa8945";
+        image = "grafana/loki:3.7.0@sha256:c316b7c7589a5eeca843b6926c7446149d18300b79ac8538dc4ae063bc478da2";
         user = "root:root";
         volumes = [
           "${cfg.volumes.loki.path}:/loki"
