@@ -139,7 +139,7 @@ def main [
         }
         | flatten
         | uniq-by id
-        | reject -i type
+        | reject --optional type
     } catch { |err|
         log error $"Unable to calculate modified works: ($err.msg)
 ($err.rendered | str indent-by 4)"
