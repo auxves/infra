@@ -62,6 +62,16 @@
     {
       "matchDepTypes": ["action"],
       "automerge": false
+    },
+    {
+      "matchFileNames": ["hosts/tide/services/otwarchive/default.nix"],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": ["ghcr.io/auxves/otwarchive-docker"],
+      "matchFileNames": ["hosts/tide/services/otwarchive/default.nix"],
+      "enabled": true,
+      "automerge": true
     }
   ],
 
