@@ -31,7 +31,7 @@ ruler:
 
 limits_config:
   metric_aggregation_enabled: true
-  retention_period: 30d
+  retention_period: 180d
 
 compactor:
   retention_enabled: true
