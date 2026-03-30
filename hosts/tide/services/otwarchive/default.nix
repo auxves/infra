@@ -38,7 +38,6 @@ in
           "s"
           "-p=3000"
           "-b=0.0.0.0"
-          "--dev-caching"
           "--no-log-to-stdout"
         ];
 
@@ -46,7 +45,34 @@ in
           cfg.containers.db.fullName
           cfg.containers.redis.fullName
           cfg.containers.es.fullName
-          cfg.containers.mc.fullName
+        ];
+      };
+
+      resque = {
+        image = "ghcr.io/auxves/otwarchive-docker:v0.9.467.4@sha256:99089a28f4490933ed49cbc7b107086bfdd7d61a0743179f2fc19be7521d1f81";
+
+        volumes = [
+          "${cfg.volumes.config.path}/database.yml:/otwa/config/database.yml"
+          "${cfg.volumes.config.path}/local.yml:/otwa/config/local.yml"
+          "${cfg.volumes.config.path}/redis.yml:/otwa/config/redis.yml"
+        ];
+
+        environment = {
+          RAILS_ENV = "development";
+          QUEUE = "*";
+        };
+
+        environmentFiles = [ config.sops.secrets."otwarchive/env".path ];
+
+        cmd = [
+          "bash"
+          "-c"
+          "bundle exec rake environment resque:scheduler & bundle exec rake environment resque:work"
+        ];
+
+        dependsOn = [
+          cfg.containers.db.fullName
+          cfg.containers.redis.fullName
         ];
       };
 
@@ -77,10 +103,6 @@ in
         };
 
         volumes = [ "${cfg.volumes.es.path}:/usr/share/elasticsearch/data" ];
-      };
-
-      mc = {
-        image = "docker.io/memcached:1.5.22@sha256:15e0ee1c1c98912a88eaded604a1f185b17b92d5958631b6f90f8e6372857c7a";
       };
     };
 
