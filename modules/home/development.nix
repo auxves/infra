@@ -12,10 +12,6 @@ in
       skim
       jq
 
-      # Zig
-      zig
-      zls
-
       # Nix
       nil
       nixpkgs-fmt
@@ -23,6 +19,10 @@ in
       # JS
       bun
       nodejs_20
+
+      # Python
+      python3
+      unstable.uv
 
       # Rust
       fenix.latest.toolchain
