@@ -25,6 +25,7 @@ in
 
     ingresses = {
       app = {
+        type = "public";
         domain = "forge.auxves.dev";
         container = "forgejo";
         port = 3000;
