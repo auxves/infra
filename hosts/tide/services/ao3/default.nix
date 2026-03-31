@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, ... }:
 let
   cfg = config.apps.ao3;
 in
@@ -24,16 +24,9 @@ in
       archival = {
         autoStart = false;
 
-        image = "sync-ao3:latest";
-        imageStream = pkgs.dockerTools.streamLayeredImage {
-          name = "sync-ao3";
-          tag = "latest";
-          contents = with pkgs.dockerTools; [ binSh caCertificates ];
-          config.Cmd = [ "${pkgs.scripts.sync-ao3}/bin/sync-ao3" ];
-        };
+        image = "forge.auxves.dev/arno/ao3-cli:v0.1.1@sha256:4299305d21b00c43d44550b6297dd4854ee71ba4769a79f25cf58c984c6a5415";
 
         environment = {
-          STATE_DIR = "/state";
           LOG_LEVEL = "DEBUG";
         };
 
@@ -42,6 +35,8 @@ in
         volumes = [
           "${cfg.volumes.archive.path}:/state"
         ];
+
+        cmd = [ "bookmarks" "sync" "/state" ];
       };
     };
 

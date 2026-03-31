@@ -3,7 +3,6 @@ rec {
   all = inputs.nixpkgs.lib.composeManyExtensions [
     overlayTools
     pythonPackages
-    nuModules
     scripts
     packages
     patches
@@ -15,7 +14,6 @@ rec {
   scripts = import ./scripts/overlay.nix;
   packages = import ./packages/overlay.nix;
   pythonPackages = import ./pythonPackages/overlay.nix;
-  nuModules = import ./nuModules/overlay.nix;
   patches = import ./patches/overlay.nix;
   tools = import ./tools/overlay.nix;
 

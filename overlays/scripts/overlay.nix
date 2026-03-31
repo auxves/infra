@@ -1,6 +1,6 @@
 final: prev: {
   auxves.checks = prev.auxves.checks or { } // prev.lib.internal.prefixAttrs "scripts" {
-    inherit (final.scripts) deploy-dns sync-ao3;
+    inherit (final.scripts) deploy-dns;
   };
 
   scripts = {
@@ -11,7 +11,5 @@ final: prev: {
       final.callPackage ./deploy-dns { inherit config; } // {
         inherit config;
       };
-
-    sync-ao3 = final.nuModules.callPackage ./sync-ao3 { };
   };
 }
