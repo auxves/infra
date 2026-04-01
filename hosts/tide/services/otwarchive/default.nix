@@ -16,7 +16,7 @@ in
 
     containers = {
       otwarchive = {
-        image = "ghcr.io/auxves/otwarchive-docker:v0.9.467.4@sha256:99089a28f4490933ed49cbc7b107086bfdd7d61a0743179f2fc19be7521d1f81";
+        image = "ghcr.io/auxves/otwarchive-docker:v0.9.468.4@sha256:060665d5b4a484b9e19802adb04bb992b682108893896b1768ec8b6d6bc70a42";
 
         volumes = [
           "${cfg.volumes.config.path}/database.yml:/otwa/config/database.yml"
@@ -49,7 +49,7 @@ in
       };
 
       resque = {
-        image = "ghcr.io/auxves/otwarchive-docker:v0.9.467.4@sha256:99089a28f4490933ed49cbc7b107086bfdd7d61a0743179f2fc19be7521d1f81";
+        image = "ghcr.io/auxves/otwarchive-docker:v0.9.468.4@sha256:060665d5b4a484b9e19802adb04bb992b682108893896b1768ec8b6d6bc70a42";
 
         volumes = [
           "${cfg.volumes.config.path}/database.yml:/otwa/config/database.yml"
