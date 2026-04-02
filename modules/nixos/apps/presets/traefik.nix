@@ -12,7 +12,9 @@ let
         http = {
           tls = { certResolver = "letsencrypt"; };
         };
-        http3 = { advertisedPort = 443; };
+
+        # QUIC currently doesn't work over Tailscale
+        # http3 = { advertisedPort = 443; };
       };
 
       public = {
