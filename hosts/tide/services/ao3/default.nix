@@ -24,7 +24,7 @@ in
       archival = {
         autoStart = false;
 
-        image = "forge.auxves.dev/arno/ao3-cli:v0.2.0@sha256:10043c1322c4750297a772488e6f74b27175b1a3a6f2cd3abc644dbad7e92397";
+        image = "forge.auxves.dev/arno/ao3-cli:v0.2.1@sha256:cd5b32e288bc3dd76b29e89de8b319b30592167784cda3a67875485a80e7ddfa";
 
         environment = {
           LOG_LEVEL = "DEBUG";
