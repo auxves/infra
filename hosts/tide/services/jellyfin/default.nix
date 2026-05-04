@@ -43,6 +43,7 @@ in
 
     ingresses = {
       app = {
+        type = "public";
         domain = "jellyfin.auxves.dev";
         container = "jellyfin";
         port = 8096;
