@@ -91,6 +91,7 @@ in
 
     ingresses = {
       app = {
+        domain = "riven.auxves.dev";
         container = "frontend";
         port = 3000;
       };
