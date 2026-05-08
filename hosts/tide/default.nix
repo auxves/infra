@@ -44,6 +44,7 @@
 
   services.samba = {
     enable = true;
+    openFirewall = true;
     settings = {
       global = {
         "socket options" = "IPTOS_LOWDELAY TCP_NODELAY IPTOS_THROUGHPUT SO_RCVBUF=131072 SO_SNDBUF=131072";
