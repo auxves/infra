@@ -25,7 +25,6 @@ in
         volumes = [
           "${cfg.volumes.jellyfin.path}:/config"
           "${cfg.volumes.library.path}:/data/library"
-          "${config.apps.riven.volumes.rd.path}:/data/rd:rshared"
         ];
 
         extraOptions = [
@@ -36,8 +35,6 @@ in
         environment = {
           JELLYFIN_PublishedServerUrl = "https://${cfg.ingresses.app.domain}";
         };
-
-        dependsOn = [ config.apps.riven.containers.rclone.fullName ];
       };
     };
 
