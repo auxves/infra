@@ -19,7 +19,6 @@ in
           DATABASE_URI = "sqlite://./data/db.sqlite";
           SEL_SYNC_ACCESS = "all";
           REGEX_FILTER_ACCESS = "all";
-          AIOSTREAMS_AUTH_REQUIRED = "true";
         };
 
         environmentFiles = [ config.sops.secrets."aiostreams/env".path ];
