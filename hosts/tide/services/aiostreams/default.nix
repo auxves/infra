@@ -32,7 +32,6 @@ in
 
     ingresses = {
       app = {
-        type = "public";
         domain = "aiostreams.auxves.dev";
         container = "aiostreams";
         port = 3000;
