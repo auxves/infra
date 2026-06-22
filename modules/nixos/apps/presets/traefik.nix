@@ -12,6 +12,7 @@ let
         http = {
           tls = { certResolver = "letsencrypt"; };
         };
+        transport.respondingTimeouts.readTimeout = "0s";
 
         # QUIC currently doesn't work over Tailscale
         # http3 = { advertisedPort = 443; };
@@ -22,6 +23,7 @@ let
         http = {
           tls = { certResolver = "letsencrypt"; };
         };
+        transport.respondingTimeouts.readTimeout = "0s";
         http3 = { advertisedPort = 443; };
       };
     };
