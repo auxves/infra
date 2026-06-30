@@ -12,7 +12,7 @@ in
 
     containers = {
       aiostreams = {
-        image = "ghcr.io/viren070/aiostreams:v2.30.4@sha256:4df42e514a880301e0ee411753a1220da3c5bd39927111cfd17f5fc99c61ec2b";
+        image = "ghcr.io/viren070/aiostreams:v2.30.5@sha256:c42879590fe96a3158e48acbcf544cd6b5ecfe1ea23218f8a92b45de53aed600";
 
         environment = {
           BASE_URL = "https://${cfg.ingresses.app.domain}";
