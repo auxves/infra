@@ -34,6 +34,8 @@
 
       "fs.inotify.max_user_instances" = "8192";
     };
+
+    zfs.forceImportRoot = false;
   };
 
   hardware.enableRedistributableFirmware = true;

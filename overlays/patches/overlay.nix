@@ -1,12 +1,7 @@
 final: prev: {
   auxves.checks = prev.auxves.checks or { } // prev.lib.internal.prefixAttrs "patches" {
-    inherit (final) podman sanoid;
+    inherit (final) sanoid;
   };
-
-  podman = prev.podman.overrideAttrs (old: {
-    patches = (old.patches or [ ])
-      ++ [ ./podman/rfc3339nano-logs.patch ];
-  });
 
   sanoid = prev.sanoid.overrideAttrs (old: {
     version = "unstable";

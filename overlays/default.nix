@@ -25,7 +25,7 @@ rec {
   unstable = final: _: {
     unstable = import inputs.unstable {
       inherit (final) config overlays;
-      localSystem = final.stdenv.hostPlatform;
+      system = final.stdenv.hostPlatform.system;
     };
   };
 }

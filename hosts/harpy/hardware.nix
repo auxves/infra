@@ -11,6 +11,7 @@
     supportedFilesystems = [ "zfs" ];
 
     zfs = {
+      forceImportRoot = false;
       extraPools = [ "backups" ];
       requestEncryptionCredentials = [ ];
     };
