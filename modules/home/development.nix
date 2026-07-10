@@ -18,7 +18,7 @@ in
 
       # JS
       bun
-      nodejs_20
+      nodejs_24
 
       # Python
       python3
