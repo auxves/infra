@@ -14,13 +14,14 @@
     fenix.url = "github:nix-community/fenix/monthly";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
 
-    lanzaboote.url = "github:nix-community/lanzaboote/v1.1.0";
+    # Custom branch to support comin
+    lanzaboote.url = "github:nix-community/lanzaboote/746a0f97b5848a88e6a1ea69ce1dc1a4d3752c66";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
 
     disko.url = "github:nix-community/disko/v1.13.0";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
-    comin.url = "github:nlewo/comin/v0.2.0";
+    comin.url = "github:nlewo/comin/v0.14.0";
     comin.inputs.nixpkgs.follows = "nixpkgs";
 
     sops.url = "github:Mic92/sops-nix";
