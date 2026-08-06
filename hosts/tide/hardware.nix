@@ -7,6 +7,8 @@
   boot = {
     initrd.systemd.enable = true;
 
+    lanzaboote.settings.default = "nixos-comin-*";
+
     loader.systemd-boot.enable = lib.mkForce false; # lanzaboote replaces it
     loader.efi.canTouchEfiVariables = true;
 

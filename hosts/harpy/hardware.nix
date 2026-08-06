@@ -5,6 +5,8 @@
   ];
 
   boot = {
+    lanzaboote.settings.default = "nixos-comin-*";
+
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
 

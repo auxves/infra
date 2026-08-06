@@ -15,7 +15,7 @@
     fenix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Custom branch to support comin
-    lanzaboote.url = "github:nix-community/lanzaboote/746a0f97b5848a88e6a1ea69ce1dc1a4d3752c66";
+    lanzaboote.url = "github:nix-community/lanzaboote/5db662a929bed2a9c7b0ea0f7b946156e077bdca";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
 
     disko.url = "github:nix-community/disko/v1.13.0";
