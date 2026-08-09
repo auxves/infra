@@ -50,6 +50,14 @@ let
         } // lib.optionalAttrs (internalRecords != [ ]) {
           "${host.name}.x" = internalRecords;
           "*.${host.name}.x" = internalRecords;
+        } // lib.optionalAttrs (addrs.public.v4 != null) {
+          "v4.${host.name}" = [{ type = "A"; value = addrs.public.v4; }];
+        } // lib.optionalAttrs (addrs.public.v6 != null) {
+          "v6.${host.name}" = [{ type = "AAAA"; value = addrs.public.v6; }];
+        } // lib.optionalAttrs (addrs.internal.v4 != null) {
+          "v4.${host.name}.x" = [{ type = "A"; value = addrs.internal.v4; }];
+        } // lib.optionalAttrs (addrs.internal.v6 != null) {
+          "v6.${host.name}.x" = [{ type = "AAAA"; value = addrs.internal.v6; }];
         };
 
       records = builtins.map ingressToRecord ingresses

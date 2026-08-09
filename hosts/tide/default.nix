@@ -126,6 +126,30 @@
     };
   };
 
+  # Host connectivity checks due to history of firewall rule issues
+  monitoring.checks = [
+    {
+      name = "tide-ipv4";
+      group = "hosts";
+      url = "tcp://v4.tide.auxves.dev:443";
+      interval = "1m";
+      alerts = [{ type = "discord"; }];
+      conditions = [
+        "[CONNECTED] == true"
+      ];
+    }
+    {
+      name = "tide-ipv6";
+      group = "hosts";
+      url = "tcp://v6.tide.auxves.dev:443";
+      interval = "1m";
+      alerts = [{ type = "discord"; }];
+      conditions = [
+        "[CONNECTED] == true"
+      ];
+    }
+  ];
+
   sops = {
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     defaultSopsFile = ./secrets.yaml;
