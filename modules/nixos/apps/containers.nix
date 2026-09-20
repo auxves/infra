@@ -12,6 +12,7 @@ let
           {
             "traefik.http.routers.${router}.rule" = ingress.rule;
             "traefik.http.routers.${router}.entrypoints" = ingress.type;
+            "traefik.http.routers.${router}.service" = router;
             "traefik.http.services.${router}.loadbalancer.server.port" = toString ingress.port;
           })
         ingresses;
