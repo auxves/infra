@@ -35,6 +35,13 @@ in
         container = "home-assistant";
         port = 8123;
       };
+
+      mcp = {
+        type = "public";
+        domain = "mcp.home.auxves.dev";
+        container = "home-assistant";
+        port = 9584;
+      };
     };
   };
 
