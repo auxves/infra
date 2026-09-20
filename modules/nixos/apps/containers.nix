@@ -34,7 +34,7 @@ let
           "metrics.path" = container.metrics.path;
           "metrics.scheme" = container.metrics.scheme;
           "metrics.port" = toString container.metrics.port;
-        };
+        } // container.labels;
       };
     in
     lib.nameValuePair container.fullName (builtins.removeAttrs (lib.recursiveUpdate container changes) [
