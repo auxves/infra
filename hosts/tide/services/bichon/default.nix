@@ -12,7 +12,7 @@ in
 
     containers = {
       bichon = {
-        image = "docker.io/rustmailer/bichon:2.0.3@sha256:fa6a04db651a43c734c1f92eb48c48c78eaf23c0d387356dfc6041abdf73587a";
+        image = "docker.io/rustmailer/bichon:2.1.0@sha256:197bf942c70a73e8d984ec3b450c17b69a9d5f5bd3a8f3ee042670b86a0b611f";
 
         volumes = [
           "${cfg.volumes.data.path}:/data"
