@@ -37,6 +37,7 @@
     remotes = [{
       name = "origin";
       url = "https://github.com/auxves/infra";
+      branches.testing.name = "staging";
     }];
   };
 

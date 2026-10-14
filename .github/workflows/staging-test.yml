@@ -1,0 +1,102 @@
+name: staging-test
+run-name: "Staging test — PR #${{ github.event.pull_request.number }}"
+
+# Deploys a PR to `staging` for testing on the real host, then waits for the
+# agent's verdict via PR labels.
+# SECURITY: `pull_request_target` runs this workflow from `main`, never from
+# the PR. Do not change it to `pull_request` — a PR editing this file could
+# then push arbitrary code to `staging`.
+
+on:
+  pull_request_target:
+    types: [labeled]
+    branches: [main]
+
+# Read-only: pushes to `staging` go through the deploy key, not this token.
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+# `queue: max` keeps up to 100 runs waiting (default silently cancels older queued runs).
+concurrency:
+  group: staging-test
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  staging-test:
+    if: >
+      github.event.label.name == 'testing requested' &&
+      github.event.pull_request.state == 'open' &&
+      github.event.sender.login == 'auxves'
+    runs-on: ubuntu-latest
+    environment: Staging
+    timeout-minutes: 180
+    steps:
+      - name: Check out the PR head
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          ssh-key: ${{ secrets.STAGING_DEPLOY_KEY }}
+
+      - name: Squash the PR onto main and push to staging
+        id: deploy
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B staging-test origin/main
+          git merge --squash "$PR_HEAD"
+          git commit -m "Staging test: ${PR_TITLE} (#${PR_NUMBER})" \
+                     -m "Squashed from ${PR_HEAD}. Deployed to staging for testing; do not merge this branch."
+          git push --force-with-lease origin staging-test:staging
+
+      - name: Wait for the agent to claim the PR
+        # Claim first so a stale verdict from a previous test can't end the run early.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          for _ in $(seq 1 30); do  # ~30 min
+            labels=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" --jq '.[].name')
+            if echo "$labels" | grep -qx "testing in progress"; then
+              echo "Agent claimed the PR."
+              exit 0
+            fi
+            sleep 60
+          done
+          echo "::error::Agent never claimed the PR (no 'testing in progress' label)."
+          exit 1
+
+      - name: Wait for the agent's verdict
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          for _ in $(seq 1 90); do  # ~90 min
+            labels=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" --jq '.[].name')
+            if echo "$labels" | grep -qx "testing failed"; then
+              echo "::error::Agent reported testing FAILED."
+              exit 1
+            fi
+            if echo "$labels" | grep -qx "testing succeeded"; then
+              echo "Agent reported testing SUCCEEDED."
+              exit 0
+            fi
+            sleep 60
+          done
+          echo "::error::Timed out waiting for the agent's verdict."
+          exit 1
+
+      - name: Roll staging back to main (on test failure)
+        # Gated on the deploy having succeeded, so a squash failure doesn't clobber staging.
+        if: (failure() || cancelled()) && steps.deploy.outcome == 'success'
+        run: |
+          git fetch origin main
+          git push --force origin origin/main:staging
