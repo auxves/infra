@@ -18,12 +18,6 @@ permissions:
   issues: read
   pull-requests: read
 
-# `queue: max` keeps up to 100 runs waiting (default silently cancels older queued runs).
-concurrency:
-  group: staging-test
-  cancel-in-progress: false
-  queue: max
-
 jobs:
   staging-test:
     if: >
@@ -32,6 +26,14 @@ jobs:
       github.event.sender.login == 'auxves'
     runs-on: ubuntu-latest
     environment: Staging
+    # Job-level, not workflow-level: the sender gate above skips non-Arno
+    # triggers before the run enters the concurrency group, so those runs
+    # end as skipped instead of failing at startup against the trigger policy.
+    # `queue: max` keeps up to 100 runs waiting (default silently cancels older queued runs).
+    concurrency:
+      group: staging-test
+      cancel-in-progress: false
+      queue: max
     timeout-minutes: 180
     steps:
       - name: Check out the PR head
