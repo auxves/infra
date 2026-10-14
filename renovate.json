@@ -52,7 +52,6 @@
     },
     {
       "matchUpdateTypes": ["digest"],
-      "matchPackageNames": ["quay.io/podman/stable"],
       "enabled": false
     },
     {
