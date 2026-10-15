@@ -1,0 +1,27 @@
+name: dns-dry-run
+
+on:
+  push:
+    branches:
+      - "**"
+      - "!main"
+      - "!staging"
+      - "!renovate/**"
+
+concurrency:
+  group: dns-dry-run-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@73327eb48f028efaaf5013656ba216ca3cdeca7b # v3.16.3
+
+      - name: Dry Update DNS Records
+        env:
+          CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN_RO }}
+        run: nix run .#scripts.deploy-dns
