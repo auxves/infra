@@ -26,12 +26,10 @@ in
         extraOptions = [ "--pid=host" ];
         volumes = [
           "/:/host:ro,rslave"
-          # D-Bus access for the systemd collector (node_systemd_unit_state)
-          "/run/dbus/system_bus_socket:/run/dbus/system_bus_socket:ro"
+          "/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro"
         ];
         cmd = [
           "--path.rootfs=/host"
-          # Explicitly enable the systemd collector (node_systemd_unit_state)
           "--collector.systemd"
         ];
 
