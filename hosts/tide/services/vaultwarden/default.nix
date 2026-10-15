@@ -31,6 +31,12 @@ in
 
         environmentFiles = [ config.sops.secrets."vaultwarden/env".path ];
       };
+
+      # TEST: intentionally invalid image to exercise the staging-test failure path.
+      # This container will fail to start on purpose. Do not merge this.
+      test-broken-image = {
+        image = "ghcr.io/auxves/this-image-does-not-exist:0.0.0-invalid";
+      };
     };
 
     ingresses = {
