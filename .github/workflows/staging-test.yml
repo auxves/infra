@@ -101,4 +101,5 @@ jobs:
         if: (failure() || cancelled()) && steps.deploy.outcome == 'success'
         run: |
           git fetch origin main
-          git push --force origin origin/main:staging
+          git push origin --delete staging
+          git push origin refs/remotes/origin/main:refs/heads/staging
