@@ -24,8 +24,14 @@ in
       node = lib.mkIf cfg.node.enable {
         image = "quay.io/prometheus/node-exporter:v1.12.1@sha256:1b4e4438faca4dd7e001dd445d161a4a2091b0fededa84093b3a8dfeae1f1be0";
         extraOptions = [ "--pid=host" ];
-        volumes = [ "/:/host:ro,rslave" ];
-        cmd = [ "--path.rootfs=/host" ];
+        volumes = [
+          "/:/host:ro,rslave"
+          "/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro"
+        ];
+        cmd = [
+          "--path.rootfs=/host"
+          "--collector.systemd"
+        ];
 
         metrics = {
           job = "node";
