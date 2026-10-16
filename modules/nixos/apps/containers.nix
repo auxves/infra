@@ -8,13 +8,16 @@ let
         (_: ingress:
           let
             router = "${app.name}-${ingress.name}";
+
+            routerOptions = lib.concatMapAttrs
+              (key: value: { "traefik.http.routers.${router}.${key}" = toString value; })
+              ingress.settings;
+
+            serviceOptions = lib.optionalAttrs (ingress.settings.service == router) {
+              "traefik.http.services.${ingress.settings.service}.loadbalancer.server.port" = toString ingress.port;
+            };
           in
-          {
-            "traefik.http.routers.${router}.rule" = ingress.rule;
-            "traefik.http.routers.${router}.entrypoints" = ingress.type;
-            "traefik.http.routers.${router}.service" = router;
-            "traefik.http.services.${router}.loadbalancer.server.port" = toString ingress.port;
-          })
+          serviceOptions // routerOptions)
         ingresses;
 
       changes = {

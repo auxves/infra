@@ -45,5 +45,10 @@ prometheus.remote_write "default" {
 			"https://%s/api/v1/write",
 			sys.env("PROMETHEUS_DOMAIN"),
 		)
+
+		basic_auth {
+			username = sys.env("PROMETHEUS_USERNAME")
+			password = sys.env("PROMETHEUS_PASSWORD")
+		}
 	}
 }

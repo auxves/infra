@@ -1,4 +1,8 @@
 { ... }: {
+  sops.secrets."alloy/env" = {
+    sopsFile = ../../../secrets.yaml;
+  };
+
   apps.alloy = {
     presets.alloy.enable = true;
   };

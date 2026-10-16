@@ -33,5 +33,10 @@ loki.write "default" {
 			"https://%s/loki/api/v1/push",
 			sys.env("LOKI_DOMAIN"),
 		)
+
+		basic_auth {
+			username = sys.env("LOKI_USERNAME")
+			password = sys.env("LOKI_PASSWORD")
+		}
 	}
 }

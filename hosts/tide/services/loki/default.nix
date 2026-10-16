@@ -16,6 +16,10 @@ in
           "${cfg.volumes.loki.path}:/loki"
           "${./loki.yaml}:/etc/loki/local-config.yaml"
         ];
+
+        labels = {
+          "traefik.http.middlewares.loki-auth.basicauth.users" = "loki:$2y$05$Br6FRQBFBO3V3lEvIVMDc.7RkfPDLFwMiuraC/nhkV8XNXsodT9s6";
+        };
       };
     };
 
@@ -23,6 +27,17 @@ in
       app = {
         container = "loki";
         port = 3100;
+        settings.middlewares = "loki-auth@docker";
+      };
+
+      unauthenticated = {
+        container = "loki";
+
+        settings = {
+          service = cfg.ingresses.app.settings.service;
+          rule = "${cfg.ingresses.app.settings.rule} && Path(`/ready`) && Method(`GET`)";
+          priority = 100;
+        };
       };
     };
   };
