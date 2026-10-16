@@ -95,6 +95,30 @@ let
     };
   };
 
+  traefikRouterOptions = { name, config, app, ingress, ... }: {
+    freeformType = lib.types.attrsOf (with lib.types; oneOf [ str int ]);
+
+    options = with lib; {
+      rule = mkOption {
+        type = types.str;
+        default = "Host(`${ingress.domain}`)";
+        description = "The Traefik routing rule for this ingress";
+      };
+
+      service = mkOption {
+        type = types.str;
+        default = "${app.name}-${ingress.name}";
+        description = "The Traefik service name";
+      };
+
+      entrypoints = mkOption {
+        type = types.str;
+        default = ingress.type;
+        description = "The Traefik entrypoints to use for this ingress";
+      };
+    };
+  };
+
   ingressOptions = { name, config, app, ... }: {
     options = with lib; {
       name = mkOption {
@@ -130,10 +154,13 @@ let
         description = "The domain to use for ingress";
       };
 
-      rule = mkOption {
-        type = types.str;
-        default = "Host(`${config.domain}`)";
-        description = "The traefik rule to use for this ingress";
+      settings = mkOption {
+        type = types.submoduleWith {
+          modules = [ traefikRouterOptions ];
+          specialArgs = { inherit app; ingress = config; };
+        };
+        default = { };
+        description = "Additional Traefik labels for this router";
       };
     };
   };

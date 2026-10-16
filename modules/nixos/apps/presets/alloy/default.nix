@@ -23,6 +23,8 @@ in
           LOKI_DOMAIN = self.hosts.tide.cfg.apps.loki.ingresses.app.domain;
         };
 
+        environmentFiles = [ osConfig.sops.secrets."alloy/env".path ];
+
         volumes = [
           "/run/podman/podman.sock:/var/run/docker.sock"
           "${config.volumes.alloy.path}:/data"

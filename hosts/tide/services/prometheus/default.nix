@@ -23,6 +23,10 @@ in
           "--storage.tsdb.path=/prometheus"
           "--web.enable-remote-write-receiver"
         ];
+
+        labels = {
+          "traefik.http.middlewares.prometheus-auth.basicauth.users" = "prometheus:$2y$05$Yj052mwfrTZR3huMspAVmu6Z3ASEyOPZl4qvvYUr1VpH26dfQo2D6";
+        };
       };
     };
 
@@ -30,6 +34,17 @@ in
       app = {
         container = "prometheus";
         port = 9090;
+        settings.middlewares = "prometheus-auth@docker";
+      };
+
+      unauthenticated = {
+        container = "prometheus";
+
+        settings = {
+          service = cfg.ingresses.app.settings.service;
+          rule = "${cfg.ingresses.app.settings.rule} && Path(`/-/ready`) && Method(`GET`)";
+          priority = 100;
+        };
       };
     };
   };
@@ -37,7 +52,7 @@ in
   monitoring.checks = [{
     name = "prometheus";
     group = "infra";
-    url = "https://${cfg.ingresses.app.domain}";
+    url = "https://${cfg.ingresses.app.domain}/-/ready";
     interval = "1m";
     alerts = [{ type = "discord"; }];
     conditions = [
