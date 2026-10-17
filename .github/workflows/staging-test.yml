@@ -71,6 +71,17 @@ jobs:
               echo "Agent claimed the PR."
               exit 0
             fi
+            # Fast worker may verdict before we poll; verdict without 'testing requested' proves the claim happened.
+            if ! echo "$labels" | grep -qx "testing requested"; then
+              if echo "$labels" | grep -qx "testing succeeded"; then
+                echo "Agent already reported testing SUCCEEDED."
+                exit 0
+              fi
+              if echo "$labels" | grep -qx "testing failed"; then
+                echo "Agent already reported testing FAILED."
+                exit 0
+              fi
+            fi
             sleep 60
           done
           echo "::error::Agent never claimed the PR (no 'testing in progress' label)."
