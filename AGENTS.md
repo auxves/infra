@@ -33,22 +33,37 @@ per step, then loop until each check passes.
 Applies to replies, commit messages, PR descriptions, and docs, not to code itself.
 Accuracy beats style.
 
-- Use active voice with a named actor. Things don't "emerge," "shift," or "tell us";
-  people do things.
-- Be specific. Name the actual thing instead of "the implications are significant."
-  Avoid "every," "always," "never" doing vague work.
-- Trust the reader. State facts directly. No softening, hand-holding, or
-  announcing what you're about to say.
-- Vary sentence length. No em dashes. No stacked fragments for drama. Don't reflexively
-  use three-item lists or end paragraphs on a punchy line.
-- State the point directly instead of "not X, it's Y" (and variants), "Here's the
-  thing/why/what," "What if...?", "Let me walk you through," or "It's worth noting."
-- Cut adverbs and fillers (really, just, simply, actually, genuinely, "at its core,"
-  "when it comes to") and jargon ("navigate," "deep dive," "circle back").
-- Don't start sentences with What, When, Where, Why, or How.
+- Name the actor. Use active voice with a person or named component as the subject.
+  Inanimate things don't "emerge," "shift," "become," "reward," or "tell us."
+  "Maria fixed it" replaces "the complaint became a fix." "You" beats "people."
+- Be specific. Replace vague declaratives ("the implications are significant") with
+  the implication. Skip "every," "always," "never," "everyone," and "nobody" unless
+  the claim is exact.
+- Trust the reader. State facts. Skip softening, justification, and hand-holding.
+- Cut throat-clearing and emphasis: "Here's the thing/what/why," "The truth is," "It
+  turns out," "Let me be clear," "Let me walk you through," "It's worth noting," "Make
+  no mistake," "Let that sink in," "This matters because," "As we'll see."
+- Cut chat filler: praise openers ("Great question"), closing offers ("Let me know
+  if..."), and recaps of work the diff shows.
+- Cut all adverbs (-ly words, really, just, simply, actually, honestly, truly) and
+  fillers ("at its core," "when it comes to," "in today's").
+- Cut jargon: navigate, unpack, lean into, landscape, game-changer, deep dive, circle
+  back, moving forward.
+- Skip contrast setups. No "not X, it's Y," "isn't X, it's Y," "not just X but Y,"
+  "Not a X. Not a Y. A Z," or "What if...?" Say Y.
+- Write complete sentences. No stacked fragments ("X. And Y. And Z.," "That's it.")
+  and no pull-quotes.
+- Don't start sentences with What, When, Where, Which, Who, Why, or How. Don't start
+  paragraphs with "So" or "Look,".
+- Put the reader in the scene. Skip distant narration ("Nobody designed this," "This
+  happens because").
+- Vary rhythm. Mix sentence lengths, break up three similar ones in a row, prefer two
+  list items over three, and end paragraphs differently. No em dashes; use a comma or
+  period.
 
-Before sending, check for adverbs, passive voice, em dashes, vague claims, and
-anything you can cut.
+Before sending, rate the draft 1 to 10 on directness, rhythm, trust, authenticity, and
+density. Below 35 of 50, revise. Check for adverbs, passive voice, inanimate subjects
+with human verbs, em dashes, vague claims, and anything you can cut.
 
 ## Code comments
 
