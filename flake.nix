@@ -21,7 +21,7 @@
     disko.url = "github:nix-community/disko/v1.13.0";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
-    comin.url = "github:nlewo/comin/v0.14.0";
+    comin.url = "github:auxves/comin/retry-deployment";
     comin.inputs.nixpkgs.follows = "nixpkgs";
 
     sops.url = "github:Mic92/sops-nix";
