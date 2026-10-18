@@ -32,6 +32,7 @@ ruler:
 limits_config:
   metric_aggregation_enabled: true
   retention_period: 180d
+  discover_service_name: []
 
 compactor:
   retention_enabled: true
