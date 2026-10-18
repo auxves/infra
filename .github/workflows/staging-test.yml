@@ -1,8 +1,8 @@
-name: staging-test
-run-name: "Staging test — PR #${{ github.event.pull_request.number }}"
+name: staging
+run-name: "staging / deploy — PR #${{ github.event.pull_request.number }}"
 
 # Deploys a PR to `staging` for testing on the real host, then waits for the
-# agent's verdict via PR labels.
+# agent's `staging / test` check run to resolve.
 # SECURITY: `pull_request_target` runs this workflow from `main`, never from
 # the PR. Do not change it to `pull_request` — a PR editing this file could
 # then push arbitrary code to `staging`.
@@ -12,14 +12,15 @@ on:
     types: [labeled]
     branches: [main]
 
-# Read-only: pushes to `staging` go through the deploy key, not this token.
+# Pushes to `staging` go through the deploy key, not this token.
 permissions:
   contents: read
-  issues: read
+  issues: write      # remove the `testing requested` trigger label
   pull-requests: read
+  checks: read       # poll the agent's `staging / test` check run
 
 jobs:
-  staging-test:
+  deploy:
     if: >
       github.event.label.name == 'testing requested' &&
       github.event.pull_request.state == 'open' &&
@@ -44,7 +45,7 @@ jobs:
           ssh-key: ${{ secrets.STAGING_DEPLOY_KEY }}
 
       - name: Squash the PR onto main and push to staging
-        id: deploy
+        id: push
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
@@ -58,59 +59,64 @@ jobs:
           git commit -m "Staging test: ${PR_TITLE} (#${PR_NUMBER})" \
                      -m "Squashed from ${PR_HEAD}. Deployed to staging for testing; do not merge this branch."
           git push --force-with-lease origin staging-test:staging
+          echo "tip_sha=$(git rev-parse staging-test)" >> "$GITHUB_OUTPUT"
 
-      - name: Wait for the agent to claim the PR
-        # Claim first so a stale verdict from a previous test can't end the run early.
+      - name: Remove the trigger label
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          for _ in $(seq 1 30); do  # ~30 min
-            labels=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" --jq '.[].name')
-            if echo "$labels" | grep -qx "testing in progress"; then
-              echo "Agent claimed the PR."
-              exit 0
-            fi
-            # Fast worker may verdict before we poll; verdict without 'testing requested' proves the claim happened.
-            if ! echo "$labels" | grep -qx "testing requested"; then
-              if echo "$labels" | grep -qx "testing succeeded"; then
-                echo "Agent already reported testing SUCCEEDED."
-                exit 0
-              fi
-              if echo "$labels" | grep -qx "testing failed"; then
-                echo "Agent already reported testing FAILED."
-                exit 0
-              fi
-            fi
-            sleep 60
-          done
-          echo "::error::Agent never claimed the PR (no 'testing in progress' label)."
-          exit 1
+          gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/testing%20requested" -X DELETE --silent || true
 
-      - name: Wait for the agent's verdict
+      - name: Wait for the staging test check
+        # Only the terminal state matters, so a fast agent verdict between
+        # polls is harmless (the old label-polling claim race can't recur).
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
         run: |
-          for _ in $(seq 1 90); do  # ~90 min
-            labels=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" --jq '.[].name')
-            if echo "$labels" | grep -qx "testing failed"; then
-              echo "::error::Agent reported testing FAILED."
-              exit 1
-            fi
-            if echo "$labels" | grep -qx "testing succeeded"; then
-              echo "Agent reported testing SUCCEEDED."
-              exit 0
+          deadline=$(( $(date +%s) + 7200 ))  # ~120 min
+          while [ "$(date +%s)" -lt "$deadline" ]; do
+            # check_name must be pre-encoded: gh's -f leaves the literal `/`
+            # unencoded, which 404s the endpoint.
+            check=$(gh api "repos/${{ github.repository }}/commits/${PR_HEAD}/check-runs?check_name=staging%20%2F%20test" \
+              --jq '.check_runs | max_by(.id) // empty')
+            status=$(echo "$check" | jq -r '.status // empty')
+            if [ -z "$status" ]; then
+              echo "Check run not created yet; waiting for the agent to claim."
+            elif [ "$status" != "completed" ]; then
+              echo "Check run in progress; waiting."
+            else
+              conclusion=$(echo "$check" | jq -r '.conclusion')
+              echo "Check run completed: $conclusion"
+              case "$conclusion" in
+                success) exit 0 ;;
+                cancelled)
+                  echo "Superseded by a newer test run; the newer run owns staging."
+                  exit 0
+                  ;;
+                *)
+                  echo "::error::Staging test reported $conclusion."
+                  exit 1
+                  ;;
+              esac
             fi
             sleep 60
           done
-          echo "::error::Timed out waiting for the agent's verdict."
+          echo "::error::Timed out waiting for the staging test check."
           exit 1
 
       - name: Roll staging back to main (on test failure)
-        # Gated on the deploy having succeeded, so a squash failure doesn't clobber staging.
-        if: (failure() || cancelled()) && steps.deploy.outcome == 'success'
+        # Gated on the push having succeeded, so a squash failure doesn't clobber staging.
+        # The tip guard keeps a superseding run's newer staging push safe.
+        if: (failure() || cancelled()) && steps.push.outcome == 'success'
         run: |
           git fetch origin main
-          git push origin --delete staging
-          git push origin refs/remotes/origin/main:refs/heads/staging
+          tip=$(git ls-remote origin staging | cut -f1)
+          if [ "$tip" = "${{ steps.push.outputs.tip_sha }}" ]; then
+            # Delete the branch first: comin only redeploys staging on delete+recreate, not a force-push.
+            git push origin --delete staging
+            git push origin refs/remotes/origin/main:refs/heads/staging
+          else
+            echo "Staging tip moved on ($tip); leaving it alone."
+          fi
