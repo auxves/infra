@@ -38,6 +38,13 @@ let
           "metrics.scheme" = container.metrics.scheme;
           "metrics.port" = toString container.metrics.port;
         } // container.labels;
+
+        service.serviceConfig.LogExtraFields = [
+          "ALLOY_ENABLE=true"
+          "APP_SERVICE=${app.name}"
+          "APP_COMPONENT=${container.name}"
+          "APP_CONTAINER=${container.fullName}"
+        ];
       };
     in
     lib.nameValuePair container.fullName (builtins.removeAttrs (lib.recursiveUpdate container changes) [

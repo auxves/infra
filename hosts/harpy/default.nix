@@ -1,6 +1,5 @@
 { self, ... }: {
   imports = [
-    self.inputs.comin.nixosModules.comin
     self.inputs.sops.nixosModules.sops
     ./hardware.nix
     ./services
@@ -9,28 +8,17 @@
   presets = {
     containers.enable = true;
     emulation.enable = true;
+    gitops.enable = true;
   };
 
   networking.hostId = "c2079aa6";
 
   networking.firewall = {
     trustedInterfaces = [ "tailscale0" ];
-    interfaces."podman+".allowedTCPPorts = [
-      4243 # comin
-    ];
   };
 
   systemd.network.enable = true;
   networking.useNetworkd = true;
-
-  services.comin = {
-    enable = true;
-    remotes = [{
-      name = "origin";
-      url = "https://github.com/auxves/infra";
-      branches.testing.name = "staging";
-    }];
-  };
 
   services.tailscale.enable = true;
 
