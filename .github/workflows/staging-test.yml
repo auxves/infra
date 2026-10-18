@@ -77,8 +77,9 @@ jobs:
         run: |
           deadline=$(( $(date +%s) + 7200 ))  # ~120 min
           while [ "$(date +%s)" -lt "$deadline" ]; do
-            check=$(gh api "repos/${{ github.repository }}/commits/${PR_HEAD}/check-runs" \
-              -f check_name='staging / test' \
+            # check_name must be pre-encoded: gh's -f leaves the literal `/`
+            # unencoded, which 404s the endpoint.
+            check=$(gh api "repos/${{ github.repository }}/commits/${PR_HEAD}/check-runs?check_name=staging%20%2F%20test" \
               --jq '.check_runs | max_by(.id) // empty')
             status=$(echo "$check" | jq -r '.status // empty')
             if [ -z "$status" ]; then
