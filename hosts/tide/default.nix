@@ -1,6 +1,5 @@
 { self, config, ... }: {
   imports = [
-    self.inputs.comin.nixosModules.comin
     self.inputs.sops.nixosModules.sops
     ./hardware.nix
     ./services
@@ -10,6 +9,7 @@
     home.enable = true;
     containers.enable = true;
     emulation.enable = true;
+    gitops.enable = true;
 
     builders = {
       volunteer = true;
@@ -24,22 +24,10 @@
     interfaces."podman+".allowedUDPPorts = [
       5353 # mDNS
     ];
-    interfaces."podman+".allowedTCPPorts = [
-      4243 # comin
-    ];
   };
 
   systemd.network.enable = true;
   networking.useNetworkd = true;
-
-  services.comin = {
-    enable = true;
-    remotes = [{
-      name = "origin";
-      url = "https://github.com/auxves/infra";
-      branches.testing.name = "staging";
-    }];
-  };
 
   services.tailscale.enable = true;
 
@@ -114,6 +102,9 @@
         extraArgs = [ "--exclude-snaps=autosnap" "--no-stream" ];
       };
     };
+
+    # Enable log scraping
+    service.serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
   };
 
   services.avahi = {

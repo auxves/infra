@@ -15,7 +15,7 @@ if test $CFG
     nix run nixpkgs#nixos-rebuild -- test \
         --flake $FLAKE#$CFG \
         --target-host $HOST --build-host $HOST \
-        --fast --use-remote-sudo $ARGS
+        --no-reexec --sudo $ARGS
 
     exit 0
 end

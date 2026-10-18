@@ -1,4 +1,6 @@
-loki.process "containers" {
+// Collect
+
+loki.process "journal" {
 	forward_to = [loki.write.default.receiver]
 
 	stage.decolorize { }
@@ -10,22 +12,65 @@ loki.process "containers" {
 	}
 }
 
-discovery.relabel "logs" {
-	targets = discovery.relabel.app_labels.output
+loki.relabel "journal" {
+	forward_to = []
 
 	rule {
-		source_labels = ["service"]
-		regex         = ".+"
-		action        = "keep"
+		source_labels = ["__journal__systemd_unit"]
+		target_label  = "unit"
+	}
+
+	rule {
+		source_labels = ["__journal_priority_keyword"]
+		target_label  = "priority"
+	}
+
+	rule {
+		source_labels = ["__journal__hostname"]
+		target_label  = "node"
+	}
+
+	rule {
+		source_labels = ["__journal_container_name"]
+		regex         = "(.+)"
+		target_label  = "container"
+		replacement   = "$1"
+	}
+
+	rule {
+		source_labels = [
+			"__journal_container_name",
+			"__journal_app_service",
+		]
+		separator     = ";"
+		regex         = "^.+;(.+)$"
+		target_label  = "service"
+		replacement   = "$1"
+		action        = "replace"
+	}
+
+	rule {
+		source_labels = [
+			"__journal_container_name",
+			"__journal_app_component",
+		]
+		separator     = ";"
+		regex         = "^.+;(.+)$"
+		target_label  = "component"
+		replacement   = "$1"
+		action        = "replace"
 	}
 }
 
-loki.source.docker "containers" {
-	host             = "unix:///var/run/docker.sock"
-	targets          = discovery.relabel.logs.output
-	forward_to       = [loki.process.containers.receiver]
-	refresh_interval = "5s"
+loki.source.journal "host" {
+	path          = "/var/log/journal"
+	relabel_rules = loki.relabel.journal.rules
+	labels        = { job = "systemd-journal" }
+	matches       = "ALLOY_ENABLE=true"
+	forward_to    = [loki.process.journal.receiver]
 }
+
+// Ship
 
 loki.write "default" {
 	endpoint {
