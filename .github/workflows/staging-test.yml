@@ -15,7 +15,6 @@ on:
 # Pushes to `staging` go through the deploy key, not this token.
 permissions:
   contents: read
-  issues: write      # remove the `testing requested` trigger label
   pull-requests: read
   checks: read       # poll the agent's `staging / test` check run
 
@@ -61,12 +60,8 @@ jobs:
           git push --force-with-lease origin staging-test:staging
           echo "tip_sha=$(git rev-parse staging-test)" >> "$GITHUB_OUTPUT"
 
-      - name: Remove the trigger label
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/testing%20requested" -X DELETE --silent || true
+      # The agent's detector removes the `testing requested` trigger label
+      # when it claims the tip; the workflow token cannot (403).
 
       - name: Wait for the staging test check
         # Only the terminal state matters, so a fast agent verdict between
