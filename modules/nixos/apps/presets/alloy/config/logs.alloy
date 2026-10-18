@@ -21,6 +21,26 @@ loki.relabel "journal" {
 	}
 
 	rule {
+		source_labels = [
+			"unit",
+			"__journal_unit",
+		]
+		separator     = ";"
+		regex         = "^.+\\.scope;(.+)$"
+		target_label  = "unit"
+		replacement   = "$1"
+		action        = "replace"
+	}
+
+	rule {
+		source_labels = ["__journal__systemd_unit"]
+		regex         = "^(.+)\\.scope$"
+		target_label  = "scope"
+		replacement   = "$1"
+		action        = "replace"
+	}
+
+	rule {
 		source_labels = ["__journal_priority_keyword"]
 		target_label  = "priority"
 	}
