@@ -1,4 +1,4 @@
-name: dns-deploy
+name: DNS
 
 on:
   push:
@@ -9,7 +9,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  update-records:
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     environment: Production
 
@@ -19,7 +20,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@73327eb48f028efaaf5013656ba216ca3cdeca7b # v3.16.3
 
-      - name: Update DNS Records
+      - name: Deploy DNS Records
         env:
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
         run: nix run .#scripts.deploy-dns -- --doit

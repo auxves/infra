@@ -1,8 +1,8 @@
-name: staging
-run-name: "staging / deploy — PR #${{ github.event.pull_request.number }}"
+name: Staging
+run-name: "Staging PR #${{ github.event.pull_request.number }}"
 
 # Deploys a PR to `staging` for testing on the real host, then waits for the
-# agent's `staging / test` check run to resolve.
+# agent's `Staging / Tests` check run to resolve.
 # SECURITY: `pull_request_target` runs this workflow from `main`, never from
 # the PR. Do not change it to `pull_request` — a PR editing this file could
 # then push arbitrary code to `staging`.
@@ -16,22 +16,19 @@ on:
 permissions:
   contents: read
   pull-requests: read
-  checks: read       # poll the agent's `staging / test` check run
+  checks: read # poll the agent's `Staging / Tests` check run
 
 jobs:
   deploy:
+    name: Deploy
     if: >
       github.event.label.name == 'testing requested' &&
       github.event.pull_request.state == 'open' &&
       github.event.sender.login == 'auxves'
     runs-on: ubuntu-latest
     environment: Staging
-    # Job-level, not workflow-level: the sender gate above skips non-Arno
-    # triggers before the run enters the concurrency group, so those runs
-    # end as skipped instead of failing at startup against the trigger policy.
-    # `queue: max` keeps up to 100 runs waiting (default silently cancels older queued runs).
     concurrency:
-      group: staging-test
+      group: staging
       cancel-in-progress: false
       queue: max
     timeout-minutes: 180
@@ -74,7 +71,7 @@ jobs:
           while [ "$(date +%s)" -lt "$deadline" ]; do
             # check_name must be pre-encoded: gh's -f leaves the literal `/`
             # unencoded, which 404s the endpoint.
-            check=$(gh api "repos/${{ github.repository }}/commits/${PR_HEAD}/check-runs?check_name=staging%20%2F%20test" \
+            check=$(gh api "repos/${{ github.repository }}/commits/${PR_HEAD}/check-runs?check_name=Staging%20%2F%20Tests" \
               --jq '.check_runs | max_by(.id) // empty')
             status=$(echo "$check" | jq -r '.status // empty')
             if [ -z "$status" ]; then
