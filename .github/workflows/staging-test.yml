@@ -74,8 +74,9 @@ jobs:
             # unencoded, which 404s the endpoint.
             # Filter by external_id (the tip SHA): a re-test leaves the previous
             # run's completed check on this commit, which max_by(.id) alone would pick up.
+            # gh's --jq takes a single expression; pipe to jq for --arg.
             check=$(gh api "repos/${{ github.repository }}/commits/${PR_HEAD}/check-runs?check_name=Staging%20%2F%20Tests" \
-              --jq --arg tip "$TIP_SHA" '[.check_runs[] | select(.external_id == $tip)] | max_by(.id) // empty')
+              --jq '.check_runs' | jq --arg tip "$TIP_SHA" '[.[] | select(.external_id == $tip)] | max_by(.id) // empty')
             status=$(echo "$check" | jq -r '.status // empty')
             if [ -z "$status" ]; then
               echo "Check run not created yet; waiting for the agent to claim."
