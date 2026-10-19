@@ -1,0 +1,55 @@
+name: staging-rollback
+run-name: "staging / rollback — check ${{ github.event.check_run.id }}"
+
+# Rolls `staging` back to `main` when the agent's `staging / test` check run
+# fails. Triggered by the check_run event, not by the deploy workflow, so the
+# deploy run completes as soon as the push lands.
+# The tip guard keeps a superseding deployment's newer staging push safe:
+# only roll back if staging still holds the exact tip that failed.
+
+on:
+  check_run:
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  rollback:
+    # Shared with the deploy workflow: one staging mutation at a time, and
+    # this rollback runs before any queued deployment starts.
+    # `queue: max` keeps up to 100 runs waiting (default silently cancels older queued runs).
+    concurrency:
+      group: staging
+      cancel-in-progress: false
+      queue: max
+    # `cancelled` means a newer test superseded this one; only `failure`
+    # rolls back.
+    if: >
+      github.event.check_run.name == 'staging / test' &&
+      github.event.check_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    environment: Staging
+    timeout-minutes: 10
+    steps:
+      - name: Check out main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 0
+          ssh-key: ${{ secrets.STAGING_DEPLOY_KEY }}
+
+      - name: Roll staging back to main (if it still holds the failed tip)
+        env:
+          FAILED_TIP: ${{ github.event.check_run.external_id }}
+        run: |
+          git fetch origin main
+          tip=$(git ls-remote origin staging | cut -f1)
+          if [ "$tip" = "$FAILED_TIP" ]; then
+            # Delete the branch first: comin only redeploys staging on delete+recreate, not a force-push.
+            git push origin --delete staging
+            git push origin refs/remotes/origin/main:refs/heads/staging
+            echo "Rolled staging back to main."
+          else
+            echo "Staging tip moved on ($tip); leaving it alone."
+          fi
