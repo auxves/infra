@@ -1,4 +1,4 @@
-name: dns-dry-run
+name: DNS
 
 on:
   push:
