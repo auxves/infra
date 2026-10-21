@@ -24,10 +24,11 @@ in
       archival = {
         autoStart = false;
 
-        image = "forge.auxves.dev/arno/ao3-cli:v0.2.4@sha256:9e37d821ebd59ff569c9650c5fecc02ba93de152be2fc42fa7e8a4f9aeadf2ab";
+        image = "forge.auxves.dev/arno/ao3-cli:v0.2.5@sha256:8cb2a6430449e58b82c1065d046374a8fc3dba470ade174c7e857fa56cb24cde";
 
         environment = {
           LOG_LEVEL = "DEBUG";
+          AO3_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5.2 Safari/605.1.15";
         };
 
         environmentFiles = [ config.sops.secrets."ao3/env".path ];
@@ -37,6 +38,12 @@ in
         ];
 
         cmd = [ "bookmarks" "sync" "/state" ];
+
+        service = {
+          startAt = "*-*-* 04:00:00 America/Los_Angeles";
+          serviceConfig.Restart = lib.mkForce "no";
+          serviceConfig.RuntimeMaxSec = "2h";
+        };
       };
     };
 
@@ -46,10 +53,5 @@ in
         port = 8090;
       };
     };
-  };
-
-  systemd.services.podman-ao3-archival = {
-    startAt = "*-*-* 04:00:00 America/Los_Angeles";
-    serviceConfig.Restart = lib.mkForce "no";
   };
 }
