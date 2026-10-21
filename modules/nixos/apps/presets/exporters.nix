@@ -6,7 +6,7 @@ let
 
   # A host that can use ZFS declares it in boot.supportedFilesystems;
   # the writer exists only there.
-  supportsZfs = builtins.elem "zfs" config.boot.supportedFilesystems;
+  supportsZfs = config.boot.supportedFilesystems ? zfs;
 in
 {
   options.presets.apps.exporters = with lib; {
