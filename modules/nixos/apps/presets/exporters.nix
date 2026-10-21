@@ -67,6 +67,7 @@ in
     # backups) report no usage. Publish zpool list numbers as textfile metrics.
     systemd.services.zpool-textfile = lib.mkIf presetCfg.node.enable {
       serviceConfig.Type = "oneshot";
+      serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
       startAt = "*:0/5";
       path = [ pkgs.zfs ];
       script = ''
