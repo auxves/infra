@@ -73,7 +73,9 @@ in
       script = ''
         dir=${textfileDir}
         mkdir -p "$dir"
-        zpool list -Hp -o name,size,alloc,free | awk '{ printf "zpool_size_bytes{pool=\"%s\"} %s\nzpool_allocated_bytes{pool=\"%s\"} %s\nzpool_free_bytes{pool=\"%s\"} %s\n", $1, $2, $1, $3, $1, $4 }' > "$dir/zpool.prom.tmp"
+        while read -r name size alloc free; do
+          printf 'zpool_size_bytes{pool="%s"} %s\nzpool_allocated_bytes{pool="%s"} %s\nzpool_free_bytes{pool="%s"} %s\n' "$name" "$size" "$name" "$alloc" "$name" "$free"
+        done < <(zpool list -Hp -o name,size,alloc,free) > "$dir/zpool.prom.tmp"
         mv "$dir/zpool.prom.tmp" "$dir/zpool.prom"
       '';
     };
