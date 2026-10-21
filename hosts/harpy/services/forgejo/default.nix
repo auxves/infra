@@ -1,7 +1,3 @@
 { ... }: {
-  sops.secrets."forgejo/runner-env" = { };
-
-  apps.forgejo = {
-    presets.forgejo-runner.enable = true;
-  };
+  presets.apps.forgejo-runner.enable = true;
 }

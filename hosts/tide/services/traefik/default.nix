@@ -1,20 +1,10 @@
 { lib, config, ... }: {
-  sops.secrets."traefik/env" = { };
+  presets.apps.traefik.enable = true;
 
   apps.traefik = {
-    presets.traefik.enable = true;
-
     containers = {
       traefik = {
-        ports = lib.optionals (config.meta.addresses.internal.v6 != null) [
-          # Internal
-          "[${config.meta.addresses.internal.v6}]:443:443/tcp"
-          "[${config.meta.addresses.internal.v6}]:443:443/udp"
-        ] ++ lib.optionals (config.meta.addresses.internal.v4 != null) [
-          # Internal
-          "${config.meta.addresses.internal.v4}:443:443/tcp"
-          "${config.meta.addresses.internal.v4}:443:443/udp"
-        ] ++ lib.optionals (config.meta.addresses.public.v6 != null) [
+        ports = lib.optionals (config.meta.addresses.public.v6 != null) [
           # Public
           "[${config.meta.addresses.public.v6}]:443:8443/tcp"
           "[${config.meta.addresses.public.v6}]:443:8443/udp"

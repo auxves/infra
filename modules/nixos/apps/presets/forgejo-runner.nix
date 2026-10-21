@@ -1,6 +1,7 @@
-{ self, config, osConfig, lib, pkgs, ... }:
+{ self, config, lib, pkgs, ... }:
 let
-  cfg = config.presets.forgejo-runner;
+  presetCfg = config.presets.apps.forgejo-runner;
+  cfg = config.apps.forgejo;
 
   yaml = pkgs.formats.yaml { };
 
@@ -43,48 +44,52 @@ let
   };
 in
 {
-  options.presets.forgejo-runner = with lib; {
+  options.presets.apps.forgejo-runner = with lib; {
     enable = mkEnableOption "Enable forgejo-runner";
   };
 
-  config = lib.mkIf (cfg.enable) {
-    volumes = {
-      runner = { type = "ephemeral"; acls = [ "u:1000:rwx" ]; };
-    };
+  config = lib.mkIf (presetCfg.enable) {
+    sops.secrets."forgejo/runner-env" = { };
 
-    containers = {
-      runner = {
-        image = "data.forgejo.org/forgejo/runner:13.2.0@sha256:ca3d5eea46004789a175d1369eec6829d3ea9bfbe2011a06625b4bdaa55f7552";
-
-        environment = {
-          DOCKER_HOST = "tcp://${config.containers.podman.fullName}:2375";
-
-          NAME = osConfig.networking.hostName;
-          INSTANCE = "https://${self.hosts.tide.cfg.apps.forgejo.ingresses.app.domain}";
-
-          LABELS = builtins.concatStringsSep "," [
-            "ubuntu-latest:docker://forge.auxves.dev/actions/runner-base:latest"
-          ];
-        };
-
-        environmentFiles = [ osConfig.sops.secrets."forgejo/runner-env".path ];
-
-        volumes = [
-          "${config.volumes.runner.path}:/data"
-          "${initScript}:/init-runner.sh"
-          "${configFile}:/data/config.yml"
-        ];
-
-        cmd = [ "/init-runner.sh" ];
-
-        dependsOn = [ config.containers.podman.fullName ];
+    apps.forgejo = {
+      volumes = {
+        runner = { type = "ephemeral"; acls = [ "u:1000:rwx" ]; };
       };
 
-      podman = {
-        image = "quay.io/podman/stable:v5.8.9@sha256:0ccbc4e7f79f9c33e7fc959be59f714abbc0f4c9cffbe14f5bceff537a014738";
-        user = "root";
-        extraOptions = [ "--privileged" ];
-        cmd = [ "podman" "system" "service" "-t=0" "tcp://0.0.0.0:2375" ];
+      containers = {
+        runner = {
+          image = "data.forgejo.org/forgejo/runner:13.2.0@sha256:ca3d5eea46004789a175d1369eec6829d3ea9bfbe2011a06625b4bdaa55f7552";
+
+          environment = {
+            DOCKER_HOST = "tcp://${cfg.containers.podman.fullName}:2375";
+
+            NAME = config.networking.hostName;
+            INSTANCE = "https://${self.hosts.tide.cfg.apps.forgejo.ingresses.app.domain}";
+
+            LABELS = builtins.concatStringsSep "," [
+              "ubuntu-latest:docker://forge.auxves.dev/actions/runner-base:latest"
+            ];
+          };
+
+          environmentFiles = [ config.sops.secrets."forgejo/runner-env".path ];
+
+          volumes = [
+            "${cfg.volumes.runner.path}:/data"
+            "${initScript}:/init-runner.sh"
+            "${configFile}:/data/config.yml"
+          ];
+
+          cmd = [ "/init-runner.sh" ];
+
+          dependsOn = [ cfg.containers.podman.fullName ];
+        };
+
+        podman = {
+          image = "quay.io/podman/stable:v5.8.9@sha256:0ccbc4e7f79f9c33e7fc959be59f714abbc0f4c9cffbe14f5bceff537a014738";
+          user = "root";
+          extraOptions = [ "--privileged" ];
+          cmd = [ "podman" "system" "service" "-t=0" "tcp://0.0.0.0:2375" ];
+        };
       };
     };
   };

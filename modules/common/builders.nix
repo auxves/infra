@@ -1,4 +1,4 @@
-{ lib, config, host, ... }:
+{ self, lib, config, host, ... }:
 let
   user = "nixremote";
 
@@ -56,7 +56,7 @@ in
   config = lib.mkMerge [
     (lib.mkIf cfg.outsource {
       sops.secrets."builders/key" = {
-        sopsFile = ../../hosts/secrets.yaml;
+        sopsFile = "${self}/hosts/secrets.yaml";
       };
 
       nix = {

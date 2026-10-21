@@ -166,8 +166,6 @@ let
   };
 
   appOptions = { config, name, ... }: {
-    imports = [ ./presets ];
-
     options = with lib; {
       name = mkOption {
         type = types.str;
@@ -207,7 +205,7 @@ let
 
 in
 {
-  imports = [ ./containers.nix ./volumes.nix ];
+  imports = lib.internal.readModules ./.;
 
   options = with lib; {
     apps = mkOption {
