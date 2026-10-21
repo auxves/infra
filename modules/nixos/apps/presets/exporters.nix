@@ -4,9 +4,9 @@ let
 
   textfileDir = "/var/lib/node-exporter/textfile";
 
-  # Hosts define their pools with disko; the writer and the textfile
-  # collector exist only where a pool does.
-  hasPools = (config.disko.devices.zpool or { }) != { };
+  # A host that can use ZFS declares it in boot.supportedFilesystems;
+  # the writer exists only there.
+  supportsZfs = builtins.elem "zfs" config.boot.supportedFilesystems;
 in
 {
   options.presets.apps.exporters = with lib; {
@@ -38,7 +38,8 @@ in
           cmd = [
             "--path.rootfs=/host"
             "--collector.systemd"
-          ] ++ lib.optional hasPools "--collector.textfile.directory=/host${textfileDir}";
+            "--collector.textfile.directory=/host${textfileDir}"
+          ];
 
           metrics = {
             job = "node";
@@ -68,7 +69,7 @@ in
 
     # node_filesystem only sees mounted datasets, so unmounted pools (harpy's
     # backups) report no usage. Publish zpool list numbers as textfile metrics.
-    systemd.services.zpool-textfile = lib.mkIf (presetCfg.node.enable && hasPools) {
+    systemd.services.zpool-textfile = lib.mkIf (presetCfg.node.enable && supportsZfs) {
       serviceConfig.Type = "oneshot";
       serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
       startAt = "*:0/5";
