@@ -3,6 +3,8 @@ let
   presetCfg = config.presets.apps.exporters;
 
   textfileDir = "/var/lib/node-exporter/textfile";
+
+  supportsZfs = config.boot.supportedFilesystems ? zfs;
 in
 {
   options.presets.apps.exporters = with lib; {
@@ -65,7 +67,7 @@ in
 
     # node_filesystem only sees mounted datasets, so unmounted pools (harpy's
     # backups) report no usage. Publish zpool list numbers as textfile metrics.
-    systemd.services.zpool-textfile = lib.mkIf presetCfg.node.enable {
+    systemd.services.zpool-textfile = lib.mkIf (presetCfg.node.enable && supportsZfs) {
       serviceConfig.Type = "oneshot";
       serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
       startAt = "*:0/5";
