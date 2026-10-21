@@ -4,8 +4,6 @@ let
 
   textfileDir = "/var/lib/node-exporter/textfile";
 
-  # A host that can use ZFS declares it in boot.supportedFilesystems;
-  # the writer exists only there.
   supportsZfs = config.boot.supportedFilesystems ? zfs;
 in
 {
