@@ -39,7 +39,7 @@ in
 
         cmd = [ "bookmarks" "sync" "/state" ];
 
-        systemd = {
+        service = {
           startAt = "*-*-* 04:00:00 America/Los_Angeles";
           serviceConfig.Restart = lib.mkForce "no";
           serviceConfig.RuntimeMaxSec = "2h";
