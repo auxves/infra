@@ -1,6 +1,8 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   presetCfg = config.presets.apps.exporters;
+
+  textfileDir = "/var/lib/node-exporter/textfile";
 in
 {
   options.presets.apps.exporters = with lib; {
@@ -32,6 +34,7 @@ in
           cmd = [
             "--path.rootfs=/host"
             "--collector.systemd"
+            "--collector.textfile.directory=/host${textfileDir}"
           ];
 
           metrics = {
@@ -58,6 +61,20 @@ in
           };
         };
       };
+    };
+
+    # node_filesystem only sees mounted datasets, so unmounted pools (harpy's
+    # backups) report no usage. Publish zpool list numbers as textfile metrics.
+    systemd.services.zpool-textfile = lib.mkIf presetCfg.node.enable {
+      serviceConfig.Type = "oneshot";
+      startAt = "*:0/5";
+      path = [ pkgs.zfs ];
+      script = ''
+        dir=${textfileDir}
+        mkdir -p "$dir"
+        zpool list -Hp -o name,size,alloc,free | awk '{ printf "zpool_size_bytes{pool=\"%s\"} %s\nzpool_allocated_bytes{pool=\"%s\"} %s\nzpool_free_bytes{pool=\"%s\"} %s\n", $1, $2, $1, $3, $1, $4 }' > "$dir/zpool.prom.tmp"
+        mv "$dir/zpool.prom.tmp" "$dir/zpool.prom"
+      '';
     };
   };
 }
