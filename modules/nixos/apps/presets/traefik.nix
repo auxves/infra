@@ -1,6 +1,7 @@
-{ config, osConfig, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
-  cfg = config.presets.traefik;
+  presetCfg = config.presets.apps.traefik;
+  cfg = config.apps.traefik;
 
   yaml = pkgs.formats.yaml { };
 
@@ -58,42 +59,56 @@ let
   };
 in
 {
-  options.presets.traefik = with lib; {
+  options.presets.apps.traefik = with lib; {
     enable = mkEnableOption "Enable traefik";
   };
 
-  config = lib.mkIf (cfg.enable) {
-    volumes = {
-      traefik = { type = "ephemeral"; };
-    };
+  config = lib.mkIf (presetCfg.enable) {
+    sops.secrets."traefik/env" = { };
 
-    containers = {
-      traefik = {
-        image = "traefik:v3.7.15@sha256:0f6150202bc1fed72a7bd2107460eaa510e5b8a905f3fdb5b84f2c8619c33368";
-
-        volumes = [
-          "/run/podman/podman.sock:/var/run/docker.sock"
-          "${config.volumes.traefik.path}:/etc/traefik"
-          "${configFile}:/etc/traefik/traefik.yaml"
-        ];
-
-        environmentFiles = [ osConfig.sops.secrets."traefik/env".path ];
-
-        labels = {
-          "traefik.http.routers.traefik-app.service" = "api@internal";
-          "traefik.http.routers.traefik-app.tls.certresolver" = "letsencrypt";
-          "traefik.http.routers.traefik-app.tls.domains[0].main" = "${osConfig.networking.hostName}.x.auxves.dev";
-          "traefik.http.routers.traefik-app.tls.domains[0].sans" = "*.${osConfig.networking.hostName}.x.auxves.dev";
-        };
-
-        metrics.port = 8080;
+    apps.traefik = {
+      volumes = {
+        traefik = { type = "ephemeral"; };
       };
-    };
 
-    ingresses = {
-      app = {
-        container = "traefik";
-        port = 9999;
+      containers = {
+        traefik = {
+          image = "traefik:v3.7.15@sha256:0f6150202bc1fed72a7bd2107460eaa510e5b8a905f3fdb5b84f2c8619c33368";
+
+          ports = lib.optionals (config.meta.addresses.internal.v6 != null) [
+            # Internal
+            "[${config.meta.addresses.internal.v6}]:443:443/tcp"
+            "[${config.meta.addresses.internal.v6}]:443:443/udp"
+          ] ++ lib.optionals (config.meta.addresses.internal.v4 != null) [
+            # Internal
+            "${config.meta.addresses.internal.v4}:443:443/tcp"
+            "${config.meta.addresses.internal.v4}:443:443/udp"
+          ];
+
+          volumes = [
+            "/run/podman/podman.sock:/var/run/docker.sock"
+            "${cfg.volumes.traefik.path}:/etc/traefik"
+            "${configFile}:/etc/traefik/traefik.yaml"
+          ];
+
+          environmentFiles = [ config.sops.secrets."traefik/env".path ];
+
+          labels = {
+            "traefik.http.routers.traefik-app.service" = "api@internal";
+            "traefik.http.routers.traefik-app.tls.certresolver" = "letsencrypt";
+            "traefik.http.routers.traefik-app.tls.domains[0].main" = "${config.networking.hostName}.x.auxves.dev";
+            "traefik.http.routers.traefik-app.tls.domains[0].sans" = "*.${config.networking.hostName}.x.auxves.dev";
+          };
+
+          metrics.port = 8080;
+        };
+      };
+
+      ingresses = {
+        app = {
+          container = "traefik";
+          port = 9999;
+        };
       };
     };
   };

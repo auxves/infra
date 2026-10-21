@@ -1,21 +1,27 @@
-{ ... }: {
-  _module.args.lib'.mkPostgres =
-    { image ? "postgres:16-alpine@sha256:de3d7b6e4b5b3fe899e997579d6dfe95a99539d154abe03f0b6839133ed05065"
-    , data
-    , user ? "postgres"
-    , db
-    }: {
-      inherit image;
+{ lib, ... }: {
+  options.apps = lib.mkOption {
+    type = lib.types.attrsOf (lib.types.submoduleWith {
+      modules = [{
+        _module.args.lib'.mkPostgres =
+          { image ? "postgres:16-alpine@sha256:de3d7b6e4b5b3fe899e997579d6dfe95a99539d154abe03f0b6839133ed05065"
+          , data
+          , user ? "postgres"
+          , db
+          }: {
+            inherit image;
 
-      volumes = [
-        "${data}:/var/lib/postgresql/data"
-      ];
+            volumes = [
+              "${data}:/var/lib/postgresql/data"
+            ];
 
-      environment = {
-        POSTGRES_USER = user;
-        POSTGRES_DB = db;
-        POSTGRES_HOST_AUTH_METHOD = "trust";
-        POSTGRES_INITDB_ARGS = "--data-checksums";
-      };
-    };
+            environment = {
+              POSTGRES_USER = user;
+              POSTGRES_DB = db;
+              POSTGRES_HOST_AUTH_METHOD = "trust";
+              POSTGRES_INITDB_ARGS = "--data-checksums";
+            };
+          };
+      }];
+    });
+  };
 }
