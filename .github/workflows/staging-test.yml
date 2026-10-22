@@ -110,9 +110,7 @@ jobs:
           git fetch origin main
           tip=$(git ls-remote origin staging | cut -f1)
           if [ "$tip" = "${{ steps.push.outputs.tip_sha }}" ]; then
-            # Delete the branch first: comin only redeploys staging on delete+recreate, not a force-push.
-            git push origin --delete staging
-            git push origin refs/remotes/origin/main:refs/heads/staging
+            git push --force origin origin/main:staging
           else
             echo "Staging tip moved on ($tip); leaving it alone."
           fi
