@@ -33,6 +33,7 @@
   networking.hostName = host.name;
 
   environment.systemPackages = with pkgs; [
+    curl
     neovim
     tmux
   ];
