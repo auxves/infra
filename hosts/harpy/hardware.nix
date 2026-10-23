@@ -15,6 +15,10 @@
       extraPools = [ "backups" ];
       requestEncryptionCredentials = [ ];
     };
+
+    extraModprobeConfig = ''
+      options zfs zfs_arc_max=2147483648
+    '';
   };
 
   disko.devices = {

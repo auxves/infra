@@ -38,6 +38,10 @@
     };
 
     zfs.forceImportRoot = false;
+
+    extraModprobeConfig = ''
+      options zfs zfs_arc_max=17179869184
+    '';
   };
 
   hardware.enableRedistributableFirmware = true;
