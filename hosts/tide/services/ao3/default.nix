@@ -54,4 +54,16 @@ in
       };
     };
   };
+
+  monitoring.checks = [{
+    name = "ao3-pocketbase";
+    group = "services";
+    url = "https://${cfg.ingresses.pocketbase.domain}/api/health";
+    interval = "1m";
+    alerts = [{ type = "discord"; }];
+    conditions = [
+      "[STATUS] == 200"
+      "[BODY].code == 200"
+    ];
+  }];
 }
