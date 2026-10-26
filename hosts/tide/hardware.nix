@@ -1,4 +1,4 @@
-{ self, lib, pkgs, ... }: {
+{ self, lib, ... }: {
   imports = [
     self.inputs.lanzaboote.nixosModules.lanzaboote
     self.inputs.disko.nixosModules.disko
@@ -16,8 +16,6 @@
       enable = true;
       pkiBundle = "/etc/secureboot";
     };
-
-    kernelPackages = pkgs.linuxPackages_6_12;
 
     kernelParams = [ "i915.modeset=0" "xe.force_probe=a7a1" ];
 
