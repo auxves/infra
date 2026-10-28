@@ -1,5 +1,11 @@
 { lib, config, ... }:
 let
+  toStr = x:
+    if builtins.isString x then x
+    else if builtins.isInt x || builtins.isFloat x then builtins.toString x
+    else if builtins.isBool x then (if x then "true" else "false")
+    else throw "toStr: unsupported type ${builtins.typeOf x}";
+
   processContainer = app: _: container:
     let
       ingresses = lib.filterAttrs (_: ingress: ingress.container == container.name) app.ingresses;
@@ -10,11 +16,13 @@ let
             router = "${app.name}-${ingress.name}";
 
             routerOptions = lib.concatMapAttrs
-              (key: value: { "traefik.http.routers.${router}.${key}" = toString value; })
+              (key: value: lib.optionalAttrs (value != null) {
+                "traefik.http.routers.${router}.${key}" = toStr value;
+              })
               ingress.settings;
 
             serviceOptions = lib.optionalAttrs (ingress.settings.service == router) {
-              "traefik.http.services.${ingress.settings.service}.loadbalancer.server.port" = toString ingress.port;
+              "traefik.http.services.${ingress.settings.service}.loadbalancer.server.port" = toStr ingress.port;
             };
           in
           serviceOptions // routerOptions)
@@ -36,7 +44,7 @@ let
           "metrics.job" = container.metrics.job;
           "metrics.path" = container.metrics.path;
           "metrics.scheme" = container.metrics.scheme;
-          "metrics.port" = toString container.metrics.port;
+          "metrics.port" = toStr container.metrics.port;
         } // container.labels;
 
         service.serviceConfig.LogExtraFields = [
