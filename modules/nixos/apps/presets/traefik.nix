@@ -93,13 +93,6 @@ in
 
           environmentFiles = [ config.sops.secrets."traefik/env".path ];
 
-          labels = {
-            "traefik.http.routers.traefik-app.service" = "api@internal";
-            "traefik.http.routers.traefik-app.tls.certresolver" = "letsencrypt";
-            "traefik.http.routers.traefik-app.tls.domains[0].main" = "${config.networking.hostName}.x.auxves.dev";
-            "traefik.http.routers.traefik-app.tls.domains[0].sans" = "*.${config.networking.hostName}.x.auxves.dev";
-          };
-
           metrics.port = 8080;
         };
       };
@@ -108,6 +101,13 @@ in
         app = {
           container = "traefik";
           port = 9999;
+
+          settings = {
+            service = "api@internal";
+            "tls.certresolver" = "letsencrypt";
+            "tls.domains[0].main" = "${config.networking.hostName}.x.auxves.dev";
+            "tls.domains[0].sans" = "*.${config.networking.hostName}.x.auxves.dev";
+          };
         };
       };
     };
