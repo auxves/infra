@@ -11,6 +11,8 @@
       BATTERYLEVEL 40
       MINUTES 5
       TIMEOUT 0 # disabled
+
+      NOLOGON disable
     '';
   };
 
