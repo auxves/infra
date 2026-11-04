@@ -12,7 +12,7 @@ in
 
     containers = {
       open-webui = {
-        image = "ghcr.io/open-webui/open-webui:v0.12.5@sha256:03443b8de6b617da9d900edd09b4bf1cb0ddbfdcba6afb42c548336a0b821ded";
+        image = "ghcr.io/open-webui/open-webui:v0.13.0@sha256:2272b0fb7c8783a016bcc179abb467cfa34590c99c5e6560fe0e9155b4820a09";
 
         volumes = [
           "${cfg.volumes.data.path}:/app/backend/data"
