@@ -17,4 +17,4 @@ jobs:
         uses: DeterminateSystems/determinate-nix-action@73327eb48f028efaaf5013656ba216ca3cdeca7b # v3.16.3
 
       - name: Check Flake
-        run: nix flake check
+        run: nix flake check --print-build-logs --option sandbox relaxed

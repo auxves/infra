@@ -72,6 +72,20 @@ in
         (_: lib.meta.availableOn pkgs.stdenv.hostPlatform)
         pkgs.auxves.checks;
 
+    containerImages =
+      let
+        fromHost = host: lib.concatMapAttrs
+          (_: app: lib.mapAttrsToList
+            (_: container: container.image)
+            (lib.filterAttrs
+              (_: container: container.imageFile == null && container.imageStream == null)
+              app.containers))
+          host.cfg.apps;
+
+        hosts = builtins.filter (host: host.variant == "nixos") hostList;
+      in
+      lib.sort builtins.lessThan (lib.unique (lib.concatMap fromHost hosts));
+
     replaceAll = attrs: builtins.replaceStrings
       (builtins.attrNames attrs)
       (builtins.attrValues attrs);
