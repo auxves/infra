@@ -72,6 +72,15 @@ in
         (_: lib.meta.availableOn pkgs.stdenv.hostPlatform)
         pkgs.auxves.checks;
 
+    containerImagesForHost = host:
+      lib.sort builtins.lessThan (lib.unique (lib.concatMap
+        (app: lib.mapAttrsToList
+          (_: container: container.image)
+          (lib.filterAttrs
+            (_: container: container.imageFile == null && container.imageStream == null)
+            app.containers))
+        (builtins.attrValues host.cfg.apps)));
+
     replaceAll = attrs: builtins.replaceStrings
       (builtins.attrNames attrs)
       (builtins.attrValues attrs);
