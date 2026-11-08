@@ -74,13 +74,13 @@ in
 
     containerImages =
       let
-        fromHost = host: lib.concatMapAttrs
-          (_: app: lib.mapAttrsToList
+        fromHost = host: lib.concatMap
+          (app: lib.mapAttrsToList
             (_: container: container.image)
             (lib.filterAttrs
               (_: container: container.imageFile == null && container.imageStream == null)
               app.containers))
-          host.cfg.apps;
+          (builtins.attrValues host.cfg.apps);
 
         hosts = builtins.filter (host: host.variant == "nixos") hostList;
       in
