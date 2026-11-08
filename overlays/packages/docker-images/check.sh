@@ -2,25 +2,45 @@ results=$(mktemp -d)
 
 docker_ref() {
   local image=$1
-  local first=${image%%/*}
+  local name=$image
+  local digest=""
 
-  if [ "$first" = "$image" ]; then
-    printf 'docker.io/library/%s\n' "$image"
-    return
-  fi
-
-  case "$first" in
-    *.* | *:* | localhost)
-      printf '%s\n' "$image"
-      ;;
-    *)
-      local rest=${image#*/}
-      case "$rest" in
-        */*) printf 'docker.io/%s\n' "$image" ;;
-        *) printf 'docker.io/library/%s\n' "$rest" ;;
-      esac
+  case "$image" in
+    *@*)
+      digest=${image##*@}
+      name=${image%@*}
       ;;
   esac
+
+  if [ -n "$digest" ]; then
+    local last=${name##*/}
+    case "$last" in
+      *:*)
+        if [ "$last" = "$name" ]; then
+          name=${last%%:*}
+        else
+          name=${name%/*}/${last%%:*}
+        fi
+        ;;
+    esac
+  fi
+
+  local first=${name%%/*}
+  local qualified
+  if [ "$first" = "$name" ]; then
+    qualified="docker.io/library/$name"
+  else
+    case "$first" in
+      *.* | *:* | localhost) qualified=$name ;;
+      *) qualified="docker.io/$name" ;;
+    esac
+  fi
+
+  if [ -n "$digest" ]; then
+    printf '%s@%s\n' "$qualified" "$digest"
+  else
+    printf '%s\n' "$qualified"
+  fi
 }
 
 check_image() {
@@ -35,7 +55,8 @@ check_image() {
 
   local digest
   for _ in 1 2; do
-    if digest=$(timeout 60 skopeo manifest-digest "docker://$ref" 2>"$results/$key.err"); then
+    if timeout 60 skopeo inspect --raw "docker://$ref" >"$results/$key.raw" 2>"$results/$key.err"; then
+      digest="sha256:$(sha256sum <"$results/$key.raw" | cut -d ' ' -f 1)"
       if [ -n "$pin" ] && [ "$digest" != "$pin" ]; then
         printf 'invalid image: %s (registry serves manifest %s, config pins %s)\n' \
           "$image" "$digest" "$pin" >"$results/$key.fail"
