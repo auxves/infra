@@ -72,19 +72,25 @@ in
         (_: lib.meta.availableOn pkgs.stdenv.hostPlatform)
         pkgs.auxves.checks;
 
-    containerImages =
+    containerImagesForHost = host:
       let
-        fromHost = host: lib.concatMap
-          (app: lib.mapAttrsToList
-            (_: container: container.image)
-            (lib.filterAttrs
-              (_: container: container.imageFile == null && container.imageStream == null)
-              app.containers))
-          (builtins.attrValues host.cfg.apps);
+        ociPlatforms = {
+          "x86_64-linux" = "linux/amd64";
+          "aarch64-linux" = "linux/arm64";
+        };
 
-        hosts = builtins.filter (host: host.variant == "nixos") hostList;
+        system = host.cfg.nixpkgs.hostPlatform.system;
+
+        platform = ociPlatforms.${system}
+          or (throw "containerImagesForHost: no OCI platform mapping for system ${system}");
       in
-      lib.sort builtins.lessThan (lib.unique (lib.concatMap fromHost hosts));
+      lib.concatMap
+        (app: lib.mapAttrsToList
+          (_: container: { image = container.image; inherit platform; })
+          (lib.filterAttrs
+            (_: container: container.imageFile == null && container.imageStream == null)
+            app.containers))
+        (builtins.attrValues host.cfg.apps);
 
     replaceAll = attrs: builtins.replaceStrings
       (builtins.attrNames attrs)

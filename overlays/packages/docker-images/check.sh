@@ -43,45 +43,105 @@ docker_ref() {
   fi
 }
 
+fail_platforms() {
+  local key=$1 image=$2 reason=$3
+  local platform
+  while read -r platform; do
+    printf 'invalid image: %s (%s: %s)\n' "$image" "$platform" "$reason" \
+      >"$results/$key.$(printf %s "$platform" | tr '/' '-').fail"
+  done <"$results/$key.platforms"
+}
+
 check_image() {
-  local image=$1
+  local platforms_file=$1
+  local key=${platforms_file##*/}
+  key=${key%.platforms}
+  local image=$(cat "$results/$key.image")
   local ref=$(docker_ref "$image")
-  local key=$(printf %s "$image" | md5sum | cut -d ' ' -f 1)
 
   local pin=""
   case "$ref" in
     *@sha256:*) pin=${ref##*@} ;;
   esac
 
-  local digest
+  local fetched=0
+  local digest=""
   for _ in 1 2; do
     if timeout 60 skopeo inspect --raw "docker://$ref" >"$results/$key.raw" 2>"$results/$key.err"; then
+      fetched=1
       digest="sha256:$(sha256sum <"$results/$key.raw" | cut -d ' ' -f 1)"
-      if [ -n "$pin" ] && [ "$digest" != "$pin" ]; then
-        printf 'invalid image: %s (registry serves manifest %s, config pins %s)\n' \
-          "$image" "$digest" "$pin" >"$results/$key.fail"
-        return
-      fi
-      printf 'valid image: %s\n' "$image"
-      return
+      break
     fi
     sleep 2
   done
+  if [ "$fetched" -eq 0 ]; then
+    fail_platforms "$key" "$image" "$(tail -n 1 "$results/$key.err")"
+    return
+  fi
+  if [ -n "$pin" ] && [ "$digest" != "$pin" ]; then
+    fail_platforms "$key" "$image" \
+      "registry serves manifest $digest, config pins $pin"
+    return
+  fi
 
-  printf 'invalid image: %s (%s)\n' "$image" "$(tail -n 1 "$results/$key.err")" >"$results/$key.fail"
+  local available=""
+  if jq -e '.manifests | type == "array"' "$results/$key.raw" >/dev/null; then
+    available=$(jq -r '.manifests[].platform // empty
+      | select(.os != null and .architecture != null and .os != "unknown" and .architecture != "unknown")
+      | "\(.os)/\(.architecture)"' "$results/$key.raw" | sort -u)
+  else
+    local ok=0
+    for _ in 1 2; do
+      if timeout 60 skopeo inspect "docker://$ref" >"$results/$key.info" 2>"$results/$key.info.err"; then
+        ok=1
+        break
+      fi
+      sleep 2
+    done
+    if [ "$ok" -eq 0 ]; then
+      fail_platforms "$key" "$image" "$(tail -n 1 "$results/$key.info.err")"
+      return
+    fi
+    available=$(jq -r '"\(.Os)/\(.Architecture)"' "$results/$key.info")
+  fi
+
+  local platform
+  while read -r platform; do
+    if printf '%s\n' "$available" | grep -qxF "$platform"; then
+      printf 'valid image: %s (%s)\n' "$image" "$platform"
+    else
+      local served=$(printf '%s' "$available" | paste -sd ',' -)
+      printf 'invalid image: %s (%s: no manifest for this platform, registry serves %s)\n' \
+        "$image" "$platform" "${served:-none}" \
+        >"$results/$key.$(printf %s "$platform" | tr '/' '-').fail"
+    fi
+  done <"$results/$key.platforms"
 }
 
 export results
-export -f docker_ref check_image
+export -f docker_ref fail_platforms check_image
 
-count=$(grep -c . "$1" || true)
-if [ "$count" -eq 0 ]; then
+pairs=$(grep -c . "$1" || true)
+if [ "$pairs" -eq 0 ]; then
   printf 'error: the flake collected no container images\n' >&2
   exit 1
 fi
-printf 'checking %s container images\n' "$count"
 
-grep -v '^$' "$1" | xargs -d '\n' -P 8 -n 1 bash -c 'check_image "$1"' _
+while read -r image platform; do
+  [ -n "$image" ] || continue
+  key=$(printf %s "$image" | md5sum | cut -d ' ' -f 1)
+  printf '%s\n' "$platform" >>"$results/$key.platforms"
+  printf '%s\n' "$image" >"$results/$key.image"
+done <"$1"
+
+count=0
+for file in "$results"/*.platforms; do
+  [ -e "$file" ] || continue
+  count=$((count + 1))
+done
+printf 'checking %s container images (%s image/platform pairs)\n' "$count" "$pairs"
+
+ls "$results"/*.platforms | xargs -P 8 -n 1 bash -c 'check_image "$1"' _
 
 failed=0
 for file in "$results"/*.fail; do
