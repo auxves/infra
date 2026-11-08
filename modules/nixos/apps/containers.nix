@@ -59,6 +59,7 @@ let
       "name"
       "fullName"
       "metrics"
+      "prepull"
     ]);
 
   containers = lib.mapAttrsToList processContainers config.apps;

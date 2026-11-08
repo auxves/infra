@@ -11,6 +11,18 @@ let
   };
 
   hostList = builtins.attrValues self.hosts;
+
+  pullableContainer = container:
+    container.imageFile == null && container.imageStream == null;
+
+  collectContainerImages = host: include:
+    lib.sort builtins.lessThan (lib.unique (lib.concatMap
+      (app: lib.mapAttrsToList
+        (_: container: container.image)
+        (lib.filterAttrs
+          (_: container: pullableContainer container && include container)
+          app.containers))
+      (builtins.attrValues host.cfg.apps)));
 in
 {
   internal = {
@@ -72,14 +84,9 @@ in
         (_: lib.meta.availableOn pkgs.stdenv.hostPlatform)
         pkgs.auxves.checks;
 
-    containerImagesForHost = host:
-      lib.sort builtins.lessThan (lib.unique (lib.concatMap
-        (app: lib.mapAttrsToList
-          (_: container: container.image)
-          (lib.filterAttrs
-            (_: container: container.imageFile == null && container.imageStream == null)
-            app.containers))
-        (builtins.attrValues host.cfg.apps)));
+    inherit collectContainerImages;
+
+    containerImagesForHost = host: collectContainerImages host (_: true);
 
     replaceAll = attrs: builtins.replaceStrings
       (builtins.attrNames attrs)

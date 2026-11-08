@@ -55,6 +55,12 @@ let
         default = null;
         description = "Metrics options for the container";
       };
+
+      prepull = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Whether to pull the container image before a configuration switch";
+      };
     };
   };
 
