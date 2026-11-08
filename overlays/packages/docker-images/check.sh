@@ -92,17 +92,17 @@ check_image() {
   else
     local ok=0
     for _ in 1 2; do
-      if timeout 60 skopeo inspect "docker://$ref" >"$results/$key.info" 2>"$results/$key.info.err"; then
+      if timeout 60 skopeo inspect --config "docker://$ref" >"$results/$key.config" 2>"$results/$key.config.err"; then
         ok=1
         break
       fi
       sleep 2
     done
     if [ "$ok" -eq 0 ]; then
-      fail_platforms "$key" "$image" "$(tail -n 1 "$results/$key.info.err")"
+      fail_platforms "$key" "$image" "$(tail -n 1 "$results/$key.config.err")"
       return
     fi
-    available=$(jq -r '"\(.Os)/\(.Architecture)"' "$results/$key.info")
+    available=$(jq -r '"\(.os)/\(.architecture)"' "$results/$key.config")
   fi
 
   local platform
@@ -129,7 +129,7 @@ fi
 
 while read -r image platform; do
   [ -n "$image" ] || continue
-  key=$(printf %s "$image" | md5sum | cut -d ' ' -f 1)
+  key=$(printf %s "$(docker_ref "$image")" | md5sum | cut -d ' ' -f 1)
   printf '%s\n' "$platform" >>"$results/$key.platforms"
   printf '%s\n' "$image" >"$results/$key.image"
 done <"$1"
@@ -137,6 +137,7 @@ done <"$1"
 count=0
 for file in "$results"/*.platforms; do
   [ -e "$file" ] || continue
+  sort -u -o "$file" "$file"
   count=$((count + 1))
 done
 printf 'checking %s container images (%s image/platform pairs)\n' "$count" "$pairs"
