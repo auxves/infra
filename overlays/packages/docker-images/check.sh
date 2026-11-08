@@ -53,9 +53,19 @@ check_image() {
 export results
 export -f docker_ref check_image
 
-grep -v '^$' "$1" | xargs -d '\n' -P 8 -n 1 bash -c 'check_image "$1"' _
-
-if compgen -G "$results/*.fail" >/dev/null; then
-  cat "$results"/*.fail
+count=$(grep -c . "$1" || true)
+if [ "$count" -eq 0 ]; then
+  printf 'error: the flake collected no container images\n' >&2
   exit 1
 fi
+printf 'checking %s container images\n' "$count"
+
+grep -v '^$' "$1" | xargs -d '\n' -P 8 -n 1 bash -c 'check_image "$1"' _
+
+failed=0
+for file in "$results"/*.fail; do
+  [ -e "$file" ] || continue
+  cat "$file"
+  failed=1
+done
+exit "$failed"
