@@ -12,6 +12,7 @@ in
       vz = {
         image = "itzg/minecraft-server:2024.7.2-java21-graalvm@sha256:9944796b60e917ee4dc51685b52165adadcc6f501fdb647015879146e1f6312c";
         autoStart = false;
+        prepull = false;
 
         ports = [ "25565:25565" "[::]:25565:25565" ];
 
