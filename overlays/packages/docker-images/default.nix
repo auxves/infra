@@ -8,8 +8,25 @@
 let
   hosts = lib.internal.filterHosts (host: host.variant == "nixos");
 
+  ociPlatforms = {
+    "x86_64-linux" = "linux/amd64";
+    "aarch64-linux" = "linux/arm64";
+  };
+
+  platformForHost = host:
+    let
+      system = host.cfg.nixpkgs.hostPlatform.system;
+    in
+    ociPlatforms.${system}
+      or (throw "docker-images: no OCI platform mapping for system ${system}");
+
+  pairsForHost = host:
+    map
+      (image: { inherit image; platform = platformForHost host; })
+      (lib.internal.containerImagesForHost host);
+
   grouped = lib.groupBy (pair: pair.image)
-    (lib.concatMap lib.internal.containerImagesForHost hosts);
+    (lib.concatMap pairsForHost hosts);
 
   entries = lib.sort (a: b: a.image < b.image)
     (lib.mapAttrsToList

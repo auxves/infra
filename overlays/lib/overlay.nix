@@ -73,24 +73,13 @@ in
         pkgs.auxves.checks;
 
     containerImagesForHost = host:
-      let
-        ociPlatforms = {
-          "x86_64-linux" = "linux/amd64";
-          "aarch64-linux" = "linux/arm64";
-        };
-
-        system = host.cfg.nixpkgs.hostPlatform.system;
-
-        platform = ociPlatforms.${system}
-          or (throw "containerImagesForHost: no OCI platform mapping for system ${system}");
-      in
-      lib.concatMap
+      lib.sort builtins.lessThan (lib.unique (lib.concatMap
         (app: lib.mapAttrsToList
-          (_: container: { image = container.image; inherit platform; })
+          (_: container: container.image)
           (lib.filterAttrs
             (_: container: container.imageFile == null && container.imageStream == null)
             app.containers))
-        (builtins.attrValues host.cfg.apps);
+        (builtins.attrValues host.cfg.apps)));
 
     replaceAll = attrs: builtins.replaceStrings
       (builtins.attrNames attrs)
