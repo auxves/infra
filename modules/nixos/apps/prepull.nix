@@ -1,6 +1,6 @@
 { lib, config, pkgs, host, ... }:
 let
-  images = lib.internal.prepullContainerImagesForHost host;
+  images = lib.internal.collectContainerImages host (container: container.prepull);
 
   pullScript = pkgs.writeShellApplication {
     name = "prepull-container-images";

@@ -15,7 +15,7 @@ let
   pullableContainer = container:
     container.imageFile == null && container.imageStream == null;
 
-  collectContainerImages = include: host:
+  collectContainerImages = host: include:
     lib.sort builtins.lessThan (lib.unique (lib.concatMap
       (app: lib.mapAttrsToList
         (_: container: container.image)
@@ -84,10 +84,9 @@ in
         (_: lib.meta.availableOn pkgs.stdenv.hostPlatform)
         pkgs.auxves.checks;
 
-    containerImagesForHost = collectContainerImages (_: true);
+    inherit collectContainerImages;
 
-    prepullContainerImagesForHost = collectContainerImages
-      (container: container.prepull);
+    containerImagesForHost = host: collectContainerImages host (_: true);
 
     replaceAll = attrs: builtins.replaceStrings
       (builtins.attrNames attrs)
