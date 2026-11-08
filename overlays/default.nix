@@ -5,6 +5,7 @@ rec {
     pythonPackages
     scripts
     packages
+    checks
     patches
     tools
     inputs.fenix.overlays.default
@@ -13,6 +14,7 @@ rec {
   lib = import ./lib/overlay.nix self;
   scripts = import ./scripts/overlay.nix;
   packages = import ./packages/overlay.nix;
+  checks = import ./checks/overlay.nix;
   pythonPackages = import ./pythonPackages/overlay.nix;
   patches = import ./patches/overlay.nix;
   tools = import ./tools/overlay.nix;
