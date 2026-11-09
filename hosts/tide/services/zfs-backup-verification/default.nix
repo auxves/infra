@@ -2,10 +2,12 @@
   systemd.services.zfs-canary = {
     after = [ "zfs-mount.service" ];
     serviceConfig.Type = "oneshot";
+    serviceConfig.TimeoutStartSec = 600;
     serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
     path = with pkgs; [
       coreutils
       findutils
+      python3
       zfs
     ];
     script = ''
@@ -38,31 +40,47 @@
         created=1
       fi
 
-      gen() {
-        rel="$1"
-        size="$2"
-        mkdir -p "$root/$(dirname "$rel")"
-        block=$(printf '%s' "$seed:$rel" | sha256sum | cut -d' ' -f1)
-        : > "$root/$rel.tmp"
-        remaining=$size
-        while [ "$remaining" -gt 0 ]; do
-          printf '%s' "$block" >> "$root/$rel.tmp"
-          block=$(printf '%s' "$block" | sha256sum | cut -d' ' -f1)
-          remaining=$((remaining - 64))
-        done
-        head -c "$size" "$root/$rel.tmp" > "$root/$rel"
-        rm "$root/$rel.tmp"
-      }
+      find "$root" -name '*.tmp' -type f -delete
 
-      gen data/a.bin 4194304
-      gen data/b.bin 4194304
-      gen data/nested/c.bin 2097152
-      gen data/nested/deep/d.bin 2097152
-      gen logs/e.txt 1048576
-      gen f.bin 1048576
-      gen g.bin 1048576
-      gen data/nested/h.bin 524288
-      gen meta/i.txt 524288
+      remove_tmp() {
+        find "$root" -name '*.tmp' -type f -delete
+      }
+      trap remove_tmp EXIT
+
+      python3 - "$root" "$seed" <<'PYEOF' || fail generate "python generation failed"
+      import hashlib
+      import os
+      import sys
+
+      root = sys.argv[1]
+      seed = sys.argv[2]
+      files = [
+          ("data/a.bin", 4194304),
+          ("data/b.bin", 4194304),
+          ("data/nested/c.bin", 2097152),
+          ("data/nested/deep/d.bin", 2097152),
+          ("logs/e.txt", 1048576),
+          ("f.bin", 1048576),
+          ("g.bin", 1048576),
+          ("data/nested/h.bin", 524288),
+          ("meta/i.txt", 524288),
+      ]
+
+      for rel, size in files:
+          block = hashlib.sha256(f"{seed}:{rel}".encode()).hexdigest()
+          parts = []
+          remaining = size
+          while remaining > 0:
+              parts.append(block.encode())
+              block = hashlib.sha256(block.encode()).hexdigest()
+              remaining -= 64
+          dest = os.path.join(root, rel)
+          os.makedirs(os.path.dirname(dest), exist_ok=True)
+          tmp = dest + ".tmp"
+          with open(tmp, "wb") as handle:
+              handle.write(b"".join(parts)[:size])
+          os.rename(tmp, dest)
+      PYEOF
 
       (
         cd "$root"
