@@ -1,8 +1,9 @@
 { config, pkgs, ... }: {
   systemd.services.zfs-canary = {
+    after = [ "zfs-mount.service" ];
+    wantedBy = [ "multi-user.target" ];
     serviceConfig.Type = "oneshot";
     serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
-    startAt = "monthly";
     path = with pkgs; [
       coreutils
       findutils
@@ -13,9 +14,27 @@
       root=/storage/canary
       dir=/var/lib/node-exporter/textfile
 
-      zfs list "$dataset" >/dev/null 2>&1 || zfs create "$dataset"
-
       seed=auxves-zfs-canary-v1
+      seedhash=$(printf '%s' "$seed" | sha256sum | cut -d' ' -f1)
+
+      publish() {
+        hash=$(sha256sum "$root/manifest.sha256" | cut -d' ' -f1)
+        count=$(wc -l < "$root/manifest.sha256")
+        mkdir -p "$dir"
+        printf 'zfs_canary_manifest_info{sha256="%s"} 1\nzfs_canary_files %s\nzfs_canary_last_generated_timestamp_seconds %s\n' "$hash" "$count" "$1" > "$dir/zfs-canary.prom.tmp"
+        mv "$dir/zfs-canary.prom.tmp" "$dir/zfs-canary.prom"
+      }
+
+      if zfs list "$dataset" >/dev/null 2>&1; then
+        marker=$(zfs get -Hp -o value auxves:canary-seed-hash "$dataset" || true)
+        if [ "$marker" = "$seedhash" ] && [ -f "$root/manifest.sha256" ]; then
+          publish "$(stat -c %Y "$root/manifest.sha256")"
+          exit 0
+        fi
+      else
+        zfs create "$dataset"
+      fi
+
       gen() {
         rel="$1"
         size="$2"
@@ -48,11 +67,8 @@
         mv manifest.sha256.tmp manifest.sha256
       )
 
-      hash=$(sha256sum "$root/manifest.sha256" | cut -d' ' -f1)
-      count=$(wc -l < "$root/manifest.sha256")
-      mkdir -p "$dir"
-      printf 'zfs_canary_manifest_info{sha256="%s"} 1\nzfs_canary_files %s\nzfs_canary_last_generated_timestamp_seconds %s\n' "$hash" "$count" "$(date +%s)" > "$dir/zfs-canary.prom.tmp"
-      mv "$dir/zfs-canary.prom.tmp" "$dir/zfs-canary.prom"
+      zfs set auxves:canary-seed-hash="$seedhash" "$dataset"
+      publish "$(date +%s)"
     '';
   };
 
