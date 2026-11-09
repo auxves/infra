@@ -1,4 +1,4 @@
-{ self, config, pkgs, ... }: {
+{ self, config, ... }: {
   imports = [
     self.inputs.sops.nixosModules.sops
     ./hardware.nix
