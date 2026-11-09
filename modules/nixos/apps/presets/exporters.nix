@@ -81,27 +81,5 @@ in
         mv "$dir/zpool.prom.tmp" "$dir/zpool.prom"
       '';
     };
-
-    systemd.services.zfs-snapshot-textfile = lib.mkIf (presetCfg.node.enable && supportsZfs) {
-      serviceConfig.Type = "oneshot";
-      serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
-      startAt = "*:0/5";
-      path = [ pkgs.zfs ];
-      script = ''
-        dir=${textfileDir}
-        mkdir -p "$dir"
-        {
-          while read -r dataset; do
-            line=$(zfs list -Hp -d 1 -t snapshot -o name,guid,creation -s creation "$dataset" | awk '$1 !~ /@autosnap_/ { newest = $0 } END { print newest }')
-            if [ -n "$line" ]; then
-              guid=$(printf '%s' "$line" | awk '{ print $2 }')
-              creation=$(printf '%s' "$line" | awk '{ print $3 }')
-              printf 'zfs_snapshot_newest_creation_seconds{dataset="%s",guid="%s"} %s\n' "$dataset" "$guid" "$creation"
-            fi
-          done < <(zfs list -Hp -t filesystem,volume -o name)
-        } > "$dir/zfs-snapshots.prom.tmp"
-        mv "$dir/zfs-snapshots.prom.tmp" "$dir/zfs-snapshots.prom"
-      '';
-    };
   };
 }
