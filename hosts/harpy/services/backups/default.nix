@@ -1,6 +1,10 @@
 { pkgs, ... }: {
   services.zfs = {
-    autoScrub.enable = true;
+    autoScrub = {
+      enable = true;
+      interval = "monthly";
+      pools = [ "backups" ];
+    };
     trim.enable = true;
   };
 
@@ -32,6 +36,7 @@
           "mount"
           "mountpoint"
           "receive"
+          "send"
           "rollback"
           "destroy"
 
