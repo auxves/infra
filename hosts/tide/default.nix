@@ -54,11 +54,7 @@
   };
 
   services.zfs = {
-    autoScrub = {
-      enable = true;
-      interval = "monthly";
-      pools = [ "storage" ];
-    };
+    autoScrub.enable = true;
     trim.enable = true;
   };
 

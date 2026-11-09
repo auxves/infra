@@ -75,37 +75,9 @@ in
       script = ''
         dir=${textfileDir}
         mkdir -p "$dir"
-        {
-          while read -r name size alloc free; do
-            printf 'zpool_size_bytes{pool="%s"} %s\nzpool_allocated_bytes{pool="%s"} %s\nzpool_free_bytes{pool="%s"} %s\n' "$name" "$size" "$name" "$alloc" "$name" "$free"
-          done < <(zpool list -Hp -o name,size,alloc,free)
-
-          while read -r pool; do
-            status=$(zpool status -p "$pool" || true)
-            scan=$(printf '%s\n' "$status" | grep '^  scan:' || true)
-            state=none
-            epoch=0
-            case "$scan" in
-              *"scrub in progress"*)
-                state=in-progress
-                epoch=$(date -d "''${scan##* since }" +%s 2>/dev/null) || epoch=0
-                ;;
-              *"scrub repaired"*)
-                state=finished
-                epoch=$(date -d "''${scan##* on }" +%s 2>/dev/null) || epoch=0
-                ;;
-              *"scrub canceled"*)
-                state=canceled
-                epoch=$(date -d "''${scan##* on }" +%s 2>/dev/null) || epoch=0
-                ;;
-            esac
-            printf 'zpool_scrub_state{pool="%s",state="%s"} 1\n' "$pool" "$state"
-            if [ "$epoch" -gt 0 ]; then
-              printf 'zpool_scrub_last_timestamp_seconds{pool="%s"} %s\n' "$pool" "$epoch"
-            fi
-            printf '%s\n' "$status" | awk -v pool="$pool" '$1 == pool && NF >= 5 { printf "zpool_read_errors{pool=\"%s\"} %s\nzpool_write_errors{pool=\"%s\"} %s\nzpool_checksum_errors{pool=\"%s\"} %s\n", pool, $3, pool, $4, pool, $5; exit }'
-          done < <(zpool list -Hp -o name)
-        } > "$dir/zpool.prom.tmp"
+        while read -r name size alloc free; do
+          printf 'zpool_size_bytes{pool="%s"} %s\nzpool_allocated_bytes{pool="%s"} %s\nzpool_free_bytes{pool="%s"} %s\n' "$name" "$size" "$name" "$alloc" "$name" "$free"
+        done < <(zpool list -Hp -o name,size,alloc,free) > "$dir/zpool.prom.tmp"
         mv "$dir/zpool.prom.tmp" "$dir/zpool.prom"
       '';
     };

@@ -1,10 +1,6 @@
 { pkgs, ... }: {
   services.zfs = {
-    autoScrub = {
-      enable = true;
-      interval = "monthly";
-      pools = [ "backups" ];
-    };
+    autoScrub.enable = true;
     trim.enable = true;
   };
 
