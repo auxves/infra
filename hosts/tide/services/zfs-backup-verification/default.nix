@@ -1,7 +1,6 @@
 { config, pkgs, ... }: {
   systemd.services.zfs-canary = {
     after = [ "zfs-mount.service" ];
-    wantedBy = [ "multi-user.target" ];
     serviceConfig.Type = "oneshot";
     serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
     path = with pkgs; [
@@ -87,6 +86,8 @@
   };
 
   systemd.services.zfs-drill = {
+    requires = [ "zfs-canary.service" ];
+    after = [ "zfs-canary.service" ];
     serviceConfig.Type = "oneshot";
     serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
     startAt = "monthly";
