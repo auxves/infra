@@ -17,11 +17,11 @@ let
         local image
         image=$1
 
-        if podman image exists "$image"; then
+        if podman image exists "$image" >/dev/null 2>&1; then
           return 0
         fi
 
-        if timeout 600 podman pull "$image"; then
+        if timeout 600 podman pull "$image" >/dev/null 2>&1; then
           echo "prepull: pulled $image"
         else
           echo "prepull: pull failed $image"
