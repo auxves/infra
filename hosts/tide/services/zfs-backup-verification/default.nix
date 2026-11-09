@@ -112,9 +112,11 @@
         fail 0
       fi
 
-      if ! ssh -i "$key" -o BatchMode=yes -o StrictHostKeyChecking=accept-new tide@harpy "zfs send -w $snapshot" | zfs receive -u "$scratch"; then
+      if ! ssh -i "$key" -o BatchMode=yes -o StrictHostKeyChecking=accept-new tide@harpy "zfs send -w $snapshot" | zfs receive -o syncoid:sync=false -u "$scratch"; then
         fail 0
       fi
+
+      zfs set syncoid:sync=false "$scratch" || true
 
       if ! zfs load-key -L file:///root/storage.key "$scratch"; then
         fail 0
