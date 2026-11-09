@@ -84,16 +84,16 @@
 
       (
         cd "$root"
-        find . -type f ! -name manifest.sha256 -print0 | sort -z | xargs -0 sha256sum > manifest.sha256.tmp
+        find . -type f ! -name manifest.sha256 ! -name '*.tmp' -print0 | sort -z | xargs -0 sha256sum > manifest.sha256.tmp
         mv manifest.sha256.tmp manifest.sha256
       ) || fail generate "manifest build failed"
-
-      zfs set auxves:canary-seed-hash="$seedhash" "$dataset" || fail marker "could not set the seed marker"
 
       describe
       if [ "$files" -ne 9 ]; then
         fail generate "manifest lists $files files, expected 9"
       fi
+
+      zfs set auxves:canary-seed-hash="$seedhash" "$dataset" || fail marker "could not set the seed marker"
 
       if [ "$created" = 1 ]; then
         echo "zfs-canary: created dataset=$dataset files=$files manifest_sha256=$hash"
