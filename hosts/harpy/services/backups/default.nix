@@ -32,6 +32,7 @@
           "mount"
           "mountpoint"
           "receive"
+          "send"
           "rollback"
           "destroy"
 
