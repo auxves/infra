@@ -73,7 +73,7 @@ in
 
       containers = {
         traefik = {
-          image = "traefik:v3.7.17@sha256:30ff62491aacdb862ceb8c9edcf2627da638d7deafdd4b6dab32fe34f8aa3e90";
+          image = "traefik:v3.7.18@sha256:9c437ac4f09ce6f4980a8544902d3475fdf70a1a7c578729581d2535dfa7d635";
 
           ports = lib.optionals (config.meta.addresses.internal.v6 != null) [
             # Internal
