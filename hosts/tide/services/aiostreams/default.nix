@@ -4,11 +4,13 @@ let
 in
 {
   sops.secrets."aiostreams/env" = { };
+  sops.secrets."aiostreams/trakt-addon/env" = { };
 
   apps.aiostreams = {
     volumes = {
       data = { type = "zfs"; };
       stremthru = { type = "zfs"; };
+      trakt-addon = { type = "zfs"; };
     };
 
     containers = {
@@ -44,6 +46,22 @@ in
           "${cfg.volumes.stremthru.path}:/data"
         ];
       };
+
+      trakt-addon = {
+        user = "root:root";
+        image = "ghcr.io/auxves/aiostreams-trakt-addon:v0.1.0@sha256:ae1737984cb2ffa11d7403d60b446508b27f4372d6adbbf94f00866feaba53d2";
+
+        volumes = [
+          "${cfg.volumes.trakt-addon.path}:/data"
+        ];
+
+        environment = {
+          DATA_DIR = "/data";
+          PORT = "8787";
+        };
+
+        environmentFiles = [ config.sops.secrets."aiostreams/trakt-addon/env".path ];
+      };
     };
 
     ingresses = {
@@ -53,17 +71,36 @@ in
         container = "aiostreams";
         port = 3000;
       };
+
+      trakt-addon = {
+        container = "trakt-addon";
+        port = 8787;
+      };
     };
   };
 
-  monitoring.checks = [{
-    name = "aiostreams";
-    group = "services";
-    url = "https://${cfg.ingresses.app.domain}";
-    interval = "1m";
-    alerts = [{ type = "discord"; }];
-    conditions = [
-      "[STATUS] == 200"
-    ];
-  }];
+  monitoring.checks = [
+    {
+      name = "aiostreams";
+      group = "services";
+      url = "https://${cfg.ingresses.app.domain}";
+      interval = "1m";
+      alerts = [{ type = "discord"; }];
+      conditions = [
+        "[STATUS] == 200"
+      ];
+    }
+    {
+      name = "aiostreams-trakt-addon";
+      group = "services";
+      url = "https://${cfg.ingresses.trakt-addon.domain}/healthz";
+      interval = "1m";
+      alerts = [{ type = "discord"; }];
+      conditions = [
+        "[STATUS] == 200"
+        "[BODY].needsReconnect == 0"
+        "[BODY].shapeDrift == false"
+      ];
+    }
+  ];
 }
