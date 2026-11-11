@@ -8,6 +8,7 @@ in
   apps.aiostreams = {
     volumes = {
       data = { type = "zfs"; };
+      stremthru = { type = "zfs"; };
     };
 
     containers = {
@@ -16,6 +17,7 @@ in
 
         environment = {
           BASE_URL = "https://${cfg.ingresses.app.domain}";
+          BUILTIN_STREMTHRU_URL = "http://${cfg.containers.stremthru.fullName}:8080";
           DATABASE_URI = "sqlite://./data/db.sqlite";
           SEL_SYNC_ACCESS = "all";
           REGEX_FILTER_ACCESS = "all";
@@ -25,6 +27,21 @@ in
 
         volumes = [
           "${cfg.volumes.data.path}:/app/data"
+        ];
+      };
+
+      stremthru = {
+        image = "muniftanjim/stremthru:0.105.4@sha256:947cfcb2601c67f2f21eb11bd1ea1e555889cec9e0b347cefd0c63754b9c641a";
+
+        environment = {
+          STREMTHRU_BASE_URL = "http://${cfg.containers.stremthru.fullName}:8080";
+          STREMTHRU_DATA_DIR = "/data";
+          STREMTHRU_STORE_TUNNEL = "*:false";
+          STREMTHRU_STORE_CONTENT_PROXY = "*:false";
+        };
+
+        volumes = [
+          "${cfg.volumes.stremthru.path}:/data"
         ];
       };
     };
