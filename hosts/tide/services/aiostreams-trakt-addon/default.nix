@@ -12,7 +12,7 @@ in
 
     containers = {
       aiostreams-trakt-addon = {
-        image = "ghcr.io/auxves/aiostreams-trakt-addon:pr-1@sha256:cd4e38640c1f867f0580fa5fd3aad56f5c99c7aa5a976e36f6b9665f2cb1ed74";
+        image = "ghcr.io/auxves/aiostreams-trakt-addon:pr-1@sha256:59420937934b63e5b25ccb0d966cceddb472ac59bb121eb4f4a783c6620305c6";
 
         volumes = [
           "${cfg.volumes.data.path}:/data"
