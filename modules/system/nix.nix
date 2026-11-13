@@ -1,7 +1,5 @@
-{ self, lib, config, host, pkgs, ... }:
+{ self, lib, config, host, ... }:
 {
-  imports = lib.internal.readModules ./.;
-
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" "auto-allocate-uids" ];
@@ -29,21 +27,4 @@
       options = "--delete-older-than 7d";
     };
   };
-
-  networking.hostName = host.name;
-
-  environment.systemPackages = with pkgs; [
-    curl
-    neovim
-    tmux
-  ];
-
-  programs.fish = {
-    enable = true;
-    useBabelfish = true;
-  };
-
-  environment.shells = with pkgs; [ fish ];
-
-  nixpkgs.hostPlatform = host.system;
 }

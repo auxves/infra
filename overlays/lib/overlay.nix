@@ -4,11 +4,6 @@ let
   lib = final;
 
   overlays = with self.overlays; [ all unstable ];
-  pkgsFor = system: import inputs.nixpkgs {
-    localSystem = system;
-    inherit overlays;
-    config.allowUnfree = true;
-  };
 
   hostList = builtins.attrValues self.hosts;
 
@@ -26,15 +21,6 @@ let
 in
 {
   internal = {
-    inherit pkgsFor;
-
-    forAllSystems = lib.genAttrs [
-      "aarch64-linux"
-      "x86_64-linux"
-      "aarch64-darwin"
-      "x86_64-darwin"
-    ];
-
     prefixAttrs = prefix: lib.mapAttrs'
       (name: value: lib.nameValuePair "${prefix}-${name}" value);
 
@@ -44,7 +30,8 @@ in
 
     readModules = dir:
       let
-        isValid = name: type: name != "default.nix";
+        # Platform leaves (nixos.nix, darwin.nix) are imported explicitly by the variant assembly below.
+        isValid = name: type: name != "default.nix" && name != "nixos.nix" && name != "darwin.nix";
         files = lib.filterAttrs isValid (builtins.readDir dir);
       in
       map (n: dir + "/${n}") (builtins.attrNames files);
@@ -53,7 +40,14 @@ in
       nixos = host: inputs.nixpkgs.lib.nixosSystem {
         specialArgs = { inherit self host lib; };
         modules = [
-          ../../modules/common ../../modules/${host.variant} ../../hosts/${host.name}
+          ../../modules/system
+          ../../modules/system/nixos.nix
+          ../../modules/users
+          ../../modules/networking
+          ../../modules/observability
+          ../../modules/services
+          ../../modules/security
+          ../../hosts/${host.name}
           { nixpkgs.overlays = overlays; }
         ];
       };
@@ -61,7 +55,11 @@ in
       darwin = host: inputs.darwin.lib.darwinSystem {
         specialArgs = { inherit self host lib; };
         modules = [
-          ../../modules/common ../../modules/${host.variant} ../../hosts/${host.name}
+          ../../modules/system
+          ../../modules/system/darwin.nix
+          ../../modules/users
+          ../../modules/users/darwin.nix
+          ../../hosts/${host.name}
           { nixpkgs.overlays = overlays; }
         ];
       };
@@ -73,16 +71,6 @@ in
         hosts = lib.filterAttrs isApplicable self.hosts;
       in
       lib.mapAttrs (_: host: host.configuration) hosts;
-
-    buildPackages = pkgsFor;
-
-    buildChecks = system:
-      let
-        pkgs = pkgsFor system;
-      in
-      lib.filterAttrs
-        (_: lib.meta.availableOn pkgs.stdenv.hostPlatform)
-        pkgs.auxves.checks;
 
     inherit collectContainerImages;
 
