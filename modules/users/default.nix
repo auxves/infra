@@ -1,3 +1,8 @@
-{ lib, ... }: {
-  imports = lib.internal.readModules ./.;
+{
+  imports = [
+    ./development.nix
+    ./graphical.nix
+    ./home.nix
+    ./shell.nix
+  ];
 }

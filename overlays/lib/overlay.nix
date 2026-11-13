@@ -30,8 +30,7 @@ in
 
     readModules = dir:
       let
-        # Platform leaves (nixos.nix, darwin.nix) are imported explicitly by the variant assembly below.
-        isValid = name: type: name != "default.nix" && name != "nixos.nix" && name != "darwin.nix";
+        isValid = name: type: name != "default.nix";
         files = lib.filterAttrs isValid (builtins.readDir dir);
       in
       map (n: dir + "/${n}") (builtins.attrNames files);
@@ -42,6 +41,8 @@ in
         modules = [
           ../../modules/system
           ../../modules/system/nixos.nix
+          ../../modules/system/emulation.nix
+          ../../modules/system/gitops.nix
           ../../modules/users
           ../../modules/networking
           ../../modules/observability

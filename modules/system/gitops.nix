@@ -1,9 +1,9 @@
-{ self, lib, config, host, ... }:
+{ self, lib, config, ... }:
 let
   cfg = config.presets.gitops;
 in
 {
-  imports = lib.optionals (host.platform == "linux") [
+  imports = [
     self.inputs.comin.nixosModules.comin
   ];
 

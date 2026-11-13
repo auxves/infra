@@ -53,13 +53,15 @@ Modules group by function. Host wiring stays in `hosts/`.
 
 ## Conventions
 
-- `lib.internal.readModules` skips files named `nixos.nix` and `darwin.nix`.
-  The variant assembly in `overlays/lib/overlay.nix` imports those leaves
-  explicitly. A new platform-only file takes one of those two names and one
-  line in the assembly.
-- `modules/system/gitops.nix` guards its comin import on `host.platform`.
-  The comin module is NixOS-only, and `modules/system/` is shared by both
-  variants.
+- `modules/system/default.nix` and `modules/users/default.nix` list their
+  members explicitly instead of auto-importing the directory. Both dirs hold
+  files with different platform scopes, and `modules/users/home/` holds
+  home-manager modules that must never load as system modules.
+  Platform-only files (`system/nixos.nix`, `system/emulation.nix`,
+  `system/gitops.nix`, `system/darwin.nix`, `users/darwin.nix`) are imported
+  explicitly by the variant assembly in `overlays/lib/overlay.nix`.
+  A new file in either dir takes one line in its default.nix, or one line
+  in the assembly when it is platform-only.
 - Per-system `pkgs` comes from `parts/pkgs.nix`. It imports nixpkgs with the
   repo overlays and `allowUnfree`. Change the package set there.
 
