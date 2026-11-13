@@ -10,10 +10,10 @@ Modules group by function. Host wiring stays in `hosts/`.
 - `parts/lib.nix`: `lib`, `overlays`.
 - `parts/pkgs.nix`: the per-system package set for every `perSystem` block.
 - `parts/packages.nix`, `parts/checks.nix`, `parts/shells.nix`: per-system outputs.
-- `modules/system/`: nix daemon settings, host identity, remote builders, meta addresses, emulation, gitops.
+- `modules/system/`: nix daemon settings, host identity, remote builders, meta addresses, monitoring registry, emulation, gitops.
 - `modules/users/`: home-manager wiring, shell, development, graphical, home-manager modules.
 - `modules/networking/`: tailscale, traefik.
-- `modules/observability/`: monitoring checks option, alloy, exporters.
+- `modules/observability/`: alloy, exporters.
 - `modules/services/`: the apps framework (`apps` option, containers, volumes, prepull, db helper, forgejo-runner, podman runtime, oci-containers override).
 - `modules/security/`: ssh, kernel modprobe blocks.
 
@@ -26,7 +26,7 @@ Modules group by function. Host wiring stays in `hosts/`.
 | `modules/common/default.nix` (packages, fish, shells) | `modules/users/shell.nix` |
 | `modules/common/builders.nix` | `modules/system/builders.nix` |
 | `modules/common/meta.nix` | `modules/system/meta.nix` |
-| `modules/common/monitoring.nix` | `modules/observability/monitoring.nix` |
+| `modules/common/monitoring.nix` | `modules/system/monitoring.nix` |
 | `modules/common/home.nix` | `modules/users/home.nix` |
 | `modules/common/development.nix` | `modules/users/development.nix` |
 | `modules/common/graphical.nix` | `modules/users/graphical.nix` |

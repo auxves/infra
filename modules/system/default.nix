@@ -4,5 +4,6 @@
     ./host.nix
     ./builders.nix
     ./meta.nix
+    ./monitoring.nix
   ];
 }
