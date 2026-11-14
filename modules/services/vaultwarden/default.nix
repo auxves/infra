@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  flake.services.vaultwarden.domain = "bitwarden.auxves.dev";
+{ ... }: {
 
   flake.modules.nixos.tide = { config, ... }:
     let
@@ -38,7 +37,7 @@
 
         ingresses = {
           app = {
-            domain = inputs.self.services.vaultwarden.domain;
+            domain = "bitwarden.auxves.dev";
             container = "vaultwarden";
             port = 80;
           };

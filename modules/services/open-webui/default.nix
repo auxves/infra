@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  flake.services.open-webui.domain = "ai.auxves.dev";
+{ ... }: {
 
   flake.modules.nixos.tide = { config, ... }:
     let
@@ -41,7 +40,7 @@
 
         ingresses = {
           app = {
-            domain = inputs.self.services.open-webui.domain;
+            domain = "ai.auxves.dev";
             container = "open-webui";
             port = 8080;
           };

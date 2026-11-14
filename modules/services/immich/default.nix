@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  flake.services.immich.domain = "immich.auxves.dev";
+{ ... }: {
 
   flake.modules.nixos.tide = { config, ... }:
     let
@@ -56,7 +55,7 @@
 
         ingresses = {
           app = {
-            domain = inputs.self.services.immich.domain;
+            domain = "immich.auxves.dev";
             container = "immich";
             port = 2283;
           };

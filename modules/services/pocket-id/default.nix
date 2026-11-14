@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  flake.services.pocket-id.domain = "id.auxves.dev";
+{ ... }: {
 
   flake.modules.nixos.tide = { config, ... }:
     let
@@ -35,7 +34,7 @@
         ingresses = {
           app = {
             type = "public";
-            domain = inputs.self.services.pocket-id.domain;
+            domain = "id.auxves.dev";
             container = "pocket-id";
             port = 1411;
           };

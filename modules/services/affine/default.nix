@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  flake.services.affine.domain = "affine.auxves.dev";
+{ ... }: {
 
   flake.modules.nixos.tide = { config, ... }:
     let
@@ -52,7 +51,7 @@
 
         ingresses = {
           app = {
-            domain = inputs.self.services.affine.domain;
+            domain = "affine.auxves.dev";
             container = "affine";
             port = 3010;
           };

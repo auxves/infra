@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  flake.services.loki.domain = "loki.tide.x.auxves.dev";
+{ ... }: {
 
   flake.modules.nixos.tide = { config, ... }:
     let
@@ -28,7 +27,6 @@
 
         ingresses = {
           app = {
-            domain = inputs.self.services.loki.domain;
             container = "loki";
             port = 3100;
             settings.middlewares = "loki-auth@docker";

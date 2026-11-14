@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  flake.services.prometheus.domain = "prometheus.tide.x.auxves.dev";
+{ ... }: {
 
   flake.modules.nixos.tide = { config, ... }:
     let
@@ -35,7 +34,6 @@
 
         ingresses = {
           app = {
-            domain = inputs.self.services.prometheus.domain;
             container = "prometheus";
             port = 9090;
             settings.middlewares = "prometheus-auth@docker";

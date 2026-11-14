@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  flake.services.grafana.domain = "grafana.auxves.dev";
+{ ... }: {
 
   flake.modules.nixos.tide = { config, ... }:
     let
@@ -30,7 +29,7 @@
 
         ingresses = {
           app = {
-            domain = inputs.self.services.grafana.domain;
+            domain = "grafana.auxves.dev";
             container = "grafana";
             port = 3000;
           };

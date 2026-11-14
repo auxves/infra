@@ -1,5 +1,4 @@
 { inputs, ... }: {
-  flake.services.gatus.domain = "status.auxves.dev";
 
   flake.modules.nixos.harpy = { config, pkgs, ... }:
     let
@@ -69,7 +68,7 @@
 
         ingresses = {
           app = {
-            domain = inputs.self.services.gatus.domain;
+            domain = "status.auxves.dev";
             container = "gatus";
             port = 8080;
           };
