@@ -6,7 +6,6 @@
         shell
         ssh
 
-        # builders
         meta
         monitoring
         apps-framework
@@ -25,7 +24,6 @@
         nix
         shell
 
-        # builders
         meta
         monitoring
       ] ++ [
