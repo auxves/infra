@@ -1,33 +1,15 @@
 { ... }: {
   flake.modules.nixos.exporters = { config, lib, pkgs, ... }:
     let
-      presetCfg = config.presets.apps.exporters;
-
       textfileDir = "/var/lib/node-exporter/textfile";
 
       supportsZfs = config.boot.supportedFilesystems ? zfs;
     in
     {
-      options.presets.apps.exporters = with lib; {
-        enable = mkEnableOption "Enable exporters";
-
-        node.enable = mkOption {
-          type = types.bool;
-          default = presetCfg.enable;
-          description = "Enable node exporter";
-        };
-
-        podman.enable = mkOption {
-          type = types.bool;
-          default = presetCfg.enable;
-          description = "Enable podman exporter";
-        };
-      };
-
-      config = lib.mkIf (presetCfg.enable) {
+      config = {
         apps.exporters = {
           containers = {
-            node = lib.mkIf presetCfg.node.enable {
+            node = {
               image = "quay.io/prometheus/node-exporter:v1.12.1@sha256:1b4e4438faca4dd7e001dd445d161a4a2091b0fededa84093b3a8dfeae1f1be0";
               extraOptions = [ "--pid=host" ];
               volumes = [
@@ -46,7 +28,7 @@
               };
             };
 
-            podman = lib.mkIf presetCfg.podman.enable {
+            podman = {
               image = "quay.io/navidys/prometheus-podman-exporter:v2.0.0@sha256:ddaa9003e86f435f2d958ab68041959e4d2bb290a350a2649a123c449db032db";
               user = "root:root";
 
@@ -68,7 +50,7 @@
 
         # node_filesystem only sees mounted datasets, so unmounted pools (harpy's
         # backups) report no usage. Publish zpool list numbers as textfile metrics.
-        systemd.services.zpool-textfile = lib.mkIf (presetCfg.node.enable && supportsZfs) {
+        systemd.services.zpool-textfile = lib.mkIf supportsZfs {
           serviceConfig.Type = "oneshot";
           serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
           startAt = "*:0/5";

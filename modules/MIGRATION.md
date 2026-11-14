@@ -19,8 +19,7 @@ declarations. Hosts are features under `modules/hosts/`.
 - `modules/system/`: nix daemon settings, remote builders, meta addresses,
   monitoring registry, emulation, gitops, plus the `nixos.default` and
   `darwin.default` compositions.
-- `modules/users/`: home-manager wiring, shell, development, graphical,
-  home-manager modules.
+- `modules/users/`: home-manager wiring, shell, home-manager modules.
 - `modules/networking/`: tailscale, traefik.
 - `modules/observability/`: alloy, exporters.
 - `modules/services/`: the apps framework (`apps` option, containers,
@@ -36,11 +35,26 @@ declarations. Hosts are features under `modules/hosts/`.
 
 - `flake.modules.nixos.<aspect>` for NixOS-only config.
 - `flake.modules.darwin.<aspect>` for nix-darwin-only config.
-- Both keys with one shared body when the config is identical across
-  classes; class differences use `pkgs.stdenv.isLinux`/`isDarwin` inside
-  the shared body, never `specialArgs`.
+- `flake.modules.generic.<aspect>` for config shared across classes,
+  imported by the `nixos` and `darwin` aspects. Class differences stay in
+  the class aspects, or use `pkgs.stdenv.isLinux`/`isDarwin` inside the
+  shared body, never `specialArgs`.
 - `flake.modules.homeManager.<aspect>` for home-manager config, imported
   into the user config by the `nixos.home`/`darwin.home` aspects.
+
+## Enabling
+
+A feature enables by import, not by flag. Hosts import the aspects they
+use (in `configuration.nix` or a `services/` contribution); the class
+`default` compositions hold only what every host of that class uses.
+The `presets.*` enable flags are gone: `emulation`, `gitops`, `home`,
+`traefik`, `alloy`, `exporters`, `forgejo-runner` are plain imports now,
+`podman` activates when `config.apps` is non-empty, and the
+`development`/`graphical` relay (system aspect plus `presets.home.modules`)
+is gone, with blaze importing the home-manager aspects into its user
+config directly. Two `presets` remain: `builders` (role flags and data
+other hosts read) and `presets.home.user` (the username, one source of
+truth).
 - A host is a feature: its files each set `flake.modules.<class>.<host>`,
   and the module system merges the contributions.
 
@@ -97,6 +111,8 @@ for the deploy-dns zone data files under `overlays/`.
 - `parts/`: deleted. `modules/flake/` holds the same plumbing.
 - `hosts/`: moved to `modules/hosts/`. The old `hosts/default.nix` host
   map is gone; hosts register themselves through `flake-parts.nix`.
+- `presets.*` enable flags: deleted. Enabling is importing the aspect
+  (see Enabling above). `builders` roles and `presets.home.user` remain.
 
 ## Remainder (not moved)
 

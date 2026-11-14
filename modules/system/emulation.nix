@@ -1,8 +1,6 @@
 { ... }: {
   flake.modules.nixos.emulation = { lib, config, pkgs, ... }:
     let
-      cfg = config.presets.emulation;
-
       emulatedSystems = lib.remove config.nixpkgs.hostPlatform.system [ "x86_64-linux" "aarch64-linux" "riscv64-linux" ];
 
       flags = {
@@ -13,16 +11,10 @@
       registrations = builtins.listToAttrs (map (system: lib.nameValuePair system flags) emulatedSystems);
     in
     {
-      options.presets.emulation = with lib; {
-        enable = mkEnableOption "Enable emulation";
+      boot.binfmt = {
+        inherit emulatedSystems registrations;
       };
 
-      config = lib.mkIf cfg.enable {
-        boot.binfmt = {
-          inherit emulatedSystems registrations;
-        };
-
-        environment.systemPackages = with pkgs; [ qemu ];
-      };
+      environment.systemPackages = with pkgs; [ qemu ];
     };
 }

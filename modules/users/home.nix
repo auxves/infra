@@ -5,24 +5,17 @@
     in
     {
       options.presets.home = with lib; {
-        enable = mkEnableOption "Enable home-manager";
-
         user = mkOption {
           type = types.str;
           default = "arno";
         };
-
-        modules = mkOption {
-          type = types.listOf types.anything;
-          default = [ ];
-        };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
 
-        home-manager.users.${cfg.user}.imports = [ inputs.self.modules.homeManager.home ] ++ cfg.modules;
+        home-manager.users.${cfg.user}.imports = [ inputs.self.modules.homeManager.home ];
 
         users.users.${cfg.user} = {
           openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINHiwuwSpFayBr5vka7mNjmFkPlKXK7bUkRYxJspY5WE" ];
@@ -40,7 +33,7 @@
         inputs.home-manager.nixosModules.home-manager
       ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         users.users.${cfg.user} = {
           home = "/home/${cfg.user}";
           isNormalUser = true;
@@ -59,7 +52,7 @@
         inputs.home-manager.darwinModules.home-manager
       ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         users.users.${cfg.user} = {
           home = "/Users/${cfg.user}";
         };

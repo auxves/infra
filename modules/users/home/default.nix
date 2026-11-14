@@ -1,8 +1,6 @@
 { inputs, ... }: {
   flake.modules.homeManager.home = {
     imports = with inputs.self.modules.homeManager; [
-      development
-      graphical
       darwin
       fish
       git

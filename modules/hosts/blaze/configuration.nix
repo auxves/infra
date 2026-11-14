@@ -1,14 +1,14 @@
 { inputs, ... }: {
-  flake.modules.darwin.blaze = {
-    imports = [ inputs.self.modules.darwin.default ];
+  flake.modules.darwin.blaze = { config, ... }: {
+    imports = with inputs.self.modules.darwin; [ default home ];
 
     networking.hostName = "blaze";
 
-    presets = {
-      home.enable = true;
-      development.enable = true;
-      graphical.enable = true;
-      builders.outsource = true;
-    };
+    home-manager.users.${config.presets.home.user}.imports = with inputs.self.modules.homeManager; [
+      development
+      graphical
+    ];
+
+    presets.builders.outsource = true;
   };
 }

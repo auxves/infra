@@ -1,7 +1,6 @@
 { ... }: {
   flake.modules.nixos.traefik = { config, lib, pkgs, ... }:
     let
-      presetCfg = config.presets.apps.traefik;
       cfg = config.apps.traefik;
 
       yaml = pkgs.formats.yaml { };
@@ -60,11 +59,7 @@
       };
     in
     {
-      options.presets.apps.traefik = with lib; {
-        enable = mkEnableOption "Enable traefik";
-      };
-
-      config = lib.mkIf (presetCfg.enable) {
+      config = {
         sops.secrets."traefik/env" = { };
 
         apps.traefik = {

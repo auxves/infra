@@ -1,6 +1,5 @@
-{ ... }: {
-  flake.modules.nixos.harpy = { ... }: {
-    presets.apps.forgejo-runner.enable = true;
-  }
-  ;
+{ inputs, ... }: {
+  flake.modules.nixos.harpy = {
+    imports = [ inputs.self.modules.nixos.forgejo-runner ];
+  };
 }

@@ -1,9 +1,8 @@
-{ ... }: {
-  flake.modules.nixos.harpy = { ... }: {
-    presets.apps = {
-      alloy.enable = true;
-      exporters.enable = true;
-    };
-  }
-  ;
+{ inputs, ... }: {
+  flake.modules.nixos.harpy = {
+    imports = with inputs.self.modules.nixos; [
+      alloy
+      exporters
+    ];
+  };
 }

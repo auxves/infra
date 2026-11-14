@@ -1,53 +1,43 @@
 { ... }: {
-  flake.modules.homeManager.development = { lib, config, pkgs, ... }:
-    let
-      cfg = config.presets.development;
-    in
-    {
-      options.presets.development = with lib; {
-        enable = mkEnableOption "Enable development environment";
-      };
+  flake.modules.homeManager.development = { config, pkgs, ... }: {
+    home.packages = with pkgs; [
+      skim
+      jq
 
-      config = lib.mkIf cfg.enable {
-        home.packages = with pkgs; [
-          skim
-          jq
+      # Nix
+      nil
+      nixpkgs-fmt
 
-          # Nix
-          nil
-          nixpkgs-fmt
+      # JS
+      bun
+      nodejs_24
 
-          # JS
-          bun
-          nodejs_24
+      # Python
+      python3
+      unstable.uv
 
-          # Python
-          python3
-          unstable.uv
+      # Rust
+      fenix.latest.toolchain
 
-          # Rust
-          fenix.latest.toolchain
+      # Containers
+      docker-client
+      docker-credential-helpers
+      podman
 
-          # Containers
-          docker-client
-          docker-credential-helpers
-          podman
+      # Man
+      man-pages
+      man-pages-posix
+    ];
 
-          # Man
-          man-pages
-          man-pages-posix
-        ];
-
-        programs.direnv = {
-          enable = true;
-          silent = true;
-          nix-direnv.enable = true;
-        };
-
-        home.sessionVariables = {
-          CARGO_HOME = "${config.xdg.cacheHome}/cargo";
-          GRADLE_USER_HOME = "${config.xdg.cacheHome}/gradle";
-        };
-      };
+    programs.direnv = {
+      enable = true;
+      silent = true;
+      nix-direnv.enable = true;
     };
+
+    home.sessionVariables = {
+      CARGO_HOME = "${config.xdg.cacheHome}/cargo";
+      GRADLE_USER_HOME = "${config.xdg.cacheHome}/gradle";
+    };
+  };
 }

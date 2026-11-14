@@ -71,8 +71,6 @@
     in
     {
       config = lib.mkIf (config.apps != { }) {
-        presets.containers.enable = true;
-
         virtualisation.oci-containers.containers = lib.foldl' lib.recursiveUpdate { } containers;
       };
     }

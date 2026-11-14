@@ -1,14 +1,8 @@
 { inputs, ... }: {
   flake.modules.nixos.harpy = {
-    imports = [ inputs.self.modules.nixos.default ];
+    imports = with inputs.self.modules.nixos; [ default emulation gitops ];
 
     networking.hostName = "harpy";
-
-    presets = {
-      containers.enable = true;
-      emulation.enable = true;
-      gitops.enable = true;
-    };
 
     networking.hostId = "c2079aa6";
 

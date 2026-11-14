@@ -1,15 +1,10 @@
 { inputs, ... }: {
   flake.modules.nixos.alloy = { config, lib, ... }:
     let
-      presetCfg = config.presets.apps.alloy;
       cfg = config.apps.alloy;
     in
     {
-      options.presets.apps.alloy = with lib; {
-        enable = mkEnableOption "Enable Grafana alloy";
-      };
-
-      config = lib.mkIf (presetCfg.enable) {
+      config = {
         sops.secrets."alloy/env" = {
           sopsFile = "${inputs.self}/modules/hosts/secrets.yaml";
         };

@@ -1,7 +1,6 @@
 { inputs, ... }: {
   flake.modules.nixos.forgejo-runner = { config, lib, pkgs, ... }:
     let
-      presetCfg = config.presets.apps.forgejo-runner;
       cfg = config.apps.forgejo;
 
       yaml = pkgs.formats.yaml { };
@@ -45,11 +44,7 @@
       };
     in
     {
-      options.presets.apps.forgejo-runner = with lib; {
-        enable = mkEnableOption "Enable forgejo-runner";
-      };
-
-      config = lib.mkIf (presetCfg.enable) {
+      config = {
         sops.secrets."forgejo/runner-env" = { };
 
         apps.forgejo = {

@@ -1,19 +1,12 @@
 { inputs, ... }: {
   flake.modules.nixos.tide = { config, ... }: {
-    imports = [ inputs.self.modules.nixos.default ];
+    imports = with inputs.self.modules.nixos; [ default emulation gitops home ];
 
     networking.hostName = "tide";
 
-    presets = {
-      home.enable = true;
-      containers.enable = true;
-      emulation.enable = true;
-      gitops.enable = true;
-
-      builders = {
-        volunteer = true;
-        publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUNWcC8vMlNYcHY1bWdQT0dxZ2NSUnVYMXRrS1VQN2dRNVk2SWRKb0YxTHAgcm9vdEB0aWRlCg==";
-      };
+    presets.builders = {
+      volunteer = true;
+      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUNWcC8vMlNYcHY1bWdQT0dxZ2NSUnVYMXRrS1VQN2dRNVk2SWRKb0YxTHAgcm9vdEB0aWRlCg==";
     };
 
     networking.hostId = "c2079ac5";

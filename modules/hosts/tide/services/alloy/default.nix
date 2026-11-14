@@ -1,9 +1,8 @@
-{ ... }: {
-  flake.modules.nixos.tide = { ... }: {
-    presets.apps = {
-      alloy.enable = true;
-      exporters.enable = true;
-    };
-  }
-  ;
+{ inputs, ... }: {
+  flake.modules.nixos.tide = {
+    imports = with inputs.self.modules.nixos; [
+      alloy
+      exporters
+    ];
+  };
 }

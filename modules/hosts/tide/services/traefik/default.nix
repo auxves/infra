@@ -1,6 +1,6 @@
-{ ... }: {
+{ inputs, ... }: {
   flake.modules.nixos.tide = { lib, config, ... }: {
-    presets.apps.traefik.enable = true;
+    imports = [ inputs.self.modules.nixos.traefik ];
 
     apps.traefik = {
       containers = {
