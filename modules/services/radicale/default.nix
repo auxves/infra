@@ -1,4 +1,6 @@
-{ ... }: {
+{ inputs, ... }: {
+  flake.services.radicale.domain = "radicale.auxves.dev";
+
   flake.modules.nixos.tide = { config, ... }:
     let
       cfg = config.apps.radicale;
@@ -21,7 +23,7 @@
 
         ingresses = {
           app = {
-            domain = "radicale.auxves.dev";
+            domain = inputs.self.services.radicale.domain;
             container = "radicale";
             port = 5232;
           };

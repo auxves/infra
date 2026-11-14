@@ -1,4 +1,7 @@
-{ ... }: {
+{ inputs, ... }: {
+  flake.services.home-assistant.domain = "home.auxves.dev";
+  flake.services.home-assistant.mcpDomain = "mcp.home.auxves.dev";
+
   flake.modules.nixos.tide = { pkgs, config, ... }:
     let
       cfg = config.apps.home-assistant;
@@ -32,14 +35,14 @@
 
         ingresses = {
           app = {
-            domain = "home.auxves.dev";
+            domain = inputs.self.services.home-assistant.domain;
             container = "home-assistant";
             port = 8123;
           };
 
           mcp = {
             type = "public";
-            domain = "mcp.home.auxves.dev";
+            domain = inputs.self.services.home-assistant.mcpDomain;
             container = "home-assistant";
             port = 9584;
           };

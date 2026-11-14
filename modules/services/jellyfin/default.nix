@@ -1,4 +1,6 @@
-{ ... }: {
+{ inputs, ... }: {
+  flake.services.jellyfin.domain = "jellyfin.auxves.dev";
+
   flake.modules.nixos.tide = { config, pkgs, ... }:
     let
       cfg = config.apps.jellyfin;
@@ -42,7 +44,7 @@
         ingresses = {
           app = {
             type = "public";
-            domain = "jellyfin.auxves.dev";
+            domain = inputs.self.services.jellyfin.domain;
             container = "jellyfin";
             port = 8096;
           };

@@ -1,4 +1,6 @@
 { inputs, ... }: {
+  flake.services.forgejo.domain = "forge.auxves.dev";
+
   flake.modules.nixos.tide = { config, ... }:
     let
       cfg = config.apps.forgejo;
@@ -27,7 +29,7 @@
         ingresses = {
           app = {
             type = "public";
-            domain = "forge.auxves.dev";
+            domain = inputs.self.services.forgejo.domain;
             container = "forgejo";
             port = 3000;
           };

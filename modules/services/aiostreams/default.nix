@@ -1,4 +1,6 @@
-{ ... }: {
+{ inputs, ... }: {
+  flake.services.aiostreams.domain = "aiostreams.auxves.dev";
+
   flake.modules.nixos.tide = { config, ... }:
     let
       cfg = config.apps.aiostreams;
@@ -68,7 +70,7 @@
         ingresses = {
           app = {
             type = "public";
-            domain = "aiostreams.auxves.dev";
+            domain = inputs.self.services.aiostreams.domain;
             container = "aiostreams";
             port = 3000;
           };
