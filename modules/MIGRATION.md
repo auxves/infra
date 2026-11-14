@@ -1,86 +1,106 @@
 # Dendritic prototype migration map
 
 Prototype branch: `dendritic-prototype`. The flake entry uses flake-parts.
-Modules group by function. Host wiring stays in `hosts/`.
+Every file under `modules/` is a flake-parts module, auto-imported by
+import-tree. Each file declares its own contributions to the right outputs
+(`flake.modules.<class>.<aspect>`), and hosts assemble from those
+declarations. Hosts are features under `modules/hosts/`.
 
 ## Layout
 
-- `flake.nix`: inputs plus `mkFlake`, imports `./parts`.
-- `parts/hosts.nix`: `hosts`, `nixosConfigurations`, `darwinConfigurations`.
-- `parts/lib.nix`: `lib`, `overlays`.
-- `parts/pkgs.nix`: the per-system package set for every `perSystem` block.
-- `parts/packages.nix`, `parts/checks.nix`, `parts/shells.nix`: per-system outputs.
-- `modules/system/`: nix daemon settings, host identity, remote builders, meta addresses, monitoring registry, emulation, gitops.
-- `modules/users/`: home-manager wiring, shell, development, graphical, home-manager modules.
+- `flake.nix`: inputs plus `mkFlake`, imports `./modules` through import-tree.
+  Hand-written; nothing regenerates it.
+- `modules/flake/`: flake-level plumbing. `dendritic.nix` imports the
+  flake-parts `modules` extra and sets `systems`. `pkgs.nix`,
+  `packages.nix`, `checks.nix`, `shells.nix` are the per-system outputs.
+  `lib.nix` sets `flake.lib` (extended nixpkgs lib plus `mkNixos`/`mkDarwin`
+  builders) and `flake.overlays`. `hosts.nix` builds the `flake.hosts`
+  registry (`{ name, variant, cfg }`) from the configurations.
+- `modules/system/`: nix daemon settings, remote builders, meta addresses,
+  monitoring registry, emulation, gitops, plus the `nixos.default` and
+  `darwin.default` compositions.
+- `modules/users/`: home-manager wiring, shell, development, graphical,
+  home-manager modules.
 - `modules/networking/`: tailscale, traefik.
 - `modules/observability/`: alloy, exporters.
-- `modules/services/`: the apps framework (`apps` option, containers, volumes, prepull, db helper, forgejo-runner, podman runtime, oci-containers override).
+- `modules/services/`: the apps framework (`apps` option, containers,
+  volumes, prepull, db helper, forgejo-runner, podman runtime,
+  oci-containers override).
 - `modules/security/`: ssh, kernel modprobe blocks.
+- `modules/hosts/`: one directory per host. `configuration.nix` defines the
+  host aspect and imports its class default. `flake-parts.nix` is the
+  one-line `mkNixos`/`mkDarwin` boilerplate. `hardware.nix` and each file
+  under `services/` contribute to the same host aspect.
 
-## Moves
+## How a module declares its target
 
-| Old | New |
-| --- | --- |
-| `modules/common/default.nix` (nix block) | `modules/system/nix.nix` |
-| `modules/common/default.nix` (hostName, hostPlatform) | `modules/system/host.nix` |
-| `modules/common/default.nix` (packages, fish, shells) | `modules/users/shell.nix` |
-| `modules/common/builders.nix` | `modules/system/builders.nix` |
-| `modules/common/meta.nix` | `modules/system/meta.nix` |
-| `modules/common/monitoring.nix` | `modules/system/monitoring.nix` |
-| `modules/common/home.nix` | `modules/users/home.nix` |
-| `modules/common/development.nix` | `modules/users/development.nix` |
-| `modules/common/graphical.nix` | `modules/users/graphical.nix` |
-| `modules/nixos/apps/default.nix` | `modules/services/default.nix` |
-| `modules/nixos/apps/containers.nix` | `modules/services/containers.nix` |
-| `modules/nixos/apps/volumes.nix` | `modules/services/volumes.nix` |
-| `modules/nixos/apps/prepull.nix` | `modules/services/prepull.nix` |
-| `modules/nixos/apps/presets/db.nix` | `modules/services/db.nix` |
-| `modules/nixos/apps/presets/forgejo-runner.nix` | `modules/services/forgejo-runner.nix` |
-| `modules/nixos/apps/presets/alloy/` | `modules/observability/alloy/` |
-| `modules/nixos/apps/presets/exporters.nix` | `modules/observability/exporters.nix` |
-| `modules/nixos/apps/presets/traefik.nix` | `modules/networking/traefik.nix` |
-| `modules/nixos/networking.nix` | `modules/networking/tailscale.nix` |
-| `modules/nixos/containers.nix` | `modules/services/podman.nix` |
-| `modules/nixos/emulation.nix` | `modules/system/emulation.nix` |
-| `modules/nixos/gitops.nix` | `modules/system/gitops.nix` |
-| `modules/nixos/security.nix` | `modules/security/kernel.nix` |
-| `modules/nixos/overrides/` | `modules/services/overrides/` |
-| `modules/nixos/default.nix` (ssh, pam, root keys) | `modules/security/ssh.nix` |
-| `modules/nixos/default.nix` (nix-ld, shells, cgroups) | `modules/system/nixos.nix` |
-| `modules/darwin/default.nix` | `modules/system/darwin.nix` |
-| `modules/darwin/home.nix` | `modules/users/darwin.nix` |
-| `modules/home/` | `modules/users/home/` |
+- `flake.modules.nixos.<aspect>` for NixOS-only config.
+- `flake.modules.darwin.<aspect>` for nix-darwin-only config.
+- Both keys with one shared body when the config is identical across
+  classes; class differences use `pkgs.stdenv.isLinux`/`isDarwin` inside
+  the shared body, never `specialArgs`.
+- `flake.modules.homeManager.<aspect>` for home-manager config, imported
+  into the user config by the `nixos.home`/`darwin.home` aspects.
+- A host is a feature: its files each set `flake.modules.<class>.<host>`,
+  and the module system merges the contributions.
 
-## Conventions
+## Why import-tree is safe
 
-- `modules/system/default.nix` and `modules/users/default.nix` list their
-  members explicitly instead of auto-importing the directory. Both dirs hold
-  files with different platform scopes, and `modules/users/home/` holds
-  home-manager modules that must never load as system modules.
-  Platform-only files (`system/nixos.nix`, `system/emulation.nix`,
-  `system/gitops.nix`, `system/darwin.nix`, `users/darwin.nix`) are imported
-  explicitly by the variant assembly in `overlays/lib/overlay.nix`.
-  A new file in either dir takes one line in its default.nix, or one line
-  in the assembly when it is platform-only.
-- Per-system `pkgs` comes from `parts/pkgs.nix`. It imports nixpkgs with the
-  repo overlays and `allowUnfree`. Change the package set there.
+No file under `modules/` is ever added to a NixOS or Darwin `imports` list
+except through an explicit aspect reference
+(`inputs.self.modules.<class>.<aspect>`). Each aspect declares its class in
+its `flake.modules.<class>` key, and the flake-parts `modules` extra wraps
+it with that class, so a home-manager aspect imported into a system
+configuration errors instead of silently loading. The old auto-import bug
+(home-manager modules loading as system modules) is fixed by this scoping,
+not by avoiding import-tree: the earlier `default.nix` files that listed
+members explicitly are gone, and `lib.internal.readModules` survives only
+for the deploy-dns zone data files under `overlays/`.
+
+## Abstractions
+
+- `flake.lib.mkNixos` / `mkDarwin` (`modules/flake/lib.nix`): build a host
+  configuration from its aspect plus host platform and overlays. Override a
+  host by editing its aspect; remove a builder by deleting its use in the
+  host `flake-parts.nix` files.
+- `flake.modules.nixos.default` / `darwin.default`
+  (`modules/system/default.nix`): the aspect list every host of a class
+  imports. Add an aspect to a class by adding one line here; a host that
+  needs a different set imports aspects directly instead of the default.
+- `flake.hosts` (`modules/flake/hosts.nix`): the host registry, built from
+  the configurations. Cross-host reads go through
+  `inputs.self.hosts.<name>.cfg` (alloy, forgejo-runner, gatus, builders,
+  deploy-dns, docker-images check). Delete the registry by deleting this
+  file and the reads that use it.
+- `lib.internal.collectContainerImages` (`overlays/lib/overlay.nix`): takes
+  an `apps` attrset and a predicate, returns sorted unique images. The
+  prepull aspect and the docker-images check pass `config.apps` /
+  `host.cfg.apps`. The old host-record argument is gone with `host`.
+- `lib.internal.filterHosts`, `prefixAttrs`, `readModules`, `replaceAll`
+  (`overlays/lib/overlay.nix`): unchanged helpers. `readModules` serves
+  only the deploy-dns zones now.
 
 ## Replaced bespoke code
 
 - `lib.internal.forAllSystems`, `buildPackages`, `buildChecks`, `pkgsFor`:
   deleted. flake-parts `systems` plus `perSystem` cover them.
+- `lib.internal.variants`, `buildVariant`, `platformOf`, and the `host`
+  specialArg record: deleted. Class scoping, `mkNixos`/`mkDarwin`, and
+  `pkgs.stdenv.isLinux`/`isDarwin` cover them. `host.name` is
+  `networking.hostName` in the host aspect; `host.system` is
+  `nixpkgs.hostPlatform` from the builder; `host.platform` is class
+  scoping; `host.cfg` cross-host reads are `inputs.self.hosts.<name>.cfg`.
+- `home-manager.extraSpecialArgs`: deleted. Home modules take no `self` or
+  `host`; shared values reach them through the aspect closures.
 - `shells/default.nix` (the `forAllSystems` wrapper): deleted.
-  `parts/shells.nix` wires the shell definition per system.
+  `modules/flake/shells.nix` wires the shell definition per system.
+- `parts/`: deleted. `modules/flake/` holds the same plumbing.
+- `hosts/`: moved to `modules/hosts/`. The old `hosts/default.nix` host
+  map is gone; hosts register themselves through `flake-parts.nix`.
 
 ## Remainder (not moved)
 
-- `hosts/`: per-host wiring stays. Host service files enable presets and set
-  host values. A full migration could move host service files into
-  `modules/services/` as per-host instances, but that mixes instance data
-  with module definitions.
-- `overlays/`: package, check, script, and tool overlays stay. `lib.internal`
-  keeps the host and container helpers (`filterHosts`,
-  `collectContainerImages`, `replaceAll`, `platformOf`, `prefixAttrs`,
-  `readModules`, `variants`, `buildVariant`).
-- `shells/default/`: the shell definition stays; `parts/shells.nix` wires it.
+- `overlays/`: package, check, script, and tool overlays stay.
+- `shells/default/`: the shell definition stays;
+  `modules/flake/shells.nix` wires it.
 - `deploy`: unchanged.
