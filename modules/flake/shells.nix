@@ -1,5 +1,7 @@
 { ... }: {
   perSystem = { pkgs, ... }: {
-    devShells.default = pkgs.callPackage ../../shells/default { };
+    devShells.default = pkgs.mkShellNoCC {
+      packages = [ pkgs.sops ];
+    };
   };
 }
