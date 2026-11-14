@@ -62,10 +62,5 @@
     system.stateVersion = "23.05";
   };
 
-  flake.modules.homeManager.tide = { config, ... }: {
-    imports = with inputs.self.modules.homeManager; [
-      graphical
-      development
-    ];
-  };
+  flake.modules.homeManager.tide = { config, ... }: { };
 }
