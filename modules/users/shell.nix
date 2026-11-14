@@ -1,14 +1,23 @@
-{ pkgs, ... }: {
-  environment.systemPackages = with pkgs; [
-    curl
-    neovim
-    tmux
-  ];
+{ ... }: {
+  flake.modules =
+    let
+      shell = { pkgs, ... }: {
+        environment.systemPackages = with pkgs; [
+          curl
+          neovim
+          tmux
+        ];
 
-  programs.fish = {
-    enable = true;
-    useBabelfish = true;
-  };
+        programs.fish = {
+          enable = true;
+          useBabelfish = true;
+        };
 
-  environment.shells = with pkgs; [ fish ];
+        environment.shells = with pkgs; [ fish ];
+      };
+    in
+    {
+      nixos.shell = shell;
+      darwin.shell = shell;
+    };
 }

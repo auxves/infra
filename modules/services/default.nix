@@ -1,229 +1,231 @@
-{ self, lib, config, options, pkgs, ... }:
-let
-  osConfig = config;
+{ inputs, ... }: {
+  flake.modules.nixos.services = { lib, config, options, pkgs, ... }:
+    let
+      osConfig = config;
 
-  metricsOptions = { app, ... }: {
-    options = with lib; {
-      job = mkOption {
-        type = types.str;
-        default = app.name;
-        description = "The name of this scraping job";
-      };
+      metricsOptions = { app, ... }: {
+        options = with lib; {
+          job = mkOption {
+            type = types.str;
+            default = app.name;
+            description = "The name of this scraping job";
+          };
 
-      path = mkOption {
-        type = types.str;
-        default = "/metrics";
-        description = "The path to scrape metrics from";
-      };
+          path = mkOption {
+            type = types.str;
+            default = "/metrics";
+            description = "The path to scrape metrics from";
+          };
 
-      port = mkOption {
-        type = types.port;
-        description = "The container port to use for ingress";
-      };
+          port = mkOption {
+            type = types.port;
+            description = "The container port to use for ingress";
+          };
 
-      scheme = mkOption {
-        type = types.str;
-        default = "http";
-        description = "The scheme to use for scraping";
-      };
-    };
-  };
-
-  containerOptions = { name, app, ... }: {
-    options = with lib; builtins.removeAttrs
-      (options.virtualisation.oci-containers.containers.type.getSubOptions [ ])
-      [ "_module" ] // {
-      name = mkOption {
-        type = types.str;
-        default = name;
-        readOnly = true;
-        description = "The name of the container";
-      };
-
-      fullName = mkOption {
-        type = types.str;
-        default = if name == app.name then app.name else "${app.name}-${name}";
-        readOnly = true;
-        description = "The full name of the container as seen by podman";
-      };
-
-      metrics = mkOption {
-        type = types.nullOr (types.submoduleWith {
-          modules = [ metricsOptions ];
-          specialArgs = { inherit app; };
-        });
-        default = null;
-        description = "Metrics options for the container";
-      };
-
-      prepull = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Whether to pull the container image before a configuration switch";
-      };
-    };
-  };
-
-  volumeOptions = { name, app, config, ... }: {
-    options = with lib; {
-      name = mkOption {
-        type = types.str;
-        default = name;
-        readOnly = true;
-        description = "The name of the volume";
-      };
-
-      type = mkOption {
-        type = types.enum [ "ephemeral" "zfs" ];
-        default = "ephemeral";
-      };
-
-      path = mkOption {
-        type = types.str;
-        description = "The filesystem path to this volume";
-        default = {
-          ephemeral =
-            if app.name != name
-            then "/var/cache/${app.name}-${name}"
-            else "/var/cache/${app.name}";
-          zfs =
-            if app.name != name
-            then "/storage/services/${app.name}/${name}"
-            else "/storage/services/${app.name}";
-        }.${config.type};
-      };
-
-      acls = mkOption {
-        type = types.listOf types.str;
-        description = "Additional ACLs to assign to this volume";
-        default = [ ];
-      };
-    };
-  };
-
-  traefikRouterOptions = { name, config, app, ingress, ... }: {
-    freeformType = lib.types.attrsOf (with lib.types; oneOf [ str int ]);
-
-    options = with lib; {
-      rule = mkOption {
-        type = types.str;
-        default = "Host(`${ingress.domain}`)";
-        description = "The Traefik routing rule for this ingress";
-      };
-
-      service = mkOption {
-        type = types.str;
-        default = "${app.name}-${ingress.name}";
-        description = "The Traefik service name";
-      };
-
-      entrypoints = mkOption {
-        type = types.str;
-        default = ingress.type;
-        description = "The Traefik entrypoints to use for this ingress";
-      };
-    };
-  };
-
-  ingressOptions = { name, config, app, ... }: {
-    options = with lib; {
-      name = mkOption {
-        type = types.str;
-        default = name;
-        readOnly = true;
-        description = "The name of the ingress";
-      };
-
-      type = mkOption {
-        type = types.enum [ "internal" "public" ];
-        default = "internal";
-        description = "The access level to this ingress";
-      };
-
-      container = mkOption {
-        type = types.enum (builtins.attrNames app.containers);
-        description = "The container to use for ingress";
-      };
-
-      port = mkOption {
-        type = types.port;
-        description = "The container port to use for ingress";
-      };
-
-      domain = mkOption {
-        type = types.str;
-        default =
-          let
-            prefix = if name == "app" then app.name else "${name}.${app.name}";
-          in
-          "${prefix}.${osConfig.networking.hostName}.x.auxves.dev";
-        description = "The domain to use for ingress";
-      };
-
-      settings = mkOption {
-        type = types.submoduleWith {
-          modules = [ traefikRouterOptions ];
-          specialArgs = { inherit app; ingress = config; };
+          scheme = mkOption {
+            type = types.str;
+            default = "http";
+            description = "The scheme to use for scraping";
+          };
         };
-        default = { };
-        description = "Additional Traefik labels for this router";
-      };
-    };
-  };
-
-  appOptions = { config, name, ... }: {
-    options = with lib; {
-      name = mkOption {
-        type = types.str;
-        default = name;
-        readOnly = true;
-        description = "The name of the application";
       };
 
-      containers = mkOption {
-        type = types.attrsOf (types.submoduleWith {
-          modules = [ containerOptions ];
-          specialArgs = { app = config; };
-        });
-        default = { };
-        description = "The containers that provide the application";
-      };
+      containerOptions = { name, app, ... }: {
+        options = with lib; builtins.removeAttrs
+          (options.virtualisation.oci-containers.containers.type.getSubOptions [ ])
+          [ "_module" ] // {
+          name = mkOption {
+            type = types.str;
+            default = name;
+            readOnly = true;
+            description = "The name of the container";
+          };
 
-      volumes = mkOption {
-        type = types.attrsOf (types.submoduleWith {
-          modules = [ volumeOptions ];
-          specialArgs = { app = config; };
-        });
-        default = { };
-        description = "The volumes to create";
-      };
+          fullName = mkOption {
+            type = types.str;
+            default = if name == app.name then app.name else "${app.name}-${name}";
+            readOnly = true;
+            description = "The full name of the container as seen by podman";
+          };
 
-      ingresses = mkOption {
-        type = types.attrsOf (types.submoduleWith {
-          modules = [ ingressOptions ];
-          specialArgs = { app = config; };
-        });
-        default = { };
-        description = "Ingresses for the application";
-      };
-    };
-  };
+          metrics = mkOption {
+            type = types.nullOr (types.submoduleWith {
+              modules = [ metricsOptions ];
+              specialArgs = { inherit app; };
+            });
+            default = null;
+            description = "Metrics options for the container";
+          };
 
-in
-{
-  imports = lib.internal.readModules ./.;
-
-  options = with lib; {
-    apps = mkOption {
-      default = { };
-      type = types.attrsOf (types.submoduleWith {
-        modules = [ appOptions ];
-        specialArgs = {
-          inherit self lib pkgs;
-          osConfig = config;
+          prepull = mkOption {
+            type = types.bool;
+            default = true;
+            description = "Whether to pull the container image before a configuration switch";
+          };
         };
-      });
-      description = "Applications to host on this node";
-    };
-  };
+      };
+
+      volumeOptions = { name, app, config, ... }: {
+        options = with lib; {
+          name = mkOption {
+            type = types.str;
+            default = name;
+            readOnly = true;
+            description = "The name of the volume";
+          };
+
+          type = mkOption {
+            type = types.enum [ "ephemeral" "zfs" ];
+            default = "ephemeral";
+          };
+
+          path = mkOption {
+            type = types.str;
+            description = "The filesystem path to this volume";
+            default = {
+              ephemeral =
+                if app.name != name
+                then "/var/cache/${app.name}-${name}"
+                else "/var/cache/${app.name}";
+              zfs =
+                if app.name != name
+                then "/storage/services/${app.name}/${name}"
+                else "/storage/services/${app.name}";
+            }.${config.type};
+          };
+
+          acls = mkOption {
+            type = types.listOf types.str;
+            description = "Additional ACLs to assign to this volume";
+            default = [ ];
+          };
+        };
+      };
+
+      traefikRouterOptions = { name, config, app, ingress, ... }: {
+        freeformType = lib.types.attrsOf (with lib.types; oneOf [ str int ]);
+
+        options = with lib; {
+          rule = mkOption {
+            type = types.str;
+            default = "Host(`${ingress.domain}`)";
+            description = "The Traefik routing rule for this ingress";
+          };
+
+          service = mkOption {
+            type = types.str;
+            default = "${app.name}-${ingress.name}";
+            description = "The Traefik service name";
+          };
+
+          entrypoints = mkOption {
+            type = types.str;
+            default = ingress.type;
+            description = "The Traefik entrypoints to use for this ingress";
+          };
+        };
+      };
+
+      ingressOptions = { name, config, app, ... }: {
+        options = with lib; {
+          name = mkOption {
+            type = types.str;
+            default = name;
+            readOnly = true;
+            description = "The name of the ingress";
+          };
+
+          type = mkOption {
+            type = types.enum [ "internal" "public" ];
+            default = "internal";
+            description = "The access level to this ingress";
+          };
+
+          container = mkOption {
+            type = types.enum (builtins.attrNames app.containers);
+            description = "The container to use for ingress";
+          };
+
+          port = mkOption {
+            type = types.port;
+            description = "The container port to use for ingress";
+          };
+
+          domain = mkOption {
+            type = types.str;
+            default =
+              let
+                prefix = if name == "app" then app.name else "${name}.${app.name}";
+              in
+              "${prefix}.${osConfig.networking.hostName}.x.auxves.dev";
+            description = "The domain to use for ingress";
+          };
+
+          settings = mkOption {
+            type = types.submoduleWith {
+              modules = [ traefikRouterOptions ];
+              specialArgs = { inherit app; ingress = config; };
+            };
+            default = { };
+            description = "Additional Traefik labels for this router";
+          };
+        };
+      };
+
+      appOptions = { config, name, ... }: {
+        options = with lib; {
+          name = mkOption {
+            type = types.str;
+            default = name;
+            readOnly = true;
+            description = "The name of the application";
+          };
+
+          containers = mkOption {
+            type = types.attrsOf (types.submoduleWith {
+              modules = [ containerOptions ];
+              specialArgs = { app = config; };
+            });
+            default = { };
+            description = "The containers that provide the application";
+          };
+
+          volumes = mkOption {
+            type = types.attrsOf (types.submoduleWith {
+              modules = [ volumeOptions ];
+              specialArgs = { app = config; };
+            });
+            default = { };
+            description = "The volumes to create";
+          };
+
+          ingresses = mkOption {
+            type = types.attrsOf (types.submoduleWith {
+              modules = [ ingressOptions ];
+              specialArgs = { app = config; };
+            });
+            default = { };
+            description = "Ingresses for the application";
+          };
+        };
+      };
+
+    in
+    {
+      options = with lib; {
+        apps = mkOption {
+          default = { };
+          type = types.attrsOf (types.submoduleWith {
+            modules = [ appOptions ];
+            specialArgs = {
+              self = inputs.self;
+              inherit lib pkgs;
+              osConfig = config;
+            };
+          });
+          description = "Applications to host on this node";
+        };
+      };
+    }
+  ;
 }

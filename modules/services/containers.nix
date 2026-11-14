@@ -1,77 +1,80 @@
-{ lib, config, ... }:
-let
-  toStr = x:
-    if builtins.isString x then x
-    else if builtins.isInt x || builtins.isFloat x then builtins.toString x
-    else if builtins.isBool x then (if x then "true" else "false")
-    else throw "toStr: unsupported type ${builtins.typeOf x}";
-
-  processContainer = app: _: container:
+{ ... }: {
+  flake.modules.nixos.containers = { lib, config, ... }:
     let
-      ingresses = lib.filterAttrs (_: ingress: ingress.container == container.name) app.ingresses;
+      toStr = x:
+        if builtins.isString x then x
+        else if builtins.isInt x || builtins.isFloat x then builtins.toString x
+        else if builtins.isBool x then (if x then "true" else "false")
+        else throw "toStr: unsupported type ${builtins.typeOf x}";
 
-      traefikLabels = lib.concatMapAttrs
-        (_: ingress:
-          let
-            router = "${app.name}-${ingress.name}";
+      processContainer = app: _: container:
+        let
+          ingresses = lib.filterAttrs (_: ingress: ingress.container == container.name) app.ingresses;
 
-            routerOptions = lib.concatMapAttrs
-              (key: value: lib.optionalAttrs (value != null) {
-                "traefik.http.routers.${router}.${key}" = toStr value;
-              })
-              ingress.settings;
+          traefikLabels = lib.concatMapAttrs
+            (_: ingress:
+              let
+                router = "${app.name}-${ingress.name}";
 
-            serviceOptions = lib.optionalAttrs (ingress.settings.service == router) {
-              "traefik.http.services.${ingress.settings.service}.loadbalancer.server.port" = toStr ingress.port;
-            };
-          in
-          serviceOptions // routerOptions)
-        ingresses;
+                routerOptions = lib.concatMapAttrs
+                  (key: value: lib.optionalAttrs (value != null) {
+                    "traefik.http.routers.${router}.${key}" = toStr value;
+                  })
+                  ingress.settings;
 
-      changes = {
-        serviceName = "podman-${container.fullName}";
+                serviceOptions = lib.optionalAttrs (ingress.settings.service == router) {
+                  "traefik.http.services.${ingress.settings.service}.loadbalancer.server.port" = toStr ingress.port;
+                };
+              in
+              serviceOptions // routerOptions)
+            ingresses;
 
-        podman = { };
+          changes = {
+            serviceName = "podman-${container.fullName}";
 
-        labels = {
-          "app.service" = app.name;
-          "app.component" = container.name;
-          "app.node" = config.networking.hostName;
-        } // traefikLabels // lib.optionalAttrs (traefikLabels != { }) {
-          "traefik.enable" = "true";
-        } // lib.optionalAttrs (container.metrics != null) {
-          "metrics.enable" = "true";
-          "metrics.job" = container.metrics.job;
-          "metrics.path" = container.metrics.path;
-          "metrics.scheme" = container.metrics.scheme;
-          "metrics.port" = toStr container.metrics.port;
-        } // container.labels;
+            podman = { };
 
-        service.serviceConfig.LogExtraFields = [
-          "ALLOY_ENABLE=true"
-          "APP_SERVICE=${app.name}"
-          "APP_COMPONENT=${container.name}"
-          "APP_CONTAINER=${container.fullName}"
-        ];
-      };
+            labels = {
+              "app.service" = app.name;
+              "app.component" = container.name;
+              "app.node" = config.networking.hostName;
+            } // traefikLabels // lib.optionalAttrs (traefikLabels != { }) {
+              "traefik.enable" = "true";
+            } // lib.optionalAttrs (container.metrics != null) {
+              "metrics.enable" = "true";
+              "metrics.job" = container.metrics.job;
+              "metrics.path" = container.metrics.path;
+              "metrics.scheme" = container.metrics.scheme;
+              "metrics.port" = toStr container.metrics.port;
+            } // container.labels;
+
+            service.serviceConfig.LogExtraFields = [
+              "ALLOY_ENABLE=true"
+              "APP_SERVICE=${app.name}"
+              "APP_COMPONENT=${container.name}"
+              "APP_CONTAINER=${container.fullName}"
+            ];
+          };
+        in
+        lib.nameValuePair container.fullName (builtins.removeAttrs (lib.recursiveUpdate container changes) [
+          "name"
+          "fullName"
+          "metrics"
+          "prepull"
+        ]);
+
+      containers = lib.mapAttrsToList processContainers config.apps;
+
+      processContainers = _: app: lib.mapAttrs'
+        (processContainer app)
+        app.containers;
     in
-    lib.nameValuePair container.fullName (builtins.removeAttrs (lib.recursiveUpdate container changes) [
-      "name"
-      "fullName"
-      "metrics"
-      "prepull"
-    ]);
+    {
+      config = lib.mkIf (config.apps != { }) {
+        presets.containers.enable = true;
 
-  containers = lib.mapAttrsToList processContainers config.apps;
-
-  processContainers = _: app: lib.mapAttrs'
-    (processContainer app)
-    app.containers;
-in
-{
-  config = lib.mkIf (config.apps != { }) {
-    presets.containers.enable = true;
-
-    virtualisation.oci-containers.containers = lib.foldl' lib.recursiveUpdate { } containers;
-  };
+        virtualisation.oci-containers.containers = lib.foldl' lib.recursiveUpdate { } containers;
+      };
+    }
+  ;
 }
