@@ -1,4 +1,5 @@
 { ... }: {
+
   flake.modules.nixos.tide = { pkgs, config, ... }:
     let
       cfg = config.apps.home-assistant;

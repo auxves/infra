@@ -1,4 +1,5 @@
 { inputs, ... }: {
+
   flake.modules.nixos.tide = { config, ... }:
     let
       cfg = config.apps.forgejo;

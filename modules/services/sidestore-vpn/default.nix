@@ -1,4 +1,4 @@
-{ ... }: {
+{ inputs, ... }: {
   flake.modules.nixos.tide = { config, ... }:
     let
       cfg = config.apps.sidestore-vpn;
