@@ -13,7 +13,7 @@
 
         containers = {
           sidestore-vpn = {
-            image = "${inputs.self.services.forgejo.domain}/arno/sidestore-vpn:latest@sha256:f4dd8747e5a064b4843c411dbccf01ec529a95181db3739d7be6711f7453fcc4";
+            image = "forge.auxves.dev/arno/sidestore-vpn:latest@sha256:f4dd8747e5a064b4843c411dbccf01ec529a95181db3739d7be6711f7453fcc4";
             dependsOn = [ cfg.containers.tailscale.fullName ];
             extraOptions = [
               "--device=/dev/net/tun"

@@ -25,7 +25,7 @@
           archival = {
             autoStart = false;
 
-            image = "${inputs.self.services.forgejo.domain}/arno/ao3-cli:v0.2.6@sha256:3bbbfd178b4e46a15046d7a0873ae48977992bf6aaa072ff040d19c6b3396597";
+            image = "forge.auxves.dev/arno/ao3-cli:v0.2.6@sha256:3bbbfd178b4e46a15046d7a0873ae48977992bf6aaa072ff040d19c6b3396597";
 
             environment = {
               LOG_LEVEL = "DEBUG";

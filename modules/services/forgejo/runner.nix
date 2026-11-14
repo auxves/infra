@@ -63,7 +63,7 @@
                 INSTANCE = "https://${inputs.self.services.forgejo.domain}";
 
                 LABELS = builtins.concatStringsSep "," [
-                  "ubuntu-latest:docker://${inputs.self.services.forgejo.domain}/actions/runner-base:latest"
+                  "ubuntu-latest:docker://forge.auxves.dev/actions/runner-base:latest"
                 ];
               };
 
