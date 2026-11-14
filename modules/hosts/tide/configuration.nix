@@ -23,6 +23,17 @@
     systemd.network.enable = true;
     networking.useNetworkd = true;
 
+    services.avahi = {
+      enable = true;
+      nssmdns4 = true;
+      nssmdns6 = true;
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = true;
+      };
+    };
+
     # Host connectivity checks due to history of firewall rule issues
     monitoring.checks = [
       {

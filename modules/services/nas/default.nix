@@ -1,5 +1,5 @@
 { ... }: {
-  flake.modules.nixos.tide = { ... }: {
+  flake.modules.nixos.tide = { config, ... }: {
     services.samba = {
       enable = true;
       openFirewall = true;
@@ -15,7 +15,7 @@
         };
 
         storage = {
-          path = "/storage";
+          path = config.disko.devices.zpool.storage.mountpoint;
           browseable = true;
           "read only" = false;
         };
