@@ -5,6 +5,11 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+
+    import-tree.url = "github:vic/import-tree";
+
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -28,20 +33,5 @@
     sops.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, ... }:
-    let
-      lib' = self.lib.internal;
-    in
-    {
-      lib = nixpkgs.lib.extend self.overlays.lib;
-      hosts = import ./hosts self;
-
-      legacyPackages = lib'.forAllSystems lib'.buildPackages;
-      checks = lib'.forAllSystems lib'.buildChecks;
-      devShells = import ./shells self;
-      overlays = import ./overlays self;
-
-      nixosConfigurations = lib'.buildVariant "nixos";
-      darwinConfigurations = lib'.buildVariant "darwin";
-    };
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }
