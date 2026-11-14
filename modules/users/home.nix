@@ -1,10 +1,10 @@
 { inputs, ... }: {
   flake.modules.generic.home = { lib, config, ... }:
     let
-      cfg = config.presets.home;
+      cfg = config.home;
     in
     {
-      options.presets.home = with lib; {
+      options.home = with lib; {
         user = mkOption {
           type = types.str;
           default = "arno";
@@ -25,7 +25,7 @@
 
   flake.modules.nixos.home = { lib, config, ... }:
     let
-      cfg = config.presets.home;
+      cfg = config.home;
     in
     {
       imports = [
@@ -44,7 +44,7 @@
 
   flake.modules.darwin.home = { lib, config, ... }:
     let
-      cfg = config.presets.home;
+      cfg = config.home;
     in
     {
       imports = [

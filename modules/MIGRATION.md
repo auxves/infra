@@ -52,9 +52,10 @@ The `presets.*` enable flags are gone: `emulation`, `gitops`, `home`,
 `podman` activates when `config.apps` is non-empty, and the
 `development`/`graphical` relay (system aspect plus `presets.home.modules`)
 is gone, with blaze importing the home-manager aspects into its user
-config directly. Two `presets` remain: `builders` (role flags and data
-other hosts read) and `presets.home.user` (the username, one source of
-truth).
+config directly. The `presets` namespace is gone entirely: the builders
+roles and host-key data are `builders.*` options declared on the builders
+aspect, and the username is the `home.user` option declared on the home
+aspect.
 - A host is a feature: its files each set `flake.modules.<class>.<host>`,
   and the module system merges the contributions.
 
@@ -111,8 +112,9 @@ for the deploy-dns zone data files under `overlays/`.
 - `parts/`: deleted. `modules/flake/` holds the same plumbing.
 - `hosts/`: moved to `modules/hosts/`. The old `hosts/default.nix` host
   map is gone; hosts register themselves through `flake-parts.nix`.
-- `presets.*` enable flags: deleted. Enabling is importing the aspect
-  (see Enabling above). `builders` roles and `presets.home.user` remain.
+- `presets.*`: deleted entirely. Enabling is importing the aspect
+  (see Enabling above). Builders roles and the home user are aspect
+  options (`builders.*`, `home.user`).
 
 ## Remainder (not moved)
 

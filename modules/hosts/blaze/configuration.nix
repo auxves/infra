@@ -4,11 +4,11 @@
 
     networking.hostName = "blaze";
 
-    home-manager.users.${config.presets.home.user}.imports = with inputs.self.modules.homeManager; [
+    home-manager.users.${config.home.user}.imports = with inputs.self.modules.homeManager; [
       development
       graphical
     ];
 
-    presets.builders.outsource = true;
+    builders.outsource = true;
   };
 }

@@ -4,7 +4,7 @@
 
     networking.hostName = "tide";
 
-    presets.builders = {
+    builders = {
       volunteer = true;
       publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUNWcC8vMlNYcHY1bWdQT0dxZ2NSUnVYMXRrS1VQN2dRNVk2SWRKb0YxTHAgcm9vdEB0aWRlCg==";
     };

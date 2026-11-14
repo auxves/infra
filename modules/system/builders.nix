@@ -3,7 +3,7 @@
     let
       user = "nixremote";
 
-      isVolunteer = h: h.name != config.networking.hostName && h.cfg ? presets.builders && h.cfg.presets.builders.volunteer;
+      isVolunteer = h: h.name != config.networking.hostName && h.cfg ? builders && h.cfg.builders.volunteer;
       builderHosts = inputs.self.lib.internal.filterHosts isVolunteer;
 
       buildRemoteMachine = host: {
@@ -11,12 +11,12 @@
         protocol = "ssh";
         sshUser = user;
         sshKey = config.sops.secrets."builders/key".path;
-      } // builtins.removeAttrs host.cfg.presets.builders [ "outsource" "volunteer" ];
+      } // builtins.removeAttrs host.cfg.builders [ "outsource" "volunteer" ];
 
-      cfg = config.presets.builders;
+      cfg = config.builders;
     in
     {
-      options.presets.builders = with lib; {
+      options.builders = with lib; {
         outsource = mkEnableOption "Configure this machine to make use of remote builders";
         volunteer = mkEnableOption "Configure this machine to act as a remote builder";
 
