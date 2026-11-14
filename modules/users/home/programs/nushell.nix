@@ -1,11 +1,11 @@
 { ... }: {
-  flake.modules.homeManager.nushell = { config, lib, ... }: {
-    config = lib.mkIf config.programs.nushell.enable {
-      programs.nushell = {
-        configFile.text = ''
-          $env.config.show_banner = false
-        '';
-      };
+  flake.modules.homeManager.nushell = {
+    programs.nushell = {
+      enable = true;
+
+      configFile.text = ''
+        $env.config.show_banner = false
+      '';
     };
   };
 }

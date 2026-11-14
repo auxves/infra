@@ -1,11 +1,11 @@
 { ... }: {
-  flake.modules.homeManager.fish = { config, lib, ... }: {
-    config = lib.mkIf config.programs.fish.enable {
-      programs.fish = {
-        interactiveShellInit = ''
-          set fish_greeting
-        '';
-      };
+  flake.modules.homeManager.fish = {
+    programs.fish = {
+      enable = true;
+
+      interactiveShellInit = ''
+        set fish_greeting
+      '';
     };
   };
 }
