@@ -1,15 +1,9 @@
 { inputs, ... }: {
   flake.modules.nixos.tide = {
-    imports = with inputs.self.modules.nixos; [
-      alloy
-      exporters
-    ];
+    imports = [ inputs.self.modules.nixos.alloy ];
   };
 
   flake.modules.nixos.harpy = {
-    imports = with inputs.self.modules.nixos; [
-      alloy
-      exporters
-    ];
+    imports = [ inputs.self.modules.nixos.alloy ];
   };
 }

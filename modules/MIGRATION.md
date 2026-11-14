@@ -21,12 +21,12 @@ declarations. Hosts are features under `modules/hosts/`.
   `darwin.default` compositions.
 - `modules/users/`: home-manager wiring, shell, home-manager modules.
 - `modules/networking/`: tailscale, traefik.
-- `modules/observability/`: alloy, exporters.
 - `modules/services/`: one folder per application service, each file
   declaring the host or hosts it runs on by contributing to their host
   aspects (`flake.modules.nixos.<host>`). Multi-host services live in one
   file or folder: forgejo and its runner share `forgejo/`, alloy and
-  traefik name both hosts in one file. `framework/` holds the apps
+  traefik name both hosts in one file, and alloy's folder holds its
+  exporters as a second file on the same aspect. `framework/` holds the apps
   machinery (`apps` option, containers, volumes, prepull, db helper,
   podman runtime, oci-containers override).
 - `modules/security/`: ssh, kernel modprobe blocks.
@@ -54,8 +54,8 @@ use in `configuration.nix`; application services contribute to the host
 aspects they run on from their own files in `modules/services/`; the class
 `default` compositions hold only what every host of that class uses.
 The `presets.*` enable flags are gone: `emulation`, `gitops`, `home`,
-`traefik`, `alloy`, `exporters`, `forgejo-runner` are plain imports now,
-`podman` activates when `config.apps` is non-empty, and the
+`traefik`, `alloy`, `forgejo-runner` are plain imports now, the exporters
+folded into the alloy aspect, `podman` activates when `config.apps` is non-empty, and the
 `development`/`graphical` relay (system aspect plus `presets.home.modules`)
 is gone, with blaze importing the home-manager aspects into its user
 config directly. The `presets` namespace is gone entirely: the builders

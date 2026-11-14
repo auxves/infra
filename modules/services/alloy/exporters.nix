@@ -1,5 +1,5 @@
 { ... }: {
-  flake.modules.nixos.exporters = { config, lib, pkgs, ... }:
+  flake.modules.nixos.alloy = { config, lib, pkgs, ... }:
     let
       textfileDir = "/var/lib/node-exporter/textfile";
 
