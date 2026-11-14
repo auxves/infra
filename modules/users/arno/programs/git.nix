@@ -28,7 +28,7 @@ let
   ];
 in
 {
-  flake.modules.homeManager.users-arno = { pkgs, ... }: {
+  flake.modules.homeManager.git = { pkgs, ... }: {
     programs.git = {
       enable = true;
       package = pkgs.gitMinimal;

@@ -1,5 +1,5 @@
 { ... }: {
-  flake.modules.homeManager.users-arno = {
+  flake.modules.homeManager.zoxide = {
     programs.zoxide.enable = true;
 
     home.shellAliases = {

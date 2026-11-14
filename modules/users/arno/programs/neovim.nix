@@ -1,5 +1,5 @@
 { ... }: {
-  flake.modules.homeManager.users-arno = { pkgs, ... }: {
+  flake.modules.homeManager.neovim = { pkgs, ... }: {
     home.packages = [ pkgs.neovim ];
 
     home.sessionVariables = {

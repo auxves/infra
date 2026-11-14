@@ -31,7 +31,6 @@
 
       home-manager.users.arno.imports = [
         inputs.self.modules.homeManager.users-arno
-        inputs.self.modules.homeManager.darwin-defaults
       ];
 
       system.primaryUser = "arno";

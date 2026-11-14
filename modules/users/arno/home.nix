@@ -1,5 +1,12 @@
-{ ... }: {
+{ inputs, ... }: {
   flake.modules.homeManager.users-arno = { ... }: {
+    imports = with inputs.self.modules.homeManager; [
+      fish
+      git
+      neovim
+      zoxide
+    ];
+
     home.sessionPath = [
       "$HOME/.local/bin"
     ];

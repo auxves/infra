@@ -1,5 +1,5 @@
 { ... }: {
-  flake.modules.homeManager.users-arno = {
+  flake.modules.homeManager.fish = {
     programs.fish = {
       enable = true;
 
