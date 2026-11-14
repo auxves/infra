@@ -22,14 +22,19 @@ declarations. Hosts are features under `modules/hosts/`.
 - `modules/users/`: home-manager wiring, shell, home-manager modules.
 - `modules/networking/`: tailscale, traefik.
 - `modules/observability/`: alloy, exporters.
-- `modules/services/`: the apps framework (`apps` option, containers,
-  volumes, prepull, db helper, forgejo-runner, podman runtime,
-  oci-containers override).
+- `modules/services/`: one folder per application service, each file
+  declaring the host or hosts it runs on by contributing to their host
+  aspects (`flake.modules.nixos.<host>`). Multi-host services live in one
+  file or folder: forgejo and its runner share `forgejo/`, alloy and
+  traefik name both hosts in one file. `framework/` holds the apps
+  machinery (`apps` option, containers, volumes, prepull, db helper,
+  podman runtime, oci-containers override).
 - `modules/security/`: ssh, kernel modprobe blocks.
 - `modules/hosts/`: one directory per host. `configuration.nix` defines the
   host aspect and imports its class default. `flake-parts.nix` is the
-  one-line `mkNixos`/`mkDarwin` boilerplate. `hardware.nix` and each file
-  under `services/` contribute to the same host aspect.
+  one-line `mkNixos`/`mkDarwin` boilerplate. `hardware.nix` contributes to
+  the same host aspect. Application services live in `modules/services/`,
+  not per host.
 
 ## How a module declares its target
 
@@ -45,7 +50,8 @@ declarations. Hosts are features under `modules/hosts/`.
 ## Enabling
 
 A feature enables by import, not by flag. Hosts import the aspects they
-use (in `configuration.nix` or a `services/` contribution); the class
+use in `configuration.nix`; application services contribute to the host
+aspects they run on from their own files in `modules/services/`; the class
 `default` compositions hold only what every host of that class uses.
 The `presets.*` enable flags are gone: `emulation`, `gitops`, `home`,
 `traefik`, `alloy`, `exporters`, `forgejo-runner` are plain imports now,

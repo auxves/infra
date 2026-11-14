@@ -1,4 +1,4 @@
-{ ... }: {
+{ inputs, ... }: {
   flake.modules.nixos.tide = { config, ... }:
     let
       cfg = config.apps.forgejo;
@@ -46,4 +46,8 @@
       }];
     }
   ;
+
+  flake.modules.nixos.harpy = {
+    imports = [ inputs.self.modules.nixos.forgejo-runner ];
+  };
 }
