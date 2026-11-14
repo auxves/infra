@@ -6,6 +6,7 @@
           inputs.self.modules.nixos.${name}
           { nixpkgs.hostPlatform = lib.mkDefault system; }
           { nixpkgs.overlays = with inputs.self.overlays; [ all unstable ]; }
+          { networking.hostName = name; }
         ];
       };
     };
@@ -16,6 +17,7 @@
           inputs.self.modules.darwin.${name}
           { nixpkgs.hostPlatform = lib.mkDefault system; }
           { nixpkgs.overlays = with inputs.self.overlays; [ all unstable ]; }
+          { networking.hostName = name; }
         ];
       };
     };

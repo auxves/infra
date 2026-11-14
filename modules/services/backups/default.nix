@@ -46,7 +46,5 @@
           zfs allow tide ${perms} backups/tide 
         '';
     };
-
-  }
-  ;
+  };
 }

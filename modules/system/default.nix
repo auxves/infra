@@ -3,34 +3,31 @@
     nixos.default = {
       imports = with inputs.self.modules.nixos; [
         nix
-        builders
+        shell
+        ssh
+
+        # builders
         meta
         monitoring
-        system
-        shell
-        tailscale
-        services
-        containers
-        volumes
-        prepull
-        podman
-        db
-        oci-containers
-        ssh
-        kernel
+        apps-framework
       ] ++ [
         inputs.sops.nixosModules.sops
       ];
+
+      environment.defaultPackages = [ ];
+
+      programs.nix-ld.enable = true;
+      programs.command-not-found.enable = false;
     };
 
-    darwin.default = {
+    darwin.default = { lib, ... }: {
       imports = with inputs.self.modules.darwin; [
         nix
-        builders
+        shell
+
+        # builders
         meta
         monitoring
-        system
-        shell
       ] ++ [
         inputs.sops.darwinModules.sops
       ];

@@ -1,114 +1,27 @@
 { inputs, ... }: {
   flake.modules.nixos.tide = { config, ... }: {
-    imports = with inputs.self.modules.nixos; [ default emulation gitops home ];
+    imports = with inputs.self.modules.nixos; [
+      default
 
-    networking.hostName = "tide";
+      tailscale
+      gitops
+      emulation
+      builders-worker
+      users-arno
+    ];
 
-    builders = {
-      volunteer = true;
+    home-manager.users.arno.imports = [
+      inputs.self.modules.homeManager.tide
+    ];
+
+    builders.worker = {
       publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUNWcC8vMlNYcHY1bWdQT0dxZ2NSUnVYMXRrS1VQN2dRNVk2SWRKb0YxTHAgcm9vdEB0aWRlCg==";
     };
 
     networking.hostId = "c2079ac5";
 
-    networking.firewall = {
-      trustedInterfaces = [ "tailscale0" ];
-      interfaces."podman+".allowedUDPPorts = [
-        5353 # mDNS
-      ];
-    };
-
     systemd.network.enable = true;
     networking.useNetworkd = true;
-
-    services.tailscale.enable = true;
-
-    services.samba = {
-      enable = true;
-      openFirewall = true;
-      settings = {
-        global = {
-          "socket options" = "IPTOS_LOWDELAY TCP_NODELAY IPTOS_THROUGHPUT SO_RCVBUF=131072 SO_SNDBUF=131072";
-          "getwd cache" = "true";
-          "strict sync" = "no";
-          "sync always" = "no";
-          "use sendfile" = "true";
-          "deadtime" = "30";
-          "min receivefile size" = "16384";
-        };
-
-        storage = {
-          path = "/storage";
-          browseable = true;
-          "read only" = false;
-        };
-      };
-    };
-
-    services.zfs = {
-      autoScrub.enable = true;
-      trim.enable = true;
-    };
-
-    services.sanoid = {
-      enable = true;
-
-      interval = "*:0/15";
-
-      datasets = {
-        "storage" = {
-          useTemplate = [ "data" ];
-          recursive = true;
-        };
-
-        "storage/media/movies".autosnap = false;
-        "storage/media/shows".autosnap = false;
-      };
-
-      templates.data = {
-        autosnap = true;
-        autoprune = true;
-        hourly = 12;
-        daily = 6;
-        weekly = 3;
-        monthly = 2;
-      };
-    };
-
-    sops.secrets."syncoid/ssh" = {
-      owner = "syncoid";
-      group = "syncoid";
-      mode = "0400";
-    };
-
-    services.syncoid = {
-      enable = true;
-      interval = "daily";
-      sshKey = config.sops.secrets."syncoid/ssh".path;
-
-      commands = {
-        storage = {
-          target = "tide@harpy:backups/tide";
-          recursive = true;
-          sendOptions = "w p";
-          extraArgs = [ "--exclude-snaps=autosnap" "--no-stream" ];
-        };
-      };
-
-      # Enable log scraping
-      service.serviceConfig.LogExtraFields = [ "ALLOY_ENABLE=true" ];
-    };
-
-    services.avahi = {
-      enable = true;
-      nssmdns4 = true;
-      nssmdns6 = true;
-      publish = {
-        enable = true;
-        addresses = true;
-        workstation = true;
-      };
-    };
 
     # Host connectivity checks due to history of firewall rule issues
     monitoring.checks = [
@@ -147,5 +60,12 @@
     };
 
     system.stateVersion = "23.05";
+  };
+
+  flake.modules.homeManager.tide = { config, ... }: {
+    imports = with inputs.self.modules.homeManager; [
+      graphical
+      development
+    ];
   };
 }

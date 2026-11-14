@@ -44,8 +44,7 @@
           "[STATUS] == 200"
         ];
       }];
-    }
-  ;
+    };
 
   flake.modules.nixos.harpy = {
     imports = [ inputs.self.modules.nixos.forgejo-runner ];

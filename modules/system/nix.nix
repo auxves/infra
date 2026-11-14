@@ -1,11 +1,10 @@
-{ inputs, ... }: {
-  flake.modules.generic.nix = { lib, config, pkgs, ... }: {
+{ inputs, ... }:
+let
+  nix = { lib, config, pkgs, ... }: {
     nix = {
       settings = {
         experimental-features = [ "nix-command" "flakes" "auto-allocate-uids" ];
-        trusted-users = [ "@admin" "@wheel" ];
         auto-allocate-uids = true;
-        auto-optimise-store = !pkgs.stdenv.isDarwin;
         accept-flake-config = true;
         sandbox = true;
         warn-dirty = false;
@@ -28,12 +27,28 @@
       };
     };
   };
-
+in
+{
   flake.modules.nixos.nix = {
-    imports = [ inputs.self.modules.generic.nix ];
+    imports = [ nix ];
+
+    nix.settings = {
+      trusted-users = [ "@wheel" ];
+      experimental-features = [ "cgroups" ];
+      use-cgroups = true;
+      auto-optimise-store = true;
+    };
   };
 
-  flake.modules.darwin.nix = {
-    imports = [ inputs.self.modules.generic.nix ];
+  flake.modules.darwin.nix = { lib, ... }: {
+    imports = [ nix ];
+
+    nix.settings = {
+      trusted-users = [ "@admin" ];
+    };
+
+    # https://github.com/nix-darwin/nix-darwin/issues/1392
+    users.knownUsers = lib.mkForce [ ];
+    users.knownGroups = lib.mkForce [ ];
   };
 }

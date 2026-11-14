@@ -1,19 +1,17 @@
 { inputs, ... }: {
   flake.modules.nixos.harpy = {
-    imports = with inputs.self.modules.nixos; [ default emulation gitops ];
+    imports = with inputs.self.modules.nixos; [
+      default
 
-    networking.hostName = "harpy";
+      tailscale
+      gitops
+      emulation
+    ];
 
     networking.hostId = "c2079aa6";
 
-    networking.firewall = {
-      trustedInterfaces = [ "tailscale0" ];
-    };
-
     systemd.network.enable = true;
     networking.useNetworkd = true;
-
-    services.tailscale.enable = true;
 
     sops = {
       age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
