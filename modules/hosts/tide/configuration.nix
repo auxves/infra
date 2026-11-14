@@ -10,6 +10,10 @@
       users-arno
     ];
 
+    home-manager.users.arno.imports = [
+      inputs.self.modules.homeManager.tide
+    ];
+
     builders.worker = {
       publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUNWcC8vMlNYcHY1bWdQT0dxZ2NSUnVYMXRrS1VQN2dRNVk2SWRKb0YxTHAgcm9vdEB0aWRlCg==";
     };
@@ -57,4 +61,6 @@
 
     system.stateVersion = "23.05";
   };
+
+  flake.modules.homeManager.tide = { config, ... }: { };
 }
