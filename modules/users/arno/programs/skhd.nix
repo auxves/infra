@@ -5,7 +5,7 @@
 
       focusKey = "fn - space";
 
-      YABAI = "${pkgs.yabai.package}/bin/yabai";
+      YABAI = "${pkgs.yabai}/bin/yabai";
       SKHD = "${cfg.package}/bin/skhd";
 
       keybindings = {
