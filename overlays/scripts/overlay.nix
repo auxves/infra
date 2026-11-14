@@ -4,12 +4,6 @@ final: prev: {
   };
 
   scripts = {
-    deploy-dns =
-      let
-        config = final.callPackage ./deploy-dns/config { };
-      in
-      final.callPackage ./deploy-dns { inherit config; } // {
-        inherit config;
-      };
+    deploy-dns = final.callPackage ./deploy-dns { };
   };
 }
