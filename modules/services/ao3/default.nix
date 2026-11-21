@@ -1,4 +1,4 @@
-{ ... }: {
+{ inputs, ... }: {
   flake.modules.nixos.tide = { lib, config, ... }:
     let
       cfg = config.apps.ao3;

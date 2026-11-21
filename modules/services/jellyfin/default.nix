@@ -1,4 +1,5 @@
 { ... }: {
+
   flake.modules.nixos.tide = { config, pkgs, ... }:
     let
       cfg = config.apps.jellyfin;

@@ -1,4 +1,5 @@
 { inputs, ... }: {
+
   flake.modules.nixos.harpy = { config, pkgs, ... }:
     let
       cfg = config.apps.gatus;

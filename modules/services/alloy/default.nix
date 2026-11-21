@@ -21,8 +21,8 @@
 
               environment = {
                 HOSTNAME = config.networking.hostName;
-                PROMETHEUS_DOMAIN = inputs.self.hosts.tide.cfg.apps.prometheus.ingresses.app.domain;
-                LOKI_DOMAIN = inputs.self.hosts.tide.cfg.apps.loki.ingresses.app.domain;
+                PROMETHEUS_DOMAIN = inputs.self.services.prometheus.domain;
+                LOKI_DOMAIN = inputs.self.services.loki.domain;
               };
 
               environmentFiles = [ config.sops.secrets."alloy/env".path ];

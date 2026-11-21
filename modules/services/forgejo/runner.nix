@@ -60,10 +60,10 @@
                 DOCKER_HOST = "tcp://${cfg.containers.podman.fullName}:2375";
 
                 NAME = config.networking.hostName;
-                INSTANCE = "https://${inputs.self.hosts.tide.cfg.apps.forgejo.ingresses.app.domain}";
+                INSTANCE = "https://${inputs.self.services.forgejo.domain}";
 
                 LABELS = builtins.concatStringsSep "," [
-                  "ubuntu-latest:docker://forge.auxves.dev/actions/runner-base:latest"
+                  "ubuntu-latest:docker://${inputs.self.services.forgejo.domain}/actions/runner-base:latest"
                 ];
               };
 
