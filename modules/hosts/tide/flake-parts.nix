@@ -5,28 +5,19 @@
     let
       addrs = config.flake.hosts.tide.cfg.meta.addresses;
       zone = "auxves.dev";
-
-      publicRecords = [ ]
-        ++ lib.optional (addrs.public.v4 != null) { type = "A"; value = addrs.public.v4; }
-        ++ lib.optional (addrs.public.v6 != null) { type = "AAAA"; value = addrs.public.v6; };
-
-      internalRecords = [ ]
-        ++ lib.optional (addrs.internal.v4 != null) { type = "A"; value = addrs.internal.v4; }
-        ++ lib.optional (addrs.internal.v6 != null) { type = "AAAA"; value = addrs.internal.v6; };
+      a = value: lib.optional (value != null) { type = "A"; value = value; };
+      aaaa = value: lib.optional (value != null) { type = "AAAA"; value = value; };
+      public = a addrs.public.v4 ++ aaaa addrs.public.v6;
+      internal = a addrs.internal.v4 ++ aaaa addrs.internal.v6;
     in
-    { } // lib.optionalAttrs (publicRecords != [ ]) {
-      "tide.${zone}" = publicRecords;
-      "*.tide.${zone}" = publicRecords;
-    } // lib.optionalAttrs (internalRecords != [ ]) {
-      "tide.x.${zone}" = internalRecords;
-      "*.tide.x.${zone}" = internalRecords;
-    } // lib.optionalAttrs (addrs.public.v4 != null) {
-      "v4.tide.${zone}" = [{ type = "A"; value = addrs.public.v4; }];
-    } // lib.optionalAttrs (addrs.public.v6 != null) {
-      "v6.tide.${zone}" = [{ type = "AAAA"; value = addrs.public.v6; }];
-    } // lib.optionalAttrs (addrs.internal.v4 != null) {
-      "v4.tide.x.${zone}" = [{ type = "A"; value = addrs.internal.v4; }];
-    } // lib.optionalAttrs (addrs.internal.v6 != null) {
-      "v6.tide.x.${zone}" = [{ type = "AAAA"; value = addrs.internal.v6; }];
+    lib.filterAttrs (_: records: records != [ ]) {
+      "tide.${zone}" = public;
+      "*.tide.${zone}" = public;
+      "tide.x.${zone}" = internal;
+      "*.tide.x.${zone}" = internal;
+      "v4.tide.${zone}" = a addrs.public.v4;
+      "v6.tide.${zone}" = aaaa addrs.public.v6;
+      "v4.tide.x.${zone}" = a addrs.internal.v4;
+      "v6.tide.x.${zone}" = aaaa addrs.internal.v6;
     };
 }
