@@ -12,8 +12,6 @@
       containerAddress = "10.100.0.2";
       hostAddress = "10.100.0.1";
 
-      dockerRoot = "/storage/services/dev-docker";
-
       yaml = pkgs.formats.yaml { };
 
       devDynamicConfig = yaml.generate "dev.yaml" {
@@ -58,23 +56,6 @@
 
       networking.firewall.trustedInterfaces = [ "ve-dev" ];
 
-      fileSystems."${dockerRoot}" = {
-        device = "/dev/zvol/storage/services/dev-docker";
-        fsType = "ext4";
-      };
-
-      system.activationScripts.ensure-dev-storage.text = ''
-        if ! ${pkgs.zfs}/bin/zfs list -H -o name storage/services/dev >/dev/null 2>&1; then
-          ${pkgs.zfs}/bin/zfs create -p -o mountpoint=/var/lib/nixos-containers/dev storage/services/dev
-        fi
-        if ! ${pkgs.zfs}/bin/zfs list -H -o name -t volume storage/services/dev-docker >/dev/null 2>&1; then
-          ${pkgs.zfs}/bin/zfs create -V 30G storage/services/dev-docker
-        fi
-        if ! ${pkgs.util-linux}/bin/blkid -o value -s TYPE /dev/zvol/storage/services/dev-docker >/dev/null 2>&1; then
-          ${pkgs.e2fsprogs}/bin/mkfs.ext4 -q /dev/zvol/storage/services/dev-docker
-        fi
-      '';
-
       containers.dev = {
         autoStart = true;
         privateNetwork = true;
@@ -86,14 +67,6 @@
           "--system-call-filter=bpf"
           "--system-call-filter=add_key"
         ];
-
-        bindMounts = {
-          docker-data = {
-            hostPath = dockerRoot;
-            mountPoint = "/var/lib/docker";
-            isReadOnly = false;
-          };
-        };
 
         config = { lib, pkgs, ... }: {
           system.stateVersion = "26.05";
