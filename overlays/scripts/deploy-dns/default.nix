@@ -4,7 +4,7 @@
 }:
 let
   octodns-with-providers = octodns.withProviders (ps: [ octodns.providers.cloudflare ]);
-  config = callPackage ./config { };
+  config = callPackage ./config.nix { };
 in
 writeShellApplication {
   name = "deploy-dns";

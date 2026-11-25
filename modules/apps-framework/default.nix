@@ -1,4 +1,4 @@
-{ inputs, ... }: {
+{ inputs, config, lib, ... }: {
   flake.modules.nixos.apps-framework = { lib, config, options, pkgs, ... }:
     let
       osConfig = config;
@@ -227,4 +227,33 @@
         };
       };
     };
+
+  flake.dns.records =
+    let
+      ingressesOfHost = host: lib.pipe host.cfg.apps [
+        (lib.mapAttrsToList (_: app: builtins.attrValues app.ingresses))
+        lib.flatten
+        (map (x: x // { inherit host; }))
+      ];
+
+      ingresses = lib.pipe (lib.attrValues config.flake.hosts) [
+        (builtins.filter (host: host.cfg ? apps && host.cfg ? meta.addresses))
+        (builtins.concatMap ingressesOfHost)
+        (builtins.filter (ingress: !(lib.hasInfix ".x." ingress.domain)))
+      ];
+
+      ingressToRecord = { type, domain, host, ... }: {
+        ${domain} = [
+          {
+            type = "A";
+            value = host.cfg.meta.addresses.${type}.v4;
+          }
+          {
+            type = "AAAA";
+            value = host.cfg.meta.addresses.${type}.v6;
+          }
+        ];
+      };
+    in
+    lib.foldl' lib.recursiveUpdate { } (builtins.map ingressToRecord ingresses);
 }
