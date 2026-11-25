@@ -1,4 +1,16 @@
 { ... }: {
+  flake.dns.records = {
+    "_minecraft._tcp.mc.auxves.dev" = [{
+      type = "SRV";
+      value = {
+        priority = 0;
+        weight = 100;
+        port = 25565;
+        target = "tide.auxves.dev.";
+      };
+    }];
+  };
+
   flake.modules.nixos.tide = { config, ... }:
     let
       cfg = config.apps.minecraft;
