@@ -44,17 +44,11 @@
       };
     in
     {
-      # Podman inside the container cannot load kernel modules, so the host
-      # preloads the modules it needs.
-      boot.kernelModules = [ "bridge" "veth" "br_netfilter" "xt_nat" "overlay" ];
-
       networking.nat = {
         enable = true;
         externalInterface = "lan";
         internalInterfaces = [ "ve-dev" ];
       };
-
-      networking.firewall.trustedInterfaces = [ "ve-dev" ];
 
       containers.dev = {
         autoStart = true;
@@ -62,10 +56,10 @@
         hostAddress = hostAddress;
         localAddress = containerAddress;
 
-        extraFlags = [
-          "--system-call-filter=keyctl"
-          "--system-call-filter=bpf"
-          "--system-call-filter=add_key"
+        privateUsers = "pick";
+
+        forwardPorts = [
+          { protocol = "tcp"; hostPort = 44622; containerPort = 22; }
         ];
 
         config = { lib, pkgs, ... }: {
@@ -77,17 +71,21 @@
           networking.nameservers = [ "1.1.1.1" "9.9.9.9" ];
           networking.firewall.allowedTCPPorts = [ 22 80 ];
 
-          # The container cannot load kernel modules; the host
-          # preloads them instead, so nothing is left to load inside.
-          boot.kernelModules = lib.mkForce [ ];
+          networking.firewall.interfaces."podman+".allowedUDPPorts = [ 53 5353 ];
 
           virtualisation.podman = {
             enable = true;
+            dockerCompat = true;
+
+            autoPrune = {
+              enable = true;
+              dates = "daily";
+              flags = [ "--all" ];
+            };
+
+            defaultNetwork.settings.dns_enabled = true;
           };
 
-          # Prod Traefik forwards *.dev to :80; this routes by label to the test apps.
-          # Traefik v3.8 has no native Podman provider, so the Docker provider
-          # reads Podman's Docker-compatible API through the Podman socket.
           virtualisation.oci-containers = {
             backend = "podman";
             containers.traefik = {
@@ -108,11 +106,22 @@
           };
 
           users.users.root.openssh.authorizedKeys.keys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINHiwuwSpFayBr5vka7mNjmFkPlKXK7bUkRYxJspY5WE auxves"
             "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBdVybiJ58SJHLY7wRVLwjAX675PBbRCzNjJ60ui5wFw dev-agent"
           ];
 
-          environment.systemPackages = [ pkgs.curl pkgs.openssl pkgs.iproute2 ];
+          environment.systemPackages = with pkgs; [
+            curl
+            openssl
+            iproute2
+            neovim
+          ];
         };
+      };
+
+      systemd.services."container@dev".serviceConfig = {
+        MemoryMax = "16G";
+        CPUQuota = "200%";
       };
 
       traefik.dynamicConfigs = [ devDynamicConfig ];
