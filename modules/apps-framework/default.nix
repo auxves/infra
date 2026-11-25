@@ -228,7 +228,7 @@
       };
     };
 
-  config.flake.dns.records =
+  flake.dns.records =
     let
       ingressesOfHost = host: lib.pipe host.cfg.apps [
         (lib.mapAttrsToList (_: app: builtins.attrValues app.ingresses))
