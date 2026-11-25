@@ -5,11 +5,12 @@
 
       yaml = pkgs.formats.yaml { };
 
-      dynamicConfigDir = pkgs.linkFarm "traefik-dynamic" (
-        lib.imap0
-          (i: path: { name = "dynamic-${toString i}.yaml"; path = path; })
-          config.traefik.dynamicConfigs
-      );
+      dynamicConfigDir = pkgs.runCommand "traefik-dynamic" { } ''
+        mkdir $out
+        ${lib.concatLines (lib.imap0
+          (i: path: "cp ${path} $out/dynamic-${toString i}.yaml")
+          config.traefik.dynamicConfigs)}
+      '';
 
       configFile = yaml.generate "traefik.yaml" {
         entryPoints = {
