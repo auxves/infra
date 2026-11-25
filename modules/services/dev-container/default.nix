@@ -127,6 +127,12 @@
         CPUQuota = "200%";
       };
 
+      # Fix issue with networkd messing up host networking
+      systemd.network.networks."20-container-ve-dev" = {
+        matchConfig.Name = "ve-dev";
+        linkConfig.Unmanaged = true;
+      };
+
       traefik.dynamicConfigs = [ devDynamicConfig ];
     };
 
