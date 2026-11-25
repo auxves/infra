@@ -59,6 +59,7 @@
             ];
 
             environment = {
+              APP_NAME = "Coolify";
               APP_ENV = "production";
               APP_URL = "https://${cfg.ingresses.app.domain}";
               DB_HOST = cfg.containers.postgres.fullName;
