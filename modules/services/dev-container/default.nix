@@ -38,7 +38,7 @@
           services = {
             dev = {
               loadBalancer = {
-                servers = [{ url = "https://${config.containers.dev.localAddress}:443"; }];
+                servers = [{ url = "http://${config.containers.dev.localAddress}:80"; }];
               };
             };
           };
@@ -102,7 +102,7 @@
           networking.useDHCP = false;
           networking.defaultGateway = hostAddress;
           networking.nameservers = [ "1.1.1.1" "9.9.9.9" ];
-          networking.firewall.allowedTCPPorts = [ 22 443 ];
+          networking.firewall.allowedTCPPorts = [ 22 80 ];
 
           # The docker module loads its kernel modules here; the host
           # preloads them instead, so nothing is left to load inside.
@@ -118,17 +118,17 @@
             };
           };
 
-          # Prod Traefik forwards *.dev to :443; this routes by label to the test apps.
+          # Prod Traefik forwards *.dev to :80; this routes by label to the test apps.
           virtualisation.oci-containers = {
             backend = "docker";
             containers.traefik = {
               image = "traefik:v3.8.0@sha256:00c9734983e74ae35a1fc18eaee9e9da13f3dde95c4e45b3b8c3b60e0dbd2d17";
-              ports = [ "443:443/tcp" ];
+              ports = [ "80:80/tcp" ];
               volumes = [ "/var/run/docker.sock:/var/run/docker.sock:ro" ];
               cmd = [
                 "--providers.docker=true"
                 "--providers.docker.exposedByDefault=false"
-                "--entryPoints.websecure.address=:443"
+                "--entryPoints.web.address=:80"
               ];
             };
           };
