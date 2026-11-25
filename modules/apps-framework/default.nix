@@ -207,18 +207,6 @@
             default = { };
             description = "Ingresses for the application";
           };
-
-          dynamicConfigs = mkOption {
-            type = types.listOf types.path;
-            default = [ ];
-            description = "Traefik dynamic configuration files contributed by this application";
-          };
-
-          dnsRecords = mkOption {
-            type = types.attrsOf (types.attrsOf (types.listOf types.attrs));
-            default = { };
-            description = "Additional DNS records for this application, keyed by zone then record name";
-          };
         };
       };
 

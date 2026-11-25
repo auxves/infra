@@ -1,4 +1,12 @@
-{ ... }: {
+{ config, lib, ... }: {
+  flake.dns.records."*.dev.auxves.dev" =
+    let addrs = config.flake.hosts.tide.cfg.meta.addresses.internal; in
+    lib.optionals (addrs.v4 != null) [
+      { type = "A"; value = addrs.v4; }
+    ] ++ lib.optionals (addrs.v6 != null) [
+      { type = "AAAA"; value = addrs.v6; }
+    ];
+
   flake.modules.nixos.tide = { config, lib, pkgs, ... }:
     let
       cfg = config.apps.coolify;
@@ -130,19 +138,9 @@
             };
           };
         };
-
-        dynamicConfigs = [ devDynamicConfig ];
-
-        dnsRecords = {
-          "auxves.dev" = {
-            "*.dev" = lib.optionals (config.meta.addresses.internal.v4 != null) [
-              { type = "A"; value = config.meta.addresses.internal.v4; }
-            ] ++ lib.optionals (config.meta.addresses.internal.v6 != null) [
-              { type = "AAAA"; value = config.meta.addresses.internal.v6; }
-            ];
-          };
-        };
       };
+
+      traefik.dynamicConfigs = [ devDynamicConfig ];
 
       monitoring.checks = [{
         name = "coolify";

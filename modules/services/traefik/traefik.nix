@@ -8,7 +8,7 @@
       dynamicConfigDir = pkgs.linkFarm "traefik-dynamic" (
         lib.imap0
           (i: path: { name = "dynamic-${toString i}.yaml"; path = path; })
-          (lib.concatMap (app: app.dynamicConfigs) (lib.attrValues config.apps))
+          config.traefik.dynamicConfigs
       );
 
       configFile = yaml.generate "traefik.yaml" {
@@ -72,6 +72,12 @@
       };
     in
     {
+      options.traefik.dynamicConfigs = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        default = [ ];
+        description = "Traefik dynamic configuration files";
+      };
+
       sops.secrets."traefik/env" = { };
 
       apps.traefik = {
