@@ -44,8 +44,8 @@
       };
     in
     {
-      # Docker inside the container cannot load kernel modules, so the host
-      # preloads the modules dockerd needs.
+      # Podman inside the container cannot load kernel modules, so the host
+      # preloads the modules it needs.
       boot.kernelModules = [ "bridge" "veth" "br_netfilter" "xt_nat" "overlay" ];
 
       networking.nat = {
@@ -77,27 +77,23 @@
           networking.nameservers = [ "1.1.1.1" "9.9.9.9" ];
           networking.firewall.allowedTCPPorts = [ 22 80 ];
 
-          # The docker module loads its kernel modules here; the host
+          # The container cannot load kernel modules; the host
           # preloads them instead, so nothing is left to load inside.
           boot.kernelModules = lib.mkForce [ ];
 
-          virtualisation.docker = {
+          virtualisation.podman = {
             enable = true;
-            storageDriver = "overlay2";
-            daemon.settings = {
-              default-address-pools = [
-                { base = "10.200.0.0/16"; size = 24; }
-              ];
-            };
           };
 
           # Prod Traefik forwards *.dev to :80; this routes by label to the test apps.
+          # Traefik v3.8 has no native Podman provider, so the Docker provider
+          # reads Podman's Docker-compatible API through the Podman socket.
           virtualisation.oci-containers = {
-            backend = "docker";
+            backend = "podman";
             containers.traefik = {
               image = "traefik:v3.8.0@sha256:00c9734983e74ae35a1fc18eaee9e9da13f3dde95c4e45b3b8c3b60e0dbd2d17";
               ports = [ "80:80/tcp" ];
-              volumes = [ "/var/run/docker.sock:/var/run/docker.sock:ro" ];
+              volumes = [ "/run/podman/podman.sock:/var/run/docker.sock:ro" ];
               cmd = [
                 "--providers.docker=true"
                 "--providers.docker.exposedByDefault=false"
