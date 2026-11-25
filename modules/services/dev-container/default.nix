@@ -115,6 +115,9 @@
             openssl
             iproute2
             neovim
+
+            docker-client
+            podman-compose
           ];
         };
       };
