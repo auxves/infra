@@ -3,7 +3,8 @@
 
   flake.dns.records =
     let
-      addrs = config.flake.hosts.harpy.cfg.meta.addresses;
+      host = "harpy";
+      addrs = config.flake.hosts.${host}.cfg.meta.addresses;
       zone = "auxves.dev";
       a = value: lib.optional (value != null) { type = "A"; value = value; };
       aaaa = value: lib.optional (value != null) { type = "AAAA"; value = value; };
@@ -11,13 +12,13 @@
       internal = a addrs.internal.v4 ++ aaaa addrs.internal.v6;
     in
     lib.filterAttrs (_: records: records != [ ]) {
-      "harpy.${zone}" = public;
-      "*.harpy.${zone}" = public;
-      "harpy.x.${zone}" = internal;
-      "*.harpy.x.${zone}" = internal;
-      "v4.harpy.${zone}" = a addrs.public.v4;
-      "v6.harpy.${zone}" = aaaa addrs.public.v6;
-      "v4.harpy.x.${zone}" = a addrs.internal.v4;
-      "v6.harpy.x.${zone}" = aaaa addrs.internal.v6;
+      "${host}.${zone}" = public;
+      "*.${host}.${zone}" = public;
+      "${host}.x.${zone}" = internal;
+      "*.${host}.x.${zone}" = internal;
+      "v4.${host}.${zone}" = a addrs.public.v4;
+      "v6.${host}.${zone}" = aaaa addrs.public.v6;
+      "v4.${host}.x.${zone}" = a addrs.internal.v4;
+      "v6.${host}.x.${zone}" = aaaa addrs.internal.v6;
     };
 }
