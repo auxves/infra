@@ -1,4 +1,4 @@
-{ config, lib, ... }: {
+{ inputs, config, lib, ... }: {
   flake.dns.records."*.dev.auxves.dev" =
     let addrs = config.flake.hosts.tide.cfg.meta.addresses.internal; in
     lib.optionals (addrs.v4 != null) [
@@ -129,4 +129,15 @@
 
       traefik.dynamicConfigs = [ devDynamicConfig ];
     };
+
+  perSystem = { pkgs, lib, ... }: {
+    checks.system-dev-container =
+      let
+        drv = inputs.self.hosts.tide.cfg.containers.dev.config.system.build.toplevel;
+        drvPath = builtins.unsafeDiscardStringContext drv.drvPath;
+      in
+      pkgs.runCommand "system-dev-container-evaluates" { } ''
+        echo ${drvPath} > $out
+      '';
+  };
 }
