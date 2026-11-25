@@ -65,10 +65,10 @@
         config = { lib, pkgs, ... }: {
           system.stateVersion = "26.05";
 
-          networking.useNetworkd = true;
           networking.useDHCP = false;
           networking.defaultGateway = hostAddress;
           networking.nameservers = [ "1.1.1.1" "9.9.9.9" ];
+          networking.useHostResolvConf = lib.mkForce false;
           networking.firewall.allowedTCPPorts = [ 22 80 ];
 
           networking.firewall.interfaces."podman+".allowedUDPPorts = [ 53 5353 ];
