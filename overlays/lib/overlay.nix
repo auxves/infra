@@ -24,13 +24,6 @@ in
 
     filterHosts = predicate: builtins.filter predicate hostList;
 
-    readModules = dir:
-      let
-        isValid = name: type: name != "default.nix";
-        files = lib.filterAttrs isValid (builtins.readDir dir);
-      in
-      map (n: dir + "/${n}") (builtins.attrNames files);
-
     inherit collectContainerImages;
 
     containerImagesForHost = host: collectContainerImages host.cfg.apps (_: true);

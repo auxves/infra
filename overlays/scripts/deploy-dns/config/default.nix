@@ -2,82 +2,25 @@
 let
   yaml = formats.yaml { };
 
-  ingressesOfHost = host: lib.pipe host.cfg.apps [
-    (lib.mapAttrsToList (_: app: builtins.attrValues app.ingresses))
-    lib.flatten
-    (map (x: x // { inherit host; }))
-  ];
+  zoneOf = fqdn:
+    let parts = lib.splitString "." fqdn;
+    in lib.concatStringsSep "." (lib.drop (builtins.length parts - 2) parts);
 
-  calculateZone = name: config:
-    let
-      appsHosts = lib.internal.filterHosts (host: host.cfg ? apps);
-      metaHosts = lib.internal.filterHosts (host: host.cfg ? meta.addresses);
+  zones = lib.unique (builtins.map zoneOf (builtins.attrNames self.dns.records));
 
-      ingresses = lib.pipe appsHosts [
-        (builtins.concatMap ingressesOfHost)
-        (builtins.filter (ingress: lib.hasSuffix name ingress.domain))
-        (builtins.filter (ingress: !(lib.hasInfix ".x." ingress.domain)))
-      ];
+  calculateZone = name:
+    lib.mapAttrs'
+      (domain: records: lib.nameValuePair (lib.removeSuffix ".${name}" domain) records)
+      (lib.filterAttrs (domain: _: lib.hasSuffix ".${name}" domain) self.dns.records);
 
-      ingressToRecord = { type, domain, host, ... }: {
-        ${lib.removeSuffix ".${name}" domain} = [
-          {
-            type = "A";
-            value = host.cfg.meta.addresses.${type}.v4;
-          }
-          {
-            type = "AAAA";
-            value = host.cfg.meta.addresses.${type}.v6;
-          }
-        ];
-      };
-
-      hostToRecords = host:
-        let
-          addrs = host.cfg.meta.addresses;
-
-          publicRecords = [ ]
-            ++ lib.optional (addrs.public.v4 != null) { type = "A"; value = addrs.public.v4; }
-            ++ lib.optional (addrs.public.v6 != null) { type = "AAAA"; value = addrs.public.v6; };
-
-          internalRecords = [ ]
-            ++ lib.optional (addrs.internal.v4 != null) { type = "A"; value = addrs.internal.v4; }
-            ++ lib.optional (addrs.internal.v6 != null) { type = "AAAA"; value = addrs.internal.v6; };
-        in
-        { } // lib.optionalAttrs (publicRecords != [ ]) {
-          "${host.name}" = publicRecords;
-          "*.${host.name}" = publicRecords;
-        } // lib.optionalAttrs (internalRecords != [ ]) {
-          "${host.name}.x" = internalRecords;
-          "*.${host.name}.x" = internalRecords;
-        } // lib.optionalAttrs (addrs.public.v4 != null) {
-          "v4.${host.name}" = [{ type = "A"; value = addrs.public.v4; }];
-        } // lib.optionalAttrs (addrs.public.v6 != null) {
-          "v6.${host.name}" = [{ type = "AAAA"; value = addrs.public.v6; }];
-        } // lib.optionalAttrs (addrs.internal.v4 != null) {
-          "v4.${host.name}.x" = [{ type = "A"; value = addrs.internal.v4; }];
-        } // lib.optionalAttrs (addrs.internal.v6 != null) {
-          "v6.${host.name}.x" = [{ type = "AAAA"; value = addrs.internal.v6; }];
-        };
-
-      records = builtins.map ingressToRecord ingresses
-        ++ builtins.map hostToRecords metaHosts;
-    in
-    lib.foldl' lib.recursiveUpdate config records;
-
-  zones = builtins.listToAttrs (builtins.map
-    (path: rec {
-      name = lib.removeSuffix ".nix" (builtins.baseNameOf (toString path));
-      value = calculateZone name (import path self);
-    })
-    (lib.internal.readModules ./zones));
+  zoneConfigs = lib.genAttrs zones calculateZone;
 
   zoneDir = linkFarm "zones" (lib.mapAttrsToList
     (zone: config: {
       name = "${zone}.yaml";
       path = yaml.generate "${zone}.yaml" config;
     })
-    zones);
+    zoneConfigs);
 
   config = {
     providers = {
