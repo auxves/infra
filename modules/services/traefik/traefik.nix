@@ -5,6 +5,13 @@
 
       yaml = pkgs.formats.yaml { };
 
+      dynamicConfigDir = pkgs.runCommand "traefik-dynamic" { } ''
+        mkdir $out
+        ${lib.concatLines (lib.imap0
+          (i: path: "cp ${path} $out/dynamic-${toString i}.yaml")
+          config.traefik.dynamicConfigs)}
+      '';
+
       configFile = yaml.generate "traefik.yaml" {
         entryPoints = {
           internal = {
@@ -42,8 +49,15 @@
           };
         };
 
-        providers.docker = {
-          exposedByDefault = false;
+        providers = {
+          docker = {
+            exposedByDefault = false;
+          };
+
+          file = {
+            directory = "/etc/traefik/dynamic";
+            watch = true;
+          };
         };
 
         api.insecure = true;
@@ -59,49 +73,58 @@
       };
     in
     {
-      sops.secrets."traefik/env" = { };
+      options.traefik.dynamicConfigs = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        default = [ ];
+        description = "Traefik dynamic configuration files";
+      };
 
-      apps.traefik = {
-        volumes = {
-          traefik = { type = "ephemeral"; };
-        };
+      config = {
+        sops.secrets."traefik/env" = { };
 
-        containers = {
-          traefik = {
-            image = "traefik:v3.8.0@sha256:00c9734983e74ae35a1fc18eaee9e9da13f3dde95c4e45b3b8c3b60e0dbd2d17";
-
-            ports = lib.optionals (config.meta.addresses.internal.v6 != null) [
-              # Internal
-              "[${config.meta.addresses.internal.v6}]:443:443/tcp"
-              "[${config.meta.addresses.internal.v6}]:443:443/udp"
-            ] ++ lib.optionals (config.meta.addresses.internal.v4 != null) [
-              # Internal
-              "${config.meta.addresses.internal.v4}:443:443/tcp"
-              "${config.meta.addresses.internal.v4}:443:443/udp"
-            ];
-
-            volumes = [
-              "/run/podman/podman.sock:/var/run/docker.sock"
-              "${cfg.volumes.traefik.path}:/etc/traefik"
-              "${configFile}:/etc/traefik/traefik.yaml"
-            ];
-
-            environmentFiles = [ config.sops.secrets."traefik/env".path ];
-
-            metrics.port = 8080;
+        apps.traefik = {
+          volumes = {
+            traefik = { type = "ephemeral"; };
           };
-        };
 
-        ingresses = {
-          app = {
-            container = "traefik";
-            port = 9999;
+          containers = {
+            traefik = {
+              image = "traefik:v3.8.0@sha256:00c9734983e74ae35a1fc18eaee9e9da13f3dde95c4e45b3b8c3b60e0dbd2d17";
 
-            settings = {
-              service = "api@internal";
-              "tls.certresolver" = "letsencrypt";
-              "tls.domains[0].main" = "${config.networking.hostName}.x.auxves.dev";
-              "tls.domains[0].sans" = "*.${config.networking.hostName}.x.auxves.dev";
+              ports = lib.optionals (config.meta.addresses.internal.v6 != null) [
+                # Internal
+                "[${config.meta.addresses.internal.v6}]:443:443/tcp"
+                "[${config.meta.addresses.internal.v6}]:443:443/udp"
+              ] ++ lib.optionals (config.meta.addresses.internal.v4 != null) [
+                # Internal
+                "${config.meta.addresses.internal.v4}:443:443/tcp"
+                "${config.meta.addresses.internal.v4}:443:443/udp"
+              ];
+
+              volumes = [
+                "/run/podman/podman.sock:/var/run/docker.sock"
+                "${cfg.volumes.traefik.path}:/etc/traefik"
+                "${configFile}:/etc/traefik/traefik.yaml"
+                "${dynamicConfigDir}:/etc/traefik/dynamic"
+              ];
+
+              environmentFiles = [ config.sops.secrets."traefik/env".path ];
+
+              metrics.port = 8080;
+            };
+          };
+
+          ingresses = {
+            app = {
+              container = "traefik";
+              port = 9999;
+
+              settings = {
+                service = "api@internal";
+                "tls.certresolver" = "letsencrypt";
+                "tls.domains[0].main" = "${config.networking.hostName}.x.auxves.dev";
+                "tls.domains[0].sans" = "*.${config.networking.hostName}.x.auxves.dev";
+              };
             };
           };
         };
