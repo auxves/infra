@@ -1,4 +1,9 @@
-{ ... }: {
+{ hosts, ... }: {
+  "*.dev" = [
+    { type = "A"; value = hosts.tide.cfg.meta.addresses.internal.v4; }
+    { type = "AAAA"; value = hosts.tide.cfg.meta.addresses.internal.v6; }
+  ];
+
   "_minecraft._tcp.mc" = [{
     type = "SRV";
     value = {

@@ -42,8 +42,15 @@
           };
         };
 
-        providers.docker = {
-          exposedByDefault = false;
+        providers = {
+          docker = {
+            exposedByDefault = false;
+          };
+        } // lib.optionalAttrs (config.networking.hostName == "tide") {
+          file = {
+            filename = "/etc/traefik/dynamic.yaml";
+            watch = true;
+          };
         };
 
         api.insecure = true;
