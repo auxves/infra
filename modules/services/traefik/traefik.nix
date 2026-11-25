@@ -5,6 +5,12 @@
 
       yaml = pkgs.formats.yaml { };
 
+      dynamicConfigDir = pkgs.linkFarm "traefik-dynamic" (
+        lib.imap0
+          (i: path: { name = "dynamic-${toString i}.yaml"; path = path; })
+          (lib.concatMap (app: app.dynamicConfigs) (lib.attrValues config.apps))
+      );
+
       configFile = yaml.generate "traefik.yaml" {
         entryPoints = {
           internal = {
@@ -42,8 +48,15 @@
           };
         };
 
-        providers.docker = {
-          exposedByDefault = false;
+        providers = {
+          docker = {
+            exposedByDefault = false;
+          };
+
+          file = {
+            directory = "/etc/traefik/dynamic";
+            watch = true;
+          };
         };
 
         api.insecure = true;
@@ -84,6 +97,7 @@
               "/run/podman/podman.sock:/var/run/docker.sock"
               "${cfg.volumes.traefik.path}:/etc/traefik"
               "${configFile}:/etc/traefik/traefik.yaml"
+              "${dynamicConfigDir}:/etc/traefik/dynamic"
             ];
 
             environmentFiles = [ config.sops.secrets."traefik/env".path ];
