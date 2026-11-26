@@ -74,15 +74,27 @@
         };
       };
 
-      monitoring.checks = [{
-        name = "healthcheck";
-        group = "infra";
-        url = "$GATUS_HEALTHCHECK_ENDPOINT";
-        interval = "2m";
-        alerts = [{ type = "discord"; }];
-        conditions = [
-          "[STATUS] == 200"
-        ];
-      }];
+      monitoring.checks = [
+        {
+          name = "gatus";
+          group = "infra";
+          url = "https://${cfg.ingresses.app.domain}";
+          interval = "1m";
+          alerts = [{ type = "discord"; }];
+          conditions = [
+            "[STATUS] == 200"
+          ];
+        }
+        {
+          name = "healthcheck";
+          group = "infra";
+          url = "$GATUS_HEALTHCHECK_ENDPOINT";
+          interval = "2m";
+          alerts = [{ type = "discord"; }];
+          conditions = [
+            "[STATUS] == 200"
+          ];
+        }
+      ];
     };
 }
