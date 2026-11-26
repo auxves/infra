@@ -18,7 +18,7 @@
         http = {
           routers = {
             dev = {
-              rule = "HostRegexp(`^[^.]+\\.dev\\.auxves\\.dev$`)";
+              rule = "Host(`*.dev.auxves.dev`)";
               entryPoints = [ "internal" ];
               service = "dev";
               tls = {
@@ -36,7 +36,7 @@
           services = {
             dev = {
               loadBalancer = {
-                servers = [{ url = "http://${config.containers.dev.localAddress}:80"; }];
+                servers = [{ url = "http://${config.containers.dev-container.localAddress}:80"; }];
               };
             };
           };
@@ -47,10 +47,10 @@
       networking.nat = {
         enable = true;
         externalInterface = "lan";
-        internalInterfaces = [ "ve-dev" ];
+        internalInterfaces = [ "ve-dev-container" ];
       };
 
-      containers.dev = {
+      containers.dev-container = {
         autoStart = true;
         privateNetwork = true;
         hostAddress = hostAddress;
@@ -123,14 +123,14 @@
         };
       };
 
-      systemd.services."container@dev".serviceConfig = {
+      systemd.services."container@dev-container".serviceConfig = {
         MemoryMax = "16G";
         CPUQuota = "200%";
       };
 
       # Fix issue with networkd messing up host networking
-      systemd.network.networks."20-container-ve-dev" = {
-        matchConfig.Name = "ve-dev";
+      systemd.network.networks."20-container-ve-dev-container" = {
+        matchConfig.Name = "ve-dev-container";
         linkConfig.Unmanaged = true;
       };
 
@@ -140,7 +140,7 @@
   perSystem = { pkgs, lib, ... }: {
     checks.system-dev-container =
       let
-        drv = inputs.self.hosts.tide.cfg.containers.dev.config.system.build.toplevel;
+        drv = inputs.self.hosts.tide.cfg.containers.dev-container.config.system.build.toplevel;
         drvPath = builtins.unsafeDiscardStringContext drv.drvPath;
       in
       pkgs.runCommand "system-dev-container-evaluates" { } ''
