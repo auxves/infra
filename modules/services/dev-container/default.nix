@@ -14,13 +14,13 @@
 
       yaml = pkgs.formats.yaml { };
 
-      devMachineDynamicConfig = yaml.generate "dev-machine.yaml" {
+      devDynamicConfig = yaml.generate "dev.yaml" {
         http = {
           routers = {
-            dev-machine = {
-              rule = "HostRegexp(`^[^.]+\\.dev\\.auxves\\.dev$`)";
+            dev = {
+              rule = "Host(`*.dev.auxves.dev`)";
               entryPoints = [ "internal" ];
-              service = "dev-machine";
+              service = "dev";
               tls = {
                 certResolver = "letsencrypt";
                 domains = [
@@ -34,9 +34,9 @@
           };
 
           services = {
-            dev-machine = {
+            dev = {
               loadBalancer = {
-                servers = [{ url = "http://${config.containers.dev-machine.localAddress}:80"; }];
+                servers = [{ url = "http://${config.containers.dev-container.localAddress}:80"; }];
               };
             };
           };
@@ -47,10 +47,10 @@
       networking.nat = {
         enable = true;
         externalInterface = "lan";
-        internalInterfaces = [ "ve-dev-machine" ];
+        internalInterfaces = [ "ve-dev-container" ];
       };
 
-      containers.dev-machine = {
+      containers.dev-container = {
         autoStart = true;
         privateNetwork = true;
         hostAddress = hostAddress;
@@ -123,27 +123,27 @@
         };
       };
 
-      systemd.services."container@dev-machine".serviceConfig = {
+      systemd.services."container@dev-container".serviceConfig = {
         MemoryMax = "16G";
         CPUQuota = "200%";
       };
 
       # Fix issue with networkd messing up host networking
-      systemd.network.networks."20-container-ve-dev-machine" = {
-        matchConfig.Name = "ve-dev-machine";
+      systemd.network.networks."20-container-ve-dev-container" = {
+        matchConfig.Name = "ve-dev-container";
         linkConfig.Unmanaged = true;
       };
 
-      traefik.dynamicConfigs = [ devMachineDynamicConfig ];
+      traefik.dynamicConfigs = [ devDynamicConfig ];
     };
 
   perSystem = { pkgs, lib, ... }: {
-    checks.system-dev-machine-container =
+    checks.system-dev-container =
       let
-        drv = inputs.self.hosts.tide.cfg.containers.dev-machine.config.system.build.toplevel;
+        drv = inputs.self.hosts.tide.cfg.containers.dev-container.config.system.build.toplevel;
         drvPath = builtins.unsafeDiscardStringContext drv.drvPath;
       in
-      pkgs.runCommand "system-dev-machine-container-evaluates" { } ''
+      pkgs.runCommand "system-dev-container-evaluates" { } ''
         echo ${drvPath} > $out
       '';
   };
