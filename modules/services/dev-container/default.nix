@@ -63,6 +63,10 @@
         ];
 
         config = { lib, pkgs, ... }: {
+          imports = with inputs.self.modules.nixos; [
+            nix
+          ];
+
           system.stateVersion = "26.05";
 
           networking.useDHCP = false;
