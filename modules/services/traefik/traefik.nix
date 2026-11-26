@@ -89,6 +89,17 @@
           "d /etc/traefik/dynamic 0755 root root -"
         ];
 
+        monitoring.checks = [{
+          name = "traefik-${config.networking.hostName}";
+          group = "infra";
+          url = "https://${cfg.ingresses.app.domain}/api/http/routers";
+          interval = "1m";
+          alerts = [{ type = "discord"; }];
+          conditions = [
+            "[STATUS] == 200"
+          ];
+        }];
+
         apps.traefik = {
           volumes = {
             traefik = { type = "ephemeral"; };
