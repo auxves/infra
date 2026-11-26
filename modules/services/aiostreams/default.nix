@@ -50,7 +50,7 @@
 
           trakt-addon = {
             user = "root:root";
-            image = "ghcr.io/auxves/aiostreams-trakt-addon:v0.4.0@sha256:d467e974260c63b6ea7d9f6179be0c33ed6a0f0a608a1d872a2ce85b6d4b92fb";
+            image = "ghcr.io/auxves/aiostreams-trakt-addon:v0.4.1@sha256:29a56c79654829cce86dc7ef94a4c8996db28f4a4cf1c44083c000a8ced7fc7d";
 
             volumes = [
               "${cfg.volumes.trakt-addon.path}:/data"
