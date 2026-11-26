@@ -47,7 +47,7 @@
       networking.nat = {
         enable = true;
         externalInterface = "lan";
-        internalInterfaces = [ "ve-dev-container" ];
+        internalInterfaces = [ "ve-dev-contopz4" ];
       };
 
       containers.dev-container = {
@@ -129,8 +129,8 @@
       };
 
       # Fix issue with networkd messing up host networking
-      systemd.network.networks."20-container-ve-dev-container" = {
-        matchConfig.Name = "ve-dev-container";
+      systemd.network.networks."20-container-ve-dev-contopz4" = {
+        matchConfig.Name = "ve-dev-contopz4";
         linkConfig.Unmanaged = true;
       };
 
