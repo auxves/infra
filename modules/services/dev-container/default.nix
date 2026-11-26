@@ -18,7 +18,7 @@
         http = {
           routers = {
             dev = {
-              rule = "HostRegexp(`^[^.]+\\.dev\\.auxves\\.dev$`)";
+              rule = "Host(`*.dev.auxves.dev`)";
               entryPoints = [ "internal" ];
               service = "dev";
               tls = {
