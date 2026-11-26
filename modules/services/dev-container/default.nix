@@ -120,6 +120,13 @@
             openssl
             iproute2
             neovim
+            git
+            jq
+            python3
+            bind
+            ripgrep
+            rsync
+            htop
 
             docker-client
             podman-compose
