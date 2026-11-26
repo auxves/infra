@@ -1,4 +1,5 @@
 results=$(mktemp -d)
+trap 'rm -rf "$results"' EXIT
 
 docker_ref() {
   local image=$1
@@ -12,17 +13,8 @@ docker_ref() {
       ;;
   esac
 
-  if [ -n "$digest" ]; then
-    local last=${name##*/}
-    case "$last" in
-      *:*)
-        if [ "$last" = "$name" ]; then
-          name=${last%%:*}
-        else
-          name=${name%/*}/${last%%:*}
-        fi
-        ;;
-    esac
+  if [ -n "$digest" ] && [[ ${name##*/} == *:* ]]; then
+    name=${name%:*}
   fi
 
   local first=${name%%/*}
@@ -45,10 +37,12 @@ docker_ref() {
 
 fail_platforms() {
   local key=$1 image=$2 reason=$3
+  reason=${reason:-no error output, possibly timed out}
   local platform
   while read -r platform; do
+    local slug=${platform//\//-}
     printf 'invalid image: %s (%s: %s)\n' "$image" "$platform" "$reason" \
-      >"$results/$key.$(printf %s "$platform" | tr '/' '-').fail"
+      >"$results/$key.$slug.fail"
   done <"$results/$key.platforms"
 }
 
@@ -56,8 +50,10 @@ check_image() {
   local platforms_file=$1
   local key=${platforms_file##*/}
   key=${key%.platforms}
-  local image=$(cat "$results/$key.image")
-  local ref=$(docker_ref "$image")
+  local image
+  image=$(cat "$results/$key.image")
+  local ref
+  ref=$(docker_ref "$image")
 
   local pin=""
   case "$ref" in
@@ -90,9 +86,14 @@ check_image() {
       | select(.os != null and .architecture != null and .os != "unknown" and .architecture != "unknown")
       | "\(.os)/\(.architecture)"' "$results/$key.raw" | sort -u)
   else
+    local repo=${ref%@*}
+    if [[ ${repo##*/} == *:* ]]; then
+      repo=${repo%:*}
+    fi
+    local config_ref="$repo@$digest"
     local ok=0
     for _ in 1 2; do
-      if timeout 60 skopeo inspect --config "docker://$ref" >"$results/$key.config" 2>"$results/$key.config.err"; then
+      if timeout 60 skopeo inspect --config "docker://$config_ref" >"$results/$key.config" 2>"$results/$key.config.err"; then
         ok=1
         break
       fi
@@ -107,13 +108,16 @@ check_image() {
 
   local platform
   while read -r platform; do
+    local slug=${platform//\//-}
     if printf '%s\n' "$available" | grep -qxF "$platform"; then
       printf 'valid image: %s (%s)\n' "$image" "$platform"
+      : >"$results/$key.$slug.ok"
     else
-      local served=$(printf '%s' "$available" | paste -sd ',' -)
+      local served
+      served=$(printf '%s' "$available" | paste -sd ',' -)
       printf 'invalid image: %s (%s: no manifest for this platform, registry serves %s)\n' \
         "$image" "$platform" "${served:-none}" \
-        >"$results/$key.$(printf %s "$platform" | tr '/' '-').fail"
+        >"$results/$key.$slug.fail"
     fi
   done <"$results/$key.platforms"
 }
@@ -121,33 +125,46 @@ check_image() {
 export results
 export -f docker_ref fail_platforms check_image
 
-pairs=$(grep -c . "$1" || true)
-if [ "$pairs" -eq 0 ]; then
-  printf 'error: the flake collected no container images\n' >&2
-  exit 1
-fi
-
-while read -r image platform; do
+while read -r image platform || [ -n "$image" ]; do
   [ -n "$image" ] || continue
-  key=$(printf %s "$(docker_ref "$image")" | md5sum | cut -d ' ' -f 1)
+  if [ -z "$platform" ]; then
+    printf 'error: no platform given for %s\n' "$image" >&2
+    exit 1
+  fi
+  key=$(printf %s "$image" | md5sum | cut -d ' ' -f 1)
   printf '%s\n' "$platform" >>"$results/$key.platforms"
   printf '%s\n' "$image" >"$results/$key.image"
 done <"$1"
 
 count=0
+pairs=0
 for file in "$results"/*.platforms; do
   [ -e "$file" ] || continue
   sort -u -o "$file" "$file"
   count=$((count + 1))
+  pairs=$((pairs + $(wc -l <"$file")))
 done
+if [ "$count" -eq 0 ]; then
+  printf 'error: the flake collected no container images\n' >&2
+  exit 1
+fi
 printf 'checking %s container images (%s image/platform pairs)\n' "$count" "$pairs"
 
-ls "$results"/*.platforms | xargs -P 8 -n 1 bash -c 'check_image "$1"' _
-
 failed=0
-for file in "$results"/*.fail; do
-  [ -e "$file" ] || continue
-  cat "$file"
-  failed=1
+printf '%s\0' "$results"/*.platforms |
+  xargs -0 -P 8 -n 1 bash -c 'check_image "$1"' _ || failed=1
+
+for file in "$results"/*.platforms; do
+  base=${file%.platforms}
+  while read -r platform; do
+    slug=${platform//\//-}
+    [ -e "$base.$slug.ok" ] && continue
+    failed=1
+    if [ -e "$base.$slug.fail" ]; then
+      cat "$base.$slug.fail"
+    else
+      printf 'error: %s (%s) was not checked\n' "$(cat "$base.image")" "$platform"
+    fi
+  done <"$file"
 done
 exit "$failed"
