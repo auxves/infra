@@ -5,13 +5,6 @@
 
       yaml = pkgs.formats.yaml { };
 
-      dynamicConfigDir = pkgs.runCommand "traefik-dynamic" { } ''
-        mkdir $out
-        ${lib.concatLines (lib.imap0
-          (i: path: "cp ${path} $out/dynamic-${toString i}.yaml")
-          config.traefik.dynamicConfigs)}
-      '';
-
       configFile = yaml.generate "traefik.yaml" {
         entryPoints = {
           internal = {
@@ -82,6 +75,20 @@
       config = {
         sops.secrets."traefik/env" = { };
 
+        environment.etc = lib.listToAttrs (lib.imap0
+          (i: path: {
+            name = "traefik/dynamic/dynamic-${toString i}.yaml";
+            value = {
+              source = path;
+              mode = "0644";
+            };
+          })
+          config.traefik.dynamicConfigs);
+
+        systemd.tmpfiles.rules = [
+          "d /etc/traefik/dynamic 0755 root root -"
+        ];
+
         apps.traefik = {
           volumes = {
             traefik = { type = "ephemeral"; };
@@ -105,7 +112,7 @@
                 "/run/podman/podman.sock:/var/run/docker.sock"
                 "${cfg.volumes.traefik.path}:/etc/traefik"
                 "${configFile}:/etc/traefik/traefik.yaml"
-                "${dynamicConfigDir}:/etc/traefik/dynamic"
+                "/etc/traefik/dynamic:/etc/traefik/dynamic"
               ];
 
               environmentFiles = [ config.sops.secrets."traefik/env".path ];
